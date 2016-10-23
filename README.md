@@ -13,6 +13,7 @@ This repo is based on the following principles/ideas:
 
 - This type is meant to make life for data scientists as easy as possible. That is the main guiding principle.
 - We provided as many lifted methods as possible for all sorts of functions. This package follows what is know as the "whitelist" approach to lifting.
+- We provide lifted methods of functions for arguments that have a mix of ``NAable`` and standard types.
 - As much as possible we are thinking of ``NA`` as just another value that a variable of type ``NAtype`` can have. In particular, ``NAtype`` is *not* seen as some sort of container. We won't be able to stick to this definition in all cases, but it will still guide our thinking. For example, this principle suggests that ``NA==NA`` is ``true``. The main reason for this choice is that it is simple and allows users to reason about the behavior of many parts of the system based on this principle.
 - This package does not have a single hard rule about lifting semantics. Instead, decisions are made case by case. As guiding principles are identifed, we will add them to this list.
 - A first principle is that the ``&`` and ``|`` operators follow the [3VL](https://en.wikipedia.org/wiki/Three-valued_logic) semantics.
