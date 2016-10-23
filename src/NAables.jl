@@ -2,10 +2,15 @@ module NAables
 
 using DataArrays
 
-export NAable, NA
+export NAable, NAException, NA, isna
 
 import Base.get
 import Base.convert
+import Base.eltype
+import Base.show
+import Base.hash
+import Base.promote_rule
+import Base.promote_op
 
 immutable NAable{T}
     hasvalue::Bool
@@ -13,6 +18,9 @@ immutable NAable{T}
 
     NAable() = new(false)
     NAable(value::T, hasvalue::Bool=true) = new(hasvalue, value)
+end
+
+immutable NAException <: Exception
 end
 
 typealias InternalNAType NAtype
@@ -68,7 +76,10 @@ end
     end
 end
 
-get(x::NAable) = isna(x) ? throw(NAableException()) : x.value
+get(x::NAable) = isna(x) ? throw(NAException()) : x.value
+
+get(x::InternalNAType) = throw(NAException())
+get(x::InternalNAType, y) = y
 
 unsafe_get(x::NAable) = x.value
 unsafe_get(x) = x
@@ -85,6 +96,11 @@ function hash(x::NAable, h::UInt)
     else
         return hash(x.value, h + NAablehash_seed)
     end
+end
+
+# TODO This is type piracy, but I think ok for now
+function hash(x::InternalNAType, h::UInt)
+    return h + NAablehash_seed
 end
 
 import Base.==
