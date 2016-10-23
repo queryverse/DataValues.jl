@@ -1,5 +1,10 @@
 # NAables
 
+[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Build Status](https://travis-ci.org/davidanthoff/NAables.jl.svg?branch=master)](https://travis-ci.org/davidanthoff/NAables.jl)
+[![Build status](https://ci.appveyor.com/api/projects/status/v56tyamg56dqy79t/branch/master?svg=true)](https://ci.appveyor.com/project/davidanthoff/naables-jl/branch/master)
+[![codecov](https://codecov.io/gh/davidanthoff/NAables.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/davidanthoff/NAables.jl)
+
 ## Overview
 
 This package provides the type ``NAable`` that is used to represent missing data in the julia data stack. The type is very similar to ``Nullable`` in the julia base library.
