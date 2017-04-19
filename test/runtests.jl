@@ -1,157 +1,159 @@
-using NAables
+using DataValues
 using Base.Test
 
-@testset begin
+type TestNType{T}
+    v::DataValue{T}
+end
+
+@testset "DataValues" begin
+
+@testset "Core" begin
 # 3VL
 
-@test NAable(true) & NAable(true) == NAable(true)
-@test NAable(true) & NAable(false) == NAable(false)
-@test NAable(true) & NAable{Bool}() == NAable{Bool}()
-@test NAable(false) & NAable(true) == NAable(false)
-@test NAable(false) & NAable(false) == NAable(false)
-@test NAable(false) & NAable{Bool}() == NAable(false)
-@test NAable{Bool}() & NAable(true) == NAable{Bool}()
-@test NAable{Bool}() & NAable(false) == NAable(false)
-@test NAable{Bool}() & NAable{Bool}() == NAable{Bool}()
+@test DataValue(true) & DataValue(true) == DataValue(true)
+@test DataValue(true) & DataValue(false) == DataValue(false)
+@test DataValue(true) & DataValue{Bool}() == DataValue{Bool}()
+@test DataValue(false) & DataValue(true) == DataValue(false)
+@test DataValue(false) & DataValue(false) == DataValue(false)
+@test DataValue(false) & DataValue{Bool}() == DataValue(false)
+@test DataValue{Bool}() & DataValue(true) == DataValue{Bool}()
+@test DataValue{Bool}() & DataValue(false) == DataValue(false)
+@test DataValue{Bool}() & DataValue{Bool}() == DataValue{Bool}()
 
-@test true & NAable(true) == NAable(true)
-@test true & NAable(false) == NAable(false)
-@test true & NAable{Bool}() == NAable{Bool}()
-@test false & NAable(true) == NAable(false)
-@test false & NAable(false) == NAable(false)
-@test false & NAable{Bool}() == NAable(false)
+@test true & DataValue(true) == DataValue(true)
+@test true & DataValue(false) == DataValue(false)
+@test true & DataValue{Bool}() == DataValue{Bool}()
+@test false & DataValue(true) == DataValue(false)
+@test false & DataValue(false) == DataValue(false)
+@test false & DataValue{Bool}() == DataValue(false)
 
-@test NAable(true) & true == NAable(true)
-@test NAable(true) & false == NAable(false)
-@test NAable(false) & true == NAable(false)
-@test NAable(false) & false == NAable(false)
-@test NAable{Bool}() & true == NAable{Bool}()
-@test NAable{Bool}() & false == NAable(false)
+@test DataValue(true) & true == DataValue(true)
+@test DataValue(true) & false == DataValue(false)
+@test DataValue(false) & true == DataValue(false)
+@test DataValue(false) & false == DataValue(false)
+@test DataValue{Bool}() & true == DataValue{Bool}()
+@test DataValue{Bool}() & false == DataValue(false)
 
-@test NAable(true) | NAable(true) == NAable(true)
-@test NAable(true) | NAable(false) == NAable(true)
-@test NAable(true) | NAable{Bool}() == NAable(true)
-@test NAable(false) | NAable(true) == NAable(true)
-@test NAable(false) | NAable(false) == NAable(false)
-@test NAable(false) | NAable{Bool}() == NAable{Bool}()
-@test NAable{Bool}() | NAable(true) == NAable(true)
-@test NAable{Bool}() | NAable(false) == NAable{Bool}()
-@test NAable{Bool}() | NAable{Bool}() == NAable{Bool}()
+@test DataValue(true) | DataValue(true) == DataValue(true)
+@test DataValue(true) | DataValue(false) == DataValue(true)
+@test DataValue(true) | DataValue{Bool}() == DataValue(true)
+@test DataValue(false) | DataValue(true) == DataValue(true)
+@test DataValue(false) | DataValue(false) == DataValue(false)
+@test DataValue(false) | DataValue{Bool}() == DataValue{Bool}()
+@test DataValue{Bool}() | DataValue(true) == DataValue(true)
+@test DataValue{Bool}() | DataValue(false) == DataValue{Bool}()
+@test DataValue{Bool}() | DataValue{Bool}() == DataValue{Bool}()
 
-@test true | NAable(true) == NAable(true)
-@test true | NAable(false) == NAable(true)
-@test true | NAable{Bool}() == NAable(true)
-@test false | NAable(true) == NAable(true)
-@test false | NAable(false) == NAable(false)
-@test false | NAable{Bool}() == NAable{Bool}()
+@test true | DataValue(true) == DataValue(true)
+@test true | DataValue(false) == DataValue(true)
+@test true | DataValue{Bool}() == DataValue(true)
+@test false | DataValue(true) == DataValue(true)
+@test false | DataValue(false) == DataValue(false)
+@test false | DataValue{Bool}() == DataValue{Bool}()
 
-@test NAable(true) | true == NAable(true)
-@test NAable(true) | false == NAable(true)
-@test NAable(false) | true == NAable(true)
-@test NAable(false) | false == NAable(false)
-@test NAable{Bool}() | true == NAable(true)
-@test NAable{Bool}() | false == NAable{Bool}()
+@test DataValue(true) | true == DataValue(true)
+@test DataValue(true) | false == DataValue(true)
+@test DataValue(false) | true == DataValue(true)
+@test DataValue(false) | false == DataValue(false)
+@test DataValue{Bool}() | true == DataValue(true)
+@test DataValue{Bool}() | false == DataValue{Bool}()
 
-@test !NAable(true) == NAable(false)
-@test !NAable(false) == NAable(true)
-@test !NAable{Bool}() == NAable{Bool}()
+@test !DataValue(true) == DataValue(false)
+@test !DataValue(false) == DataValue(true)
+@test !DataValue{Bool}() == DataValue{Bool}()
 
 # NA comparisons
-@test (NAable(5)==NA) == false
-@test (NAable{Int}()==NA) == true
-@test (NA==NAable(5)) == false
-@test (NA==NAable{Int}()) == true
+# @test (DataValue(5)==NA) == false
+# @test (DataValue{Int}()==NA) == true
+# @test (NA==DataValue(5)) == false
+# @test (NA==DataValue{Int}()) == true
 
-@test (NAable(5)!=NA) == true
-@test (NAable{Int}()!=NA) == false
-@test (NA!=NAable(5)) == true
-@test (NA!=NAable{Int}()) == false
+# @test (DataValue(5)!=NA) == true
+# @test (DataValue{Int}()!=NA) == false
+# @test (NA!=DataValue(5)) == true
+# @test (NA!=DataValue{Int}()) == false
 
 :+, :-, :!, :~
-@test +NAable(1) == NAable(+1)
-@test +NAable{Int}() == NAable{Int}()
-@test -NAable(1) == NAable(-1)
-@test -NAable{Int}() == NAable{Int}()
-@test ~NAable(1) == NAable(~1)
-@test ~NAable{Int}() == NAable{Int}()
+@test +DataValue(1) == DataValue(+1)
+@test +DataValue{Int}() == DataValue{Int}()
+@test -DataValue(1) == DataValue(-1)
+@test -DataValue{Int}() == DataValue{Int}()
+@test ~DataValue(1) == DataValue(~1)
+@test ~DataValue{Int}() == DataValue{Int}()
 
 # TODO add ^, / back
 for op in (:+, :-, :*, :%, :&, :|, :<<, :>>)
     @eval begin
-        @test $op(NAable(3), NAable(5)) == NAable($op(3, 5))
-        @test $op(NAable{Int}(), NAable(5)) == NAable{Int}()
-        @test $op(NAable(3), NAable{Int}()) == NAable{Int}()
-        @test $op(NAable{Int}(), NAable{Int}()) == NAable{Int}()
+        @test $op(DataValue(3), DataValue(5)) == DataValue($op(3, 5))
+        @test $op(DataValue{Int}(), DataValue(5)) == DataValue{Int}()
+        @test $op(DataValue(3), DataValue{Int}()) == DataValue{Int}()
+        @test $op(DataValue{Int}(), DataValue{Int}()) == DataValue{Int}()
 
-        @test $op(NAable{Int}(3), 5) == NAable($op(3, 5))
-        @test $op(3, NAable{Int}(5)) == NAable($op(3, 5))
-        @test $op(NAable{Int}(), 5) == NAable{Int}()
-        @test $op(3, NAable{Int}()) == NAable{Int}()
+        @test $op(DataValue{Int}(3), 5) == DataValue($op(3, 5))
+        @test $op(3, DataValue{Int}(5)) == DataValue($op(3, 5))
+        @test $op(DataValue{Int}(), 5) == DataValue{Int}()
+        @test $op(3, DataValue{Int}()) == DataValue{Int}()
     end
 end
 
-@test NAable(3)^2 == NAable(9)
-@test NAable{Int}()^2 == NAable{Int}()
+@test DataValue(3)^2 == DataValue(9)
+@test DataValue{Int}()^2 == DataValue{Int}()
 
-@test NAable(3) == NAable(3)
-@test !(NAable(3) == NAable(4))
-@test !(NAable{Int}() == NAable(3))
-@test !(NAable{Float64}() == NAable(3))
-@test !(NAable(3) == NAable{Int}())
-@test !(NAable(3) == NAable{Float64}())
-@test NAable{Int}() == NAable{Int}()
-@test NAable{Int}() == NAable{Float64}()
+@test DataValue(3) == DataValue(3)
+@test !(DataValue(3) == DataValue(4))
+@test !(DataValue{Int}() == DataValue(3))
+@test !(DataValue{Float64}() == DataValue(3))
+@test !(DataValue(3) == DataValue{Int}())
+@test !(DataValue(3) == DataValue{Float64}())
+@test DataValue{Int}() == DataValue{Int}()
+@test DataValue{Int}() == DataValue{Float64}()
 
-@test NAable(3) == 3
-@test 3 == NAable(3)
-@test !(NAable(3) == 4)
-@test !(4 == NAable(3))
-@test !(NAable{Int}() == 3)
-@test !(3 == NAable{Int}())
+@test DataValue(3) == 3
+@test 3 == DataValue(3)
+@test !(DataValue(3) == 4)
+@test !(4 == DataValue(3))
+@test !(DataValue{Int}() == 3)
+@test !(3 == DataValue{Int}())
 
-@test !(NAable(3) != NAable(3))
-@test NAable(3) != NAable(4)
-@test NAable{Int}() != NAable(3)
-@test NAable{Float64}() != NAable(3)
-@test NAable(3) != NAable{Int}()
-@test NAable(3) != NAable{Float64}()
-@test !(NAable{Int}() != NAable{Int}())
-@test !(NAable{Int}() != NAable{Float64}())
+@test !(DataValue(3) != DataValue(3))
+@test DataValue(3) != DataValue(4)
+@test DataValue{Int}() != DataValue(3)
+@test DataValue{Float64}() != DataValue(3)
+@test DataValue(3) != DataValue{Int}()
+@test DataValue(3) != DataValue{Float64}()
+@test !(DataValue{Int}() != DataValue{Int}())
+@test !(DataValue{Int}() != DataValue{Float64}())
 
-@test !(NAable(3) != 3)
-@test !(3 != NAable(3))
-@test NAable(3) != 4
-@test 4 != NAable(3)
-@test NAable{Int}() != 3
-@test 3 != NAable{Int}()
+@test !(DataValue(3) != 3)
+@test !(3 != DataValue(3))
+@test DataValue(3) != 4
+@test 4 != DataValue(3)
+@test DataValue{Int}() != 3
+@test 3 != DataValue{Int}()
 
-@test NAable(4) > NAable(3)
-@test !(NAable(3) > NAable(4))
-@test !(NAable(4) > NAable{Int}())
-@test !(NAable{Int}() > NAable(3))
-@test !(NAable{Int}() > NAable{Int}())
+@test DataValue(4) > DataValue(3)
+@test !(DataValue(3) > DataValue(4))
+@test !(DataValue(4) > DataValue{Int}())
+@test !(DataValue{Int}() > DataValue(3))
+@test !(DataValue{Int}() > DataValue{Int}())
 
-@test NAable(4) > 3
-@test !(NAable(3) > 4)
-@test !(NAable{Int}() > 3)
+@test DataValue(4) > 3
+@test !(DataValue(3) > 4)
+@test !(DataValue{Int}() > 3)
 
-@test 4 > NAable(3)
-@test !(3 > NAable(4))
-@test !(4 > NAable{Int}())
+@test 4 > DataValue(3)
+@test !(3 > DataValue(4))
+@test !(4 > DataValue{Int}())
 
-@test lowercase(NAable("TEST"))==NAable("test")
-@test lowercase(NAable{String}())==NAable{String}()
+@test lowercase(DataValue("TEST"))==DataValue("test")
+@test lowercase(DataValue{String}())==DataValue{String}()
 
-@test NAable("TEST")[2:end]==NAable("EST")
-@test NAable{String}()[2:end]==NAable{String}()
+@test DataValue("TEST")[2:end]==DataValue("EST")
+@test DataValue{String}()[2:end]==DataValue{String}()
 
-@test length(NAable("TEST"))==NAable(4)
-@test length(NAable{String}())==NAable{Int}()
+@test length(DataValue("TEST"))==DataValue(4)
+@test length(DataValue{String}())==DataValue{Int}()
 
-end
-
-type TestNType{T}
-    v::NAable{T}
 end
 
 @testset "Base derived tests" begin
@@ -172,102 +174,102 @@ types = [
     UInt8,
 ]
 
-# NAable{T}() = new(true)
+# DataValue{T}() = new(true)
 for T in types
-    x = NAable{T}()
+    x = DataValue{T}()
     @test x.hasvalue === false
     @test isa(x.value, T)
-    @test eltype(NAable{T}) === T
+    @test eltype(DataValue{T}) === T
     @test eltype(x) === T
 end
 
-# NAable{T}(value::T) = new(false, value)
+# DataValue{T}(value::T) = new(false, value)
 for T in types
-    x = NAable{T}(zero(T))
+    x = DataValue{T}(zero(T))
     @test x.hasvalue === true
     @test isa(x.value, T)
     @test x.value === zero(T)
     @test eltype(x) === T
 
-    x = NAable{T}(one(T))
+    x = DataValue{T}(one(T))
     @test x.hasvalue === true
     @test isa(x.value, T)
     @test x.value === one(T)
     @test eltype(x) === T
 end
 
-# NAable{T}(value::T, hasvalue::Bool) = new(hasvalue, value)
+# DataValue{T}(value::T, hasvalue::Bool) = new(hasvalue, value)
 for T in types
-    x = NAable{T}(zero(T), true)
+    x = DataValue{T}(zero(T), true)
     @test x.hasvalue === true
     @test isa(x.value, T)
     @test x.value === zero(T)
     @test eltype(x) === T
 
-    x = NAable{T}(zero(T), false)
+    x = DataValue{T}(zero(T), false)
     @test x.hasvalue === false
     @test isa(x.value, T)
-    @test eltype(NAable{T}) === T
+    @test eltype(DataValue{T}) === T
     @test eltype(x) === T
 end
 
 
-# immutable NAException <: Exception
-@test isa(NAException(), NAException)
-@test_throws NAException throw(NAException())
+# immutable DataValueException <: Exception
+@test isa(DataValueException(), DataValueException)
+@test_throws DataValueException throw(DataValueException())
 
-# NAable{T}(value::T) = NAable{T}(value)
+# DataValue{T}(value::T) = DataValue{T}(value)
 for T in types
     v = zero(T)
-    x = NAable(v)
+    x = DataValue(v)
     @test x.hasvalue === true
     @test isa(x.value, T)
     @test x.value === v
 
     v = one(T)
-    x = NAable(v)
+    x = DataValue(v)
     @test x.hasvalue === true
     @test isa(x.value, T)
     @test x.value === v
 end
 
-# show{T}(io::IO, x::NAable{T})
+# show{T}(io::IO, x::DataValue{T})
 # TODO REENABLE
 # io1 = IOBuffer()
 # io2 = IOBuffer()
 # for (i, T) in enumerate(types)
-#     x1 = NAable{T}()
-#     x2 = NAable(zero(T))
-#     x3 = NAable(one(T))
+#     x1 = DataValue{T}()
+#     x2 = DataValue(zero(T))
+#     x3 = DataValue(one(T))
 #     show(io1, x1)
-#     @test takebuf_string(io1) == @sprintf("NAable{%s}()", T)
+#     @test takebuf_string(io1) == @sprintf("DataValue{%s}()", T)
 #     show(io1, x2)
 #     showcompact(io2, get(x2))
-#     @test takebuf_string(io1) == @sprintf("NAable{%s}(%s)", T, takebuf_string(io2))
+#     @test takebuf_string(io1) == @sprintf("DataValue{%s}(%s)", T, takebuf_string(io2))
 #     show(io1, x3)
 #     showcompact(io2, get(x3))
-#     @test takebuf_string(io1) == @sprintf("NAable{%s}(%s)", T, takebuf_string(io2))
+#     @test takebuf_string(io1) == @sprintf("DataValue{%s}(%s)", T, takebuf_string(io2))
 
 #     a1 = [x2]
 #     show(IOContext(io1, compact=false), a1)
 #     show(IOContext(io2, compact=false), x2)
 #     @test takebuf_string(io1) ==
-#         @sprintf("NAable{%s}[%s]", string(T), takebuf_string(io2))
+#         @sprintf("DataValue{%s}[%s]", string(T), takebuf_string(io2))
 
 #     show(io1, a1)
 #     show(IOContext(io2, compact=true), x2)
 #     @test takebuf_string(io1) ==
-#         @sprintf("NAable{%s}[%s]", string(T), takebuf_string(io2))
+#         @sprintf("DataValue{%s}[%s]", string(T), takebuf_string(io2))
 # end
 
-# showcompact(io::IO, x::NAable)
+# showcompact(io::IO, x::DataValue)
 # TODO REENABLE
 # io1 = IOBuffer()
 # io2 = IOBuffer()
 # for (i, T) in enumerate(types)
-#     x1 = NAable{T}()
-#     x2 = NAable(zero(T))
-#     x3 = NAable(one(T))
+#     x1 = DataValue{T}()
+#     x2 = DataValue(zero(T))
+#     x3 = DataValue(one(T))
 #     showcompact(io1, x1)
 #     @test takebuf_string(io1) == "#NA"
 #     showcompact(io1, x2)
@@ -281,28 +283,28 @@ end
 #     showcompact(io1, a1)
 #     showcompact(io2, x2)
 #     @test takebuf_string(io1) ==
-#         @sprintf("NAable{%s}[%s]", string(T), takebuf_string(io2))
+#         @sprintf("DataValue{%s}[%s]", string(T), takebuf_string(io2))
 # end
 
-# get(x::NAable)
+# get(x::DataValue)
 for T in types
-    x1 = NAable{T}()
-    x2 = NAable(zero(T))
-    x3 = NAable(one(T))
+    x1 = DataValue{T}()
+    x2 = DataValue(zero(T))
+    x3 = DataValue(one(T))
 
-    @test_throws NAException get(x1)
+    @test_throws DataValueException get(x1)
     @test get(x2) === zero(T)
     @test get(x3) === one(T)
 end
 
-@test_throws NAException get(NAable())
+@test_throws DataValueException get(DataValue())
 
-# get{S, T}(x::NAable{S}, y::T)
+# get{S, T}(x::DataValue{S}, y::T)
 for T in types
-    x0 = NAable()
-    x1 = NAable{T}()
-    x2 = NAable(zero(T))
-    x3 = NAable(one(T))
+    x0 = DataValue()
+    x1 = DataValue{T}()
+    x2 = DataValue(zero(T))
+    x3 = DataValue(one(T))
 
     @test get(x0, zero(T)) === zero(T)
     @test get(x0, one(T)) === one(T)
@@ -314,12 +316,12 @@ end
 
 # TODO REENABLE
 # for T in types
-#     # unsafe_get(x::NAable)
-#     x1 = NAable{T}()
-#     x2 = NAable(zero(T))
-#     x3 = NAable(one(T))
+#     # unsafe_get(x::DataValue)
+#     x1 = DataValue{T}()
+#     x2 = DataValue(zero(T))
+#     x3 = DataValue(one(T))
 #     a = rand(T)
-#     x4 = NAable(a)
+#     x4 = DataValue(a)
 
 #     @test isa(unsafe_get(x1), T)
 #     @test unsafe_get(x2) === zero(T)
@@ -336,74 +338,74 @@ end
 #     @test unsafe_get(x4) === x4
 # end
 
-# @test_throws UndefRefError unsafe_get(NAable())
-# @test_throws UndefRefError unsafe_get(NAable{String}())
-# @test_throws UndefRefError unsafe_get(NAable{Array}())
+# @test_throws UndefRefError unsafe_get(DataValue())
+# @test_throws UndefRefError unsafe_get(DataValue{String}())
+# @test_throws UndefRefError unsafe_get(DataValue{Array}())
 
 for T in types
-    # isna(x::NAable)
-    x1 = NAable{T}()
-    x2 = NAable(zero(T))
-    x3 = NAable(one(T))
+    # isnull(x::DataValue)
+    x1 = DataValue{T}()
+    x2 = DataValue(zero(T))
+    x3 = DataValue(one(T))
 
-    @test isna(x1) === true
-    @test isna(x2) === false
-    @test isna(x3) === false
+    @test isnull(x1) === true
+    @test isnull(x2) === false
+    @test isnull(x3) === false
 
-    # isna(x)
+    # isnull(x)
     x1 = zero(T)
     x2 = one(T)
     x3 = rand(T)
 
-    @test isna(x1) === false
-    @test isna(x2) === false
-    @test isna(x3) === false
+    @test isnull(x1) === false
+    @test isnull(x2) === false
+    @test isnull(x3) === false
 end
 
-@test isna(NAable())
+@test isnull(DataValue())
 
-# function =={S, T}(x::NAable{S}, y::NAable{T})
+# function =={S, T}(x::DataValue{S}, y::DataValue{T})
 # TODO Anthoff thinks that we don't want these semantics.
 # for T in types
-#     x0 = NAable()
-#     x1 = NAable{T}()
-#     x2 = NAable{T}()
-#     x3 = NAable(zero(T))
-#     x4 = NAable(one(T))
+#     x0 = DataValue()
+#     x1 = DataValue{T}()
+#     x2 = DataValue{T}()
+#     x3 = DataValue(zero(T))
+#     x4 = DataValue(one(T))
 
-#     @test_throws NAException (x0 == x1)
-#     @test_throws NAException (x0 == x2)
-#     @test_throws NAException (x0 == x3)
-#     @test_throws NAException (x0 == x4)
+#     @test_throws DataValueException (x0 == x1)
+#     @test_throws DataValueException (x0 == x2)
+#     @test_throws DataValueException (x0 == x3)
+#     @test_throws DataValueException (x0 == x4)
 
-#     @test_throws NAException (x1 == x1)
-#     @test_throws NAException (x1 == x2)
-#     @test_throws NAException (x1 == x3)
-#     @test_throws NAException (x1 == x4)
+#     @test_throws DataValueException (x1 == x1)
+#     @test_throws DataValueException (x1 == x2)
+#     @test_throws DataValueException (x1 == x3)
+#     @test_throws DataValueException (x1 == x4)
 
-#     @test_throws NAException (x2 == x1)
-#     @test_throws NAException (x2 == x2)
-#     @test_throws NAException (x2 == x3)
-#     @test_throws NAException (x2 == x4)
+#     @test_throws DataValueException (x2 == x1)
+#     @test_throws DataValueException (x2 == x2)
+#     @test_throws DataValueException (x2 == x3)
+#     @test_throws DataValueException (x2 == x4)
 
-#     @test_throws NAException (x3 == x1)
-#     @test_throws NAException (x3 == x2)
-#     @test_throws NAException (x3 == x3)
-#     @test_throws NAException (x3 == x4)
+#     @test_throws DataValueException (x3 == x1)
+#     @test_throws DataValueException (x3 == x2)
+#     @test_throws DataValueException (x3 == x3)
+#     @test_throws DataValueException (x3 == x4)
 
-#     @test_throws NAException (x4 == x1)
-#     @test_throws NAException (x4 == x2)
-#     @test_throws NAException (x4 == x3)
-#     @test_throws NAException (x4 == x4)
+#     @test_throws DataValueException (x4 == x1)
+#     @test_throws DataValueException (x4 == x2)
+#     @test_throws DataValueException (x4 == x3)
+#     @test_throws DataValueException (x4 == x4)
 # end
 
-# function hash(x::NAable, h::UInt)
+# function hash(x::DataValue, h::UInt)
 for T in types
-    x0 = NAable()
-    x1 = NAable{T}()
-    x2 = NAable{T}()
-    x3 = NAable(zero(T))
-    x4 = NAable(one(T))
+    x0 = DataValue()
+    x1 = DataValue{T}()
+    x2 = DataValue{T}()
+    x3 = DataValue(zero(T))
+    x4 = DataValue(one(T))
 
     @test isa(hash(x0), UInt)
     @test isa(hash(x1), UInt)
@@ -423,10 +425,10 @@ for T in types
 end
 
 for T in types
-    x1 = TestNType{T}(NAable{T}())
-    @test isna(x1.v)
+    x1 = TestNType{T}(DataValue{T}())
+    @test isnull(x1.v)
     x1.v = one(T)
-    @test !isna(x1.v)
+    @test !isnull(x1.v)
     @test get(x1.v, one(T)) === one(T)
 end
 
@@ -457,93 +459,95 @@ end
 #     end
 
 #     for u in (u0, u1, u2), v in (v0, v1, v2)
-#         # function isequal(x::NAable, y::NAable)
-#         @test isequal(NAable(u), NAable(v)) === isequal(u, v)
-#         @test isequal(NAable(u), NAable(u)) === true
-#         @test isequal(NAable(v), NAable(v)) === true
+#         # function isequal(x::DataValue, y::DataValue)
+#         @test isequal(DataValue(u), DataValue(v)) === isequal(u, v)
+#         @test isequal(DataValue(u), DataValue(u)) === true
+#         @test isequal(DataValue(v), DataValue(v)) === true
 
-#         @test isequal(NAable(u), NAable(v, false)) === false
-#         @test isequal(NAable(u, false), NAable(v)) === false
-#         @test isequal(NAable(u, false), NAable(v, false)) === true
+#         @test isequal(DataValue(u), DataValue(v, false)) === false
+#         @test isequal(DataValue(u, false), DataValue(v)) === false
+#         @test isequal(DataValue(u, false), DataValue(v, false)) === true
 
-#         @test isequal(NAable(u), NAable{T}()) === false
-#         @test isequal(NAable{S}(), NAable(v)) === false
-#         @test isequal(NAable{S}(), NAable{T}()) === true
+#         @test isequal(DataValue(u), DataValue{T}()) === false
+#         @test isequal(DataValue{S}(), DataValue(v)) === false
+#         @test isequal(DataValue{S}(), DataValue{T}()) === true
 
-#         @test isequal(NAable(u), NAable()) === false
-#         @test isequal(NAable(), NAable(v)) === false
-#         @test isequal(NAable{S}(), NAable()) === true
-#         @test isequal(NAable(), NAable{T}()) === true
-#         @test isequal(NAable(), NAable()) === true
+#         @test isequal(DataValue(u), DataValue()) === false
+#         @test isequal(DataValue(), DataValue(v)) === false
+#         @test isequal(DataValue{S}(), DataValue()) === true
+#         @test isequal(DataValue(), DataValue{T}()) === true
+#         @test isequal(DataValue(), DataValue()) === true
 
-#         # function isless(x::NAable, y::NAable)
+#         # function isless(x::DataValue, y::DataValue)
 #         if S <: Real && T <: Real
-#             @test isless(NAable(u), NAable(v)) === isless(u, v)
-#             @test isless(NAable(u), NAable(u)) === false
-#             @test isless(NAable(v), NAable(v)) === false
+#             @test isless(DataValue(u), DataValue(v)) === isless(u, v)
+#             @test isless(DataValue(u), DataValue(u)) === false
+#             @test isless(DataValue(v), DataValue(v)) === false
 
-#             @test isless(NAable(u), NAable(v, false)) === true
-#             @test isless(NAable(u, false), NAable(v)) === false
-#             @test isless(NAable(u, false), NAable(v, false)) === false
+#             @test isless(DataValue(u), DataValue(v, false)) === true
+#             @test isless(DataValue(u, false), DataValue(v)) === false
+#             @test isless(DataValue(u, false), DataValue(v, false)) === false
 
-#             @test isless(NAable(u), NAable{T}()) === true
-#             @test isless(NAable{S}(), NAable(v)) === false
-#             @test isless(NAable{S}(), NAable{T}()) === false
+#             @test isless(DataValue(u), DataValue{T}()) === true
+#             @test isless(DataValue{S}(), DataValue(v)) === false
+#             @test isless(DataValue{S}(), DataValue{T}()) === false
 
-#             @test isless(NAable(u), NAable()) === true
-#             @test isless(NAable(), NAable(v)) === false
-#             @test isless(NAable{S}(), NAable()) === false
-#             @test isless(NAable(), NAable{T}()) === false
-#             @test isless(NAable(), NAable()) === false
+#             @test isless(DataValue(u), DataValue()) === true
+#             @test isless(DataValue(), DataValue(v)) === false
+#             @test isless(DataValue{S}(), DataValue()) === false
+#             @test isless(DataValue(), DataValue{T}()) === false
+#             @test isless(DataValue(), DataValue()) === false
 #         end
 #     end
 # end
 
 # issue #9462
 for T in types
-    @test isa(convert(NAable{Number}, NAable(one(T))), NAable{Number})
-    @test isa(convert(NAable{Number}, one(T)), NAable{Number})
-    @test isa(convert(NAable{T}, one(T)), NAable{T})
-    @test isa(convert(NAable{Any}, NAable(one(T))), NAable{Any})
-    @test isa(convert(NAable{Any}, one(T)), NAable{Any})
+    @test isa(convert(DataValue{Number}, DataValue(one(T))), DataValue{Number})
+    @test isa(convert(DataValue{Number}, one(T)), DataValue{Number})
+    @test isa(convert(DataValue{T}, one(T)), DataValue{T})
+    @test isa(convert(DataValue{Any}, DataValue(one(T))), DataValue{Any})
+    @test isa(convert(DataValue{Any}, one(T)), DataValue{Any})
 
     # one(T) is convertible to every type in types
-    # let's test that with NAables
+    # let's test that with DataValues
     for S in types
-        @test isa(convert(NAable{T}, one(S)), NAable{T})
+        @test isa(convert(DataValue{T}, one(S)), DataValue{T})
     end
 end
 
-@test isna(convert(NAable, nothing))
-@test isna(convert(NAable{Int}, nothing))
-@test isa(convert(NAable{Int}, nothing), NAable{Int})
+@test isnull(convert(DataValue, nothing))
+@test isnull(convert(DataValue{Int}, nothing))
+@test isa(convert(DataValue{Int}, nothing), DataValue{Int})
 
-@test convert(NAable, 1) === NAable(1)
-@test convert(NAable, NAable(1)) === NAable(1)
-@test isequal(convert(NAable, "a"), NAable("a"))
-@test isequal(convert(NAable, NAable("a")), NAable("a"))
+@test convert(DataValue, 1) === DataValue(1)
+@test convert(DataValue, DataValue(1)) === DataValue(1)
+@test isequal(convert(DataValue, "a"), DataValue("a"))
+@test isequal(convert(DataValue, DataValue("a")), DataValue("a"))
 
-@test promote_type(NAable{Int}, Int) === NAable{Int}
-@test promote_type(NAable{Union{}}, Int) === NAable{Int}
-@test promote_type(NAable{Float64}, NAable{Int}) === NAable{Float64}
-@test promote_type(NAable{Union{}}, NAable{Int}) === NAable{Int}
-@test promote_type(NAable{Date}, NAable{DateTime}) === NAable{DateTime}
+@test promote_type(DataValue{Int}, Int) === DataValue{Int}
+@test promote_type(DataValue{Union{}}, Int) === DataValue{Int}
+@test promote_type(DataValue{Float64}, DataValue{Int}) === DataValue{Float64}
+@test promote_type(DataValue{Union{}}, DataValue{Int}) === DataValue{Int}
+@test promote_type(DataValue{Date}, DataValue{DateTime}) === DataValue{DateTime}
 
-@test Base.promote_op(+, NAable{Int}, NAable{Int}) == NAable{Int}
-@test Base.promote_op(-, NAable{Int}, NAable{Int}) == NAable{Int}
-@test Base.promote_op(+, NAable{Float64}, NAable{Int}) == NAable{Float64}
-@test Base.promote_op(-, NAable{Float64}, NAable{Int}) == NAable{Float64}
-@test Base.promote_op(-, NAable{DateTime}, NAable{DateTime}) == NAable{Base.Dates.Millisecond}
+@test Base.promote_op(+, DataValue{Int}, DataValue{Int}) == DataValue{Int}
+@test Base.promote_op(-, DataValue{Int}, DataValue{Int}) == DataValue{Int}
+@test Base.promote_op(+, DataValue{Float64}, DataValue{Int}) == DataValue{Float64}
+@test Base.promote_op(-, DataValue{Float64}, DataValue{Int}) == DataValue{Float64}
+@test Base.promote_op(-, DataValue{DateTime}, DataValue{DateTime}) == DataValue{Base.Dates.Millisecond}
 
 # issue #11675
-@test repr(NAable()) == "NA"
+# @test repr(DataValue()) == "NULL"
 
 end
 
-module NAableTestEnum
-    using NAables
+end
+
+module DataValueTestEnum
+    using DataValues
     io = IOBuffer()
     @enum TestEnum a b
-    show(io, NAable(a))
-    Base.Test.@test takebuf_string(io) == "NAable{NAableTestEnum.TestEnum}(a)"
+    show(io, DataValue(a))
+    Base.Test.@test takebuf_string(io) == "DataValue{DataValueTestEnum.TestEnum}(a)"
 end
