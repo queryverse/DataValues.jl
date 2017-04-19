@@ -549,5 +549,5 @@ module DataValueTestEnum
     io = IOBuffer()
     @enum TestEnum a b
     show(io, DataValue(a))
-    Base.Test.@test takebuf_string(io) == "DataValue{DataValueTestEnum.TestEnum}(a)"
+    Base.Test.@test String(take!(io)) == "DataValue{DataValueTestEnum.TestEnum}(a)"
 end

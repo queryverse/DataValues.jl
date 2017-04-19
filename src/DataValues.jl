@@ -11,15 +11,15 @@ import Base.promote_rule
 import Base.promote_op
 import Base.isnull
 
-immutable DataValue{T}
+struct DataValue{T}
     hasvalue::Bool
     value::T
 
-    DataValue() = new(false)
-    DataValue(value::T, hasvalue::Bool=true) = new(hasvalue, value)
+    DataValue{T}() where {T} = new(false)
+    DataValue{T}(value::T, hasvalue::Bool=true) where {T} = new(hasvalue, value)
 end
 
-immutable DataValueException <: Exception
+struct DataValueException <: Exception
 end
 
 DataValue{T}(value::T, hasvalue::Bool=true) = DataValue{T}(value, hasvalue)
