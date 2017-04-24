@@ -83,6 +83,8 @@ unsafe_get(x) = x
 
 isnull(x::DataValue) = !x.hasvalue
 
+Base.hasvalue(x::DataValue) = x.hasvalue
+
 const DataValuehash_seed = UInt === UInt64 ? 0x932e0143e51d0171 : 0xe51d0171
 
 function hash(x::DataValue, h::UInt)
@@ -234,5 +236,7 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
         return isless(x.value, y.value)
     end
 end
+
+include("broadcast.jl")
 
 end
