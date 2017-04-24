@@ -4,6 +4,8 @@ Base.Broadcast.promote_containertype(::Type{Any}, ::Type{DataValue}) = DataValue
 Base.Broadcast.promote_containertype(::Type{DataValue}, ::Type{Any}) = DataValue
 Base.Broadcast.promote_containertype(::Type{Tuple}, ::Type{DataValue}) = Tuple
 Base.Broadcast.promote_containertype(::Type{DataValue}, ::Type{Tuple}) = Tuple
+Base.Broadcast.promote_containertype(::Type{DataValue}, ::Type{Nullable}) = DataValue
+Base.Broadcast.promote_containertype(::Type{Nullable}, ::Type{DataValue}) = DataValue
 
 Base.Broadcast.broadcast_indices(::Type{DataValue}, A) = ()
 
