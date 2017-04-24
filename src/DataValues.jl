@@ -78,10 +78,11 @@ get(x::DataValue) = isnull(x) ? throw(DataValueException()) : x.value
 get(x::DataValue{Union{}}) = throw(DataValueException())
 get(x::DataValue{Union{}}, y) = y
 
-unsafe_get(x::DataValue) = x.value
-unsafe_get(x) = x
+Base.unsafe_get(x::DataValue) = x.value
 
 isnull(x::DataValue) = !x.hasvalue
+
+Base.hasvalue(x::DataValue) = x.hasvalue
 
 const DataValuehash_seed = UInt === UInt64 ? 0x932e0143e51d0171 : 0xe51d0171
 
@@ -234,5 +235,7 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
         return isless(x.value, y.value)
     end
 end
+
+include("broadcast.jl")
 
 end
