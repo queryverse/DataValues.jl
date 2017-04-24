@@ -78,8 +78,7 @@ get(x::DataValue) = isnull(x) ? throw(DataValueException()) : x.value
 get(x::DataValue{Union{}}) = throw(DataValueException())
 get(x::DataValue{Union{}}, y) = y
 
-unsafe_get(x::DataValue) = x.value
-unsafe_get(x) = x
+Base.unsafe_get(x::DataValue) = x.value
 
 isnull(x::DataValue) = !x.hasvalue
 
