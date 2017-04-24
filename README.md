@@ -26,6 +26,4 @@ semantics for ``DataValue``s.
 - Common arithmetic inplace operators like ``+`` have methods that lift
 ``DataValue`` arguments without the use of the dot broadcast syntax.
 
-Any help with this package would be greatly appreciated! Please do submit
-PRs both for more lifted functions, more tests and better performing
-implementations of what is here already.
+Any help with this package would be greatly appreciated!
