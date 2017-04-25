@@ -9,8 +9,11 @@
 ## Overview
 
 This package provides the type ``DataValue`` that is used to represent
-missing data in the julia data stack. The type is very similar to
-``Nullable`` in the julia base library.
+missing data. Currently the main use of this type is in the
+[Query.jl](https://github.com/davidanthoff/Query.jl) package. The type
+is very similar to ``Nullable`` in julia base. It differs from ``Nullable``,
+by providing a small number of  additional features that make common
+operations on data easier.
 
 This repo is based on the following principles/ideas:
 
