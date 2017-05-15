@@ -154,6 +154,8 @@ end
 @test length(DataValue("TEST"))==DataValue(4)
 @test length(DataValue{String}())==DataValue{Int}()
 
+@test isequal(Nullable(DataValue("TEST")), Nullable("TEST"))
+
 end
 
 @testset "Base derived tests" begin
