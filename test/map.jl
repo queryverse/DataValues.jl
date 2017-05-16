@@ -87,7 +87,7 @@ module TestMap
 
     # if a function has no method for inner eltype of empty DataArray2,
     # result should be empty DataArray2{Any}() for consistency with generic map()
-    h3(x...) = prod(x)
+    h3(x::Float64...) = prod(x)
     Z3 = map(h3, X)
     @test isempty(Z3)
     @test isa(Z3, DataArray2{Any})
