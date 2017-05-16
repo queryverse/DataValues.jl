@@ -2,7 +2,7 @@
 DataArrays2.jl
 =================
 [![Build Status](https://travis-ci.org/davidanthoff/DataArrays2.jl.svg?branch=master)](https://travis-ci.org/davidanthoff/DataArrays2.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/r6grjnpthfp3bfe5?svg=true)](https://ci.appveyor.com/project/nalimilan/nullablearrays-jl)
+[![Build status](https://ci.appveyor.com/api/projects/status/4lyet4un2wv4altx/branch/master?svg=true)](https://ci.appveyor.com/project/davidanthoff/dataarrays2-jl/branch/master)
 [![DataArrays2](http://pkg.julialang.org/badges/DataArrays2_0.6.svg)](http://pkg.julialang.org/?pkg=DataArrays2)
 [![codecov.io](http://codecov.io/github/davidanthoff/DataArrays2.jl/coverage.svg?branch=master)](http://codecov.io/github/davidanthoff/DataArrays2.jl?branch=master)
 
