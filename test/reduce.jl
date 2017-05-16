@@ -1,11 +1,11 @@
 module TestReduce
-    using NullableArrays
+    using DataArrays2
     using Base.Test
 
     srand(1)
     f(x) = 5 * x
-    f{T<:Number}(x::Nullable{T}) = ifelse(isnull(x), Nullable{typeof(5 * x.value)}(),
-                                                     Nullable(5 * x.value))
+    f{T<:Number}(x::DataValue{T}) = ifelse(isnull(x), DataValue{typeof(5 * x.value)}(),
+                                                     DataValue(5 * x.value))
 
     for N in (10, 2050)
         A = rand(N)
@@ -17,18 +17,18 @@ module TestReduce
             j = rand(1:N)
         end
         M[j] = false
-        X = NullableArray(A)
-        Y = NullableArray(A, M)
+        X = DataArray2(A)
+        Y = DataArray2(A, M)
         B = A[find(x->!x, M)]
 
-        @test isequal(mapreduce(f, +, X), Nullable(mapreduce(f, +, X.values)))
-        @test isequal(mapreduce(f, +, Y), Nullable{Float64}())
+        @test isequal(mapreduce(f, +, X), DataValue(mapreduce(f, +, X.values)))
+        @test isequal(mapreduce(f, +, Y), DataValue{Float64}())
         v = mapreduce(f, +, Y, skipnull=true)
         @test v.value ≈ mapreduce(f, +, B)
         @test !isnull(v)
 
-        @test isequal(reduce(+, X), Nullable(reduce(+, X.values)))
-        @test isequal(reduce(+, Y), Nullable{Float64}())
+        @test isequal(reduce(+, X), DataValue(reduce(+, X.values)))
+        @test isequal(reduce(+, Y), DataValue{Float64}())
         v = reduce(+, Y, skipnull=true)
         @test v.value ≈ reduce(+, B)
         @test !isnull(v)
@@ -39,20 +39,20 @@ module TestReduce
             minimum,
             maximum,
         )
-            @test isequal(method(X), Nullable(method(A)))
-            @test isequal(method(f, X), Nullable(method(f, A)))
-            @test isequal(method(Y), Nullable{Float64}())
+            @test method(X) == DataValue(method(A))
+            @test method(f, X) == DataValue(method(f, A))
+            @test method(Y) == DataValue{Float64}()
             v = method(Y, skipnull=true)
             @test v.value ≈ method(B)
             @test !isnull(v)
-            @test isequal(method(f, Y), Nullable{Float64}())
+            @test method(f, Y) == DataValue{Float64}()
             v = method(f, Y, skipnull=true)
             @test v.value ≈ method(f, B)
             @test !isnull(v)
         end
 
-        @test isequal(extrema(X), (Nullable(minimum(A)), Nullable(maximum(A))))
-        @test isequal(extrema(Y), (Nullable{Float64}(), Nullable{Float64}()))
+        @test isequal(extrema(X), (DataValue(minimum(A)), DataValue(maximum(A))))
+        @test isequal(extrema(Y), (DataValue{Float64}(), DataValue{Float64}()))
         v1 = extrema(Y, skipnull=true)
         v2 = extrema(B)
         @test v1[1].value == v2[1]
@@ -62,19 +62,19 @@ module TestReduce
 
         H = rand(Bool, N)
         G = H[find(x->!x, M)]
-        U = NullableArray(H)
-        V = NullableArray(H, M)
+        U = DataArray2(H)
+        V = DataArray2(H, M)
 
         for op in (
             &,
             |,
         )
             @test isequal(reduce(op, U),
-                          Nullable(reduce(op, H)))
+                          DataValue(reduce(op, H)))
             @test isequal(reduce(op, U, skipnull=true),
-                          Nullable(reduce(op, H)))
+                          DataValue(reduce(op, H)))
             @test isequal(reduce(op, V, skipnull=true),
-                          Nullable(reduce(op, G)))
+                          DataValue(reduce(op, G)))
         end
     end
 end

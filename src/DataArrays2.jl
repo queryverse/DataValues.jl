@@ -1,15 +1,16 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 
-module NullableArrays
+module DataArrays2
 
 using Compat
 using Compat.view
 using Reexport
 @reexport using Base.Cartesian
+@reexport using DataValues
 
-export NullableArray,
-       NullableVector,
-       NullableMatrix,
+export DataArray2,
+       DataVector2,
+       DataMatrix2,
 
        # Macros
 
@@ -24,14 +25,11 @@ include("typedefs.jl")
 include("constructors.jl")
 include("primitives.jl")
 include("indexing.jl")
-include("lift.jl")
-include("map.jl")
+# include("broadcast.jl")
+# include("map.jl")
 include("nullablevector.jl")
-include("operators.jl")
-include("broadcast.jl")
 include("reduce.jl")
 include("show.jl")
 include("subarray.jl")
-include("deprecated.jl")
 
 end

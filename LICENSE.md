@@ -1,6 +1,6 @@
-NullableArrays.jl is licensed under the MIT License:
+DAtaArrays2.jl is licensed under the MIT License:
 
-> Copyright (c) 2012-2015: Harlan Harris, EPRI (Tom Short's code), Chris DuBois,
+> Copyright (c) 2012-2017: Harlan Harris, EPRI (Tom Short's code), Chris DuBois,
 > John Myles White, and other contributors.
 >
 > Permission is hereby granted, free of charge, to any person obtaining

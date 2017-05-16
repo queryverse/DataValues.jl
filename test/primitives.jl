@@ -1,13 +1,13 @@
 module TestPrimitives
     using Base.Test
-    using NullableArrays
+    using DataArrays2
     using Compat.view
 
     n = rand(1:5)
     siz = [ rand(2:5) for i in n ]
     A = rand(siz...)
     M = rand(Bool, siz...)
-    X = NullableArray(A, M)
+    X = DataArray2(A, M)
     i = rand(1:length(X))
     @test values(X, i) == X.values[i]
     @test isnull(X, i) == X.isnull[i]
@@ -17,22 +17,22 @@ module TestPrimitives
 
 # ----- test Base.similar, Base.size  ----------------------------------------#
 
-    x = NullableArray(Int, (5, 2))
-    @test isa(x, NullableMatrix{Int})
+    x = DataArray2(Int, (5, 2))
+    @test isa(x, DataMatrix2{Int})
     @test size(x) === (5, 2)
 
-    y = similar(x, Nullable{Int}, (3, 3))
-    @test isa(y, NullableMatrix{Int})
+    y = similar(x, DataValue{Int}, (3, 3))
+    @test isa(y, DataMatrix2{Int})
     @test size(y) === (3, 3)
 
-    z = similar(x, Nullable{Int}, (2,))
-    @test isa(z, NullableVector{Int})
+    z = similar(x, DataValue{Int}, (2,))
+    @test isa(z, DataVector2{Int})
     @test size(z) === (2, )
 
     # test common use-patterns for 'similar'
-    dv = NullableArray(Int, 2)
-    dm = NullableArray(Int, 2, 2)
-    dt = NullableArray(Int, 2, 2, 2)
+    dv = DataArray2(Int, 2)
+    dm = DataArray2(Int, 2, 2)
+    dt = DataArray2(Int, 2, 2, 2)
 
     similar(dv)
     similar(dm)
@@ -45,8 +45,8 @@ module TestPrimitives
 # ----- test Base.copy/Base.copy! --------------------------------------------#
 
     #copy
-    x = NullableArray([1, 2, nothing], Int, Void)
-    y = NullableArray([3, nothing, 5], Int, Void)
+    x = DataArray2([1, 2, nothing], Int, Void)
+    y = DataArray2([3, nothing, 5], Int, Void)
     @test isequal(copy(x), x)
     @test isequal(copy!(y, x), x)
 
@@ -61,12 +61,12 @@ module TestPrimitives
         end
         ret
     end
-    set1 = Any[NullableArray([1, nothing, 3], Int, Void),
-               NullableArray([nothing, 5], Int, Void),
-               NullableArray([1, 2, 3, 4, 5], Int, Void),
-               NullableArray(Int[]),
-               NullableArray([nothing, 5, 3], Int, Void),
-               NullableArray([1, 5, 3], Int, Void)]
+    set1 = Any[DataArray2([1, nothing, 3], Int, Void),
+               DataArray2([nothing, 5], Int, Void),
+               DataArray2([1, 2, 3, 4, 5], Int, Void),
+               DataArray2(Int[]),
+               DataArray2([nothing, 5, 3], Int, Void),
+               DataArray2([1, 5, 3], Int, Void)]
     set2 = map(nonbits, set1)
 
     for (dest, src, bigsrc, emptysrc, res1, res2) in Any[set1, set2]
@@ -105,16 +105,16 @@ module TestPrimitives
 
 # ----- test Base.fill! ------------------------------------------------------#
 
-    X = NullableArray(Int, 10, 2)
-    fill!(X, Nullable(10))
-    Y = NullableArray(Float64, 10)
+    X = DataArray2(Int, 10, 2)
+    fill!(X, DataValue(10))
+    Y = DataArray2(Float64, 10)
     fill!(Y, rand(Float64))
 
     @test X.values == fill(10, 10, 2)
     @test isequal(X.isnull, fill(false, 10, 2))
     @test isequal(Y.isnull, fill(false, 10))
 
-    fill!(X, Nullable())
+    fill!(X, DataValue())
     @test isequal(X.isnull, fill(true, 10, 2))
 
 # ----- test Base.deepcopy ---------------------------------------------------#
@@ -150,42 +150,42 @@ module TestPrimitives
 # ----- test Base.ndims ------------------------------------------------------#
 
     for n in 1:4
-        @test ndims(NullableArray(Int, collect(1:n)...)) == n
+        @test ndims(DataArray2(Int, collect(1:n)...)) == n
     end
 
 # ----- test Base.length -----------------------------------------------------#
 
-    @test length(NullableArray(Int, 10)) == 10
-    @test length(NullableArray(Int, 5, 5)) == 25
-    @test length(NullableArray(Int, (3, 3, 3))) == 27
+    @test length(DataArray2(Int, 10)) == 10
+    @test length(DataArray2(Int, 5, 5)) == 25
+    @test length(DataArray2(Int, (3, 3, 3))) == 27
 
 # ----- test Base.endof ------------------------------------------------------#
 
-    @test endof(NullableArray(collect(1:10))) == 10
-    @test endof(NullableArray([1, 2, nothing, 4, nothing])) == 5
+    @test endof(DataArray2(collect(1:10))) == 10
+    @test endof(DataArray2([1, 2, nothing, 4, nothing])) == 5
 
 # ----- test Base.find -------------------------------------------------------#
 
-    z = NullableArray(rand(Bool, 10))
+    z = DataArray2(rand(Bool, 10))
     @test find(z) == find(z.values)
 
-    z = NullableArray([false, true, false, true, false, true])
+    z = DataArray2([false, true, false, true, false, true])
     @test isequal(find(z), [2, 4, 6])
 
 # ----- test dropnull --------------------------------------------------------#
 
-    # dropnull(X::NullableVector)
-    z = NullableArray([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
+    # dropnull(X::DataVector2)
+    z = DataArray2([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
     @test dropnull(z) == [1, 2, 3, 5, 7]
 
     # dropnull(X::AbstractVector)
-    A = Any[1, 2, 3, Nullable(), 5, Nullable(), 7, Nullable()]
+    A = Any[1, 2, 3, DataValue(), 5, DataValue(), 7, DataValue()]
     @test dropnull(A) == [1, 2, 3, 5, 7]
 
-    # dropnull(X::AbstractVector{<:Nullable})
-    B = [1, 2, 3, Nullable(), 5, Nullable(), 7, Nullable()]
+    # dropnull(X::AbstractVector{<:DataValue})
+    B = [1, 2, 3, DataValue(), 5, DataValue(), 7, DataValue()]
     @test dropnull(B) == [1, 2, 3, 5, 7]
-    # assert dropnull returns copy for !(Nullable <: eltype(X))
+    # assert dropnull returns copy for !(DataValue <: eltype(X))
     nullfree = [1, 2, 3, 4]
     returned_copy = dropnull(nullfree)
     @test nullfree == returned_copy && !(nullfree === returned_copy)
@@ -193,121 +193,121 @@ module TestPrimitives
 # ----- test dropnull! -------------------------------------------------------#
 
     # for each, assert returned values are unwrapped and inplace change
-    # dropnull!(X::NullableVector)
+    # dropnull!(X::DataVector2)
     @test dropnull!(z) == [1, 2, 3, 5, 7]
-    @test isequal(z, NullableArray([1, 2, 3, 5, 7]))
+    @test isequal(z, DataArray2([1, 2, 3, 5, 7]))
 
     # dropnull!(X::AbstractVector)
     @test dropnull!(A) == [1, 2, 3, 5, 7]
     @test isequal(A, Any[1, 2, 3, 5, 7])
 
-    # dropnull!(X::AbstractVector{<:Nullable})
+    # dropnull!(X::AbstractVector{<:DataValue})
     @test dropnull!(B) == [1, 2, 3, 5, 7]
-    @test isequal(B, Nullable[1, 2, 3, 5, 7])
+    @test isequal(B, DataValue[1, 2, 3, 5, 7])
 
     # when no nulls present, dropnull! returns input vector
     returned_view = dropnull!(nullfree)
     @test nullfree == returned_view && nullfree === returned_view
 
-    # test that dropnull! returns unwrapped values when nullables are present
-    X = [false, 1, :c, "string", Nullable("I am not null"), Nullable()]
-    @test !any(x -> isa(x, Nullable), dropnull!(X))
-    @test any(x -> isa(x, Nullable), X)
-    Y = Any[false, 1, :c, "string", Nullable("I am not null"), Nullable()]
-    @test !any(x -> isa(x, Nullable), dropnull!(Y))
-    @test any(x -> isa(x, Nullable), Y)
+    # test that dropnull! returns unwrapped values when DataValues are present
+    X = [false, 1, :c, "string", DataValue("I am not null"), DataValue()]
+    @test !any(x -> isa(x, DataValue), dropnull!(X))
+    @test any(x -> isa(x, DataValue), X)
+    Y = Any[false, 1, :c, "string", DataValue("I am not null"), DataValue()]
+    @test !any(x -> isa(x, DataValue), dropnull!(Y))
+    @test any(x -> isa(x, DataValue), Y)
 
 # ----- test any(isnull, X) --------------------------------------------------#
 
-    # any(isnull, X::NullableArray)
-    z = NullableArray([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
+    # any(isnull, X::DataArray2)
+    z = DataArray2([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
     @test any(isnull, z) == true
     @test any(isnull, dropnull(z)) == false
-    z = NullableArray(Int, 10)
+    z = DataArray2(Int, 10)
     @test any(isnull, z) == true
 
     # any(isnull, A::AbstractArray)
-    A2 = [Nullable(1), Nullable(2), Nullable(3)]
+    A2 = [DataValue(1), DataValue(2), DataValue(3)]
     @test any(isnull, A2) == false
-    push!(A2, Nullable{Int}())
+    push!(A2, DataValue{Int}())
     @test any(isnull, A2) == true
 
     # any(isnull, xs::NTuple)
-    @test any(isnull, (Nullable(1), Nullable(2))) == false
-    @test any(isnull, (Nullable{Int}(), Nullable(1), 3, 6)) == true
+    @test any(isnull, (DataValue(1), DataValue(2))) == false
+    @test any(isnull, (DataValue{Int}(), DataValue(1), 3, 6)) == true
 
-    # any(isnull, S::SubArray{T, N, U<:NullableArray})
+    # any(isnull, S::SubArray{T, N, U<:DataArray2})
     A = rand(10, 3, 3)
     M = rand(Bool, 10, 3, 3)
-    X = NullableArray(A, M)
+    X = DataArray2(A, M)
     i, j = rand(1:3), rand(1:3)
     S = view(X, :, i, j)
 
     @test any(isnull, S) == any(isnull, X[:, i, j])
-    X = NullableArray(A)
+    X = DataArray2(A)
     S = view(X, :, i, j)
     @test any(isnull, S) == false
 
 
 # ----- test all(isnull, X) --------------------------------------------------#
 
-    # all(isnull, X::NullableArray)
-    z = NullableArray(Int, 10)
+    # all(isnull, X::DataArray2)
+    z = DataArray2(Int, 10)
     @test all(isnull, z) == true
     z[1] = 10
     @test all(isnull, z) == false
 
-    # all(isnull, X::AbstractArray{<:Nullable})
-    @test all(isnull, Nullable{Int}[Nullable(), Nullable()]) == true
-    @test all(isnull, Nullable{Int}[Nullable(1), Nullable()]) == false
+    # all(isnull, X::AbstractArray{<:DataValue})
+    @test all(isnull, DataValue{Int}[DataValue(), DataValue()]) == true
+    @test all(isnull, DataValue{Int}[DataValue(1), DataValue()]) == false
 
     # all(isnull, X::Any)
-    @test all(isnull, Any[Nullable(), Nullable()]) == true
+    @test all(isnull, Any[DataValue(), DataValue()]) == true
     @test all(isnull, [1, 2]) == false
     @test all(isnull, 1:3) == false
 
 # ----- test Base.isnan ------------------------------------------------------#
 
-    x = NullableArray([1, 2, NaN, 4, 5, NaN, Inf, nothing], Float64, Void)
+    x = DataArray2([1, 2, NaN, 4, 5, NaN, Inf, nothing], Float64, Void)
     _x = isnan(x)
-    @test isequal(_x, NullableArray([false, false, true, false,
+    @test isequal(_x, DataArray2([false, false, true, false,
                                     false, true, false, nothing], Bool, Void))
     @test _x.isnull[8] == true
 
 # ----- test Base.isfinite ---------------------------------------------------#
 
     _x = isfinite(x)
-    @test isequal(_x, NullableArray([true, true, false, true,
+    @test isequal(_x, DataArray2([true, true, false, true,
                                     true, false, false, nothing], Bool, Void))
     @test _x.isnull[8] == true
 
 # ----- test conversion methods ----------------------------------------------#
 
-    u = NullableArray(collect(1:10))
-    v = NullableArray(Int, 4, 4)
+    u = DataArray2(collect(1:10))
+    v = DataArray2(Int, 4, 4)
     fill!(v, 4)
-    w = NullableArray(['a', 'b', 'c', 'd', 'e', 'f', nothing], Char, Void)
-    x = NullableArray([(i, j, k) for i in 1:10, j in 1:10, k in 1:10])
-    y = NullableArray([2, 4, 6, 8, 10])
-    z = NullableArray([i*j for i in 1:10, j in 1:10])
-    _z = NullableArray(reshape(collect(1:100), 10, 10),
+    w = DataArray2(['a', 'b', 'c', 'd', 'e', 'f', nothing], Char, Void)
+    x = DataArray2([(i, j, k) for i in 1:10, j in 1:10, k in 1:10])
+    y = DataArray2([2, 4, 6, 8, 10])
+    z = DataArray2([i*j for i in 1:10, j in 1:10])
+    _z = DataArray2(reshape(collect(1:100), 10, 10),
                        convert(Array{Bool},
                               reshape([mod(j, 2) for i in 1:10, j in 1:10],
                                      (10, 10))))
-    _x = NullableArray([false, true, false, nothing, false, true, nothing],
+    _x = DataArray2([false, true, false, nothing, false, true, nothing],
                       Bool, Void)
     a = [i*j*k for i in 1:2, j in 1:2, k in 1:2]
     b = collect(1:10)
     c = [i for i in 1:10, j in 1:10]
 
-    e = convert(NullableArray, a)
-    f = convert(NullableArray{Float64}, b)
-    g = convert(NullableArray, c)
-    h = convert(NullableArray{Float64}, g)
+    e = convert(DataArray2, a)
+    f = convert(DataArray2{Float64}, b)
+    g = convert(DataArray2, c)
+    h = convert(DataArray2{Float64}, g)
 
     @test_throws NullException convert(Array{Char, 1}, w)
     @test convert(Array{Char, 1},
-                  NullableArray(dropnull(w))) == ['a', 'b', 'c', 'd', 'e', 'f']
+                  DataArray2(dropnull(w))) == ['a', 'b', 'c', 'd', 'e', 'f']
     @test_throws NullException convert(Array{Char}, w)
     @test convert(Array{Float64}, u) == Float64[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     @test convert(Vector{Float64}, y) == Float64[2, 4, 6, 8, 10]
@@ -322,42 +322,42 @@ module TestPrimitives
     @test convert(Vector, _x, false) == [false, true, false, false,
                                         false, true, false]
     @test sum(convert(Matrix, _z, 0)) == 2775
-    @test isequal(e[:, :, 1], NullableArray([1 2; 2 4]))
-    @test isequal(f, NullableArray(Float64[i for i in 1:10]))
-    @test isa(g, NullableArray{Int, 2})
-    @test isa(h, NullableArray{Float64, 2})
+    @test isequal(e[:, :, 1], DataArray2([1 2; 2 4]))
+    @test isequal(f, DataArray2(Float64[i for i in 1:10]))
+    @test isa(g, DataArray2{Int, 2})
+    @test isa(h, DataArray2{Float64, 2})
 
-    # Base.convert{T}(::Type{Vector}, X::NullableVector{T})
-    X = NullableArray([1, 2, 3, 4, 5])
+    # Base.convert{T}(::Type{Vector}, X::DataVector2{T})
+    X = DataArray2([1, 2, 3, 4, 5])
     @test convert(Vector, X) == [1, 2, 3, 4, 5]
-    push!(X, Nullable())
+    push!(X, DataValue())
     @test_throws NullException convert(Vector, X)
 
-    # Base.convert{T}(::Type{Matrix}, X::NullableMatrix{T})
-    Y = NullableArray([1 2; 3 4; 5 6; 7 8; 9 10])
+    # Base.convert{T}(::Type{Matrix}, X::DataMatrix2{T})
+    Y = DataArray2([1 2; 3 4; 5 6; 7 8; 9 10])
     @test convert(Matrix, Y) == [1 2; 3 4; 5 6; 7 8; 9 10]
-    Z = NullableArray([1 2; 3 4; 5 6; 7 8; 9 nothing], Int, Void)
+    Z = DataArray2([1 2; 3 4; 5 6; 7 8; 9 nothing], Int, Void)
     @test_throws NullException convert(Matrix, Z)
 
-    # float(X::NullableArray)
+    # float(X::DataArray2)
     A = rand(Int, 20)
     M = rand(Bool, 20)
-    X = NullableArray(A, M)
-    @test isequal(float(X), NullableArray(float(A), M))
+    X = DataArray2(A, M)
+    @test isequal(float(X), DataArray2(float(A), M))
 
 # ----- test Base.hash (julia/base/hashing.jl:5) -----------------------------#
 
-    # Omitted for now, pending investigation into NullableArray-specific
+    # Omitted for now, pending investigation into DataArray2-specific
     # method.
     # TODO: reinstate testing once decision whether or not to implement
-    # NullableArray-specific hash method is reached.
+    # DataArray2-specific hash method is reached.
 
 # ----- test unique (julia/base/set.jl:107) ----------------------------------#
 
-    x = NullableArray([1, nothing, -2, 1, nothing, 4], Int, Void)
-    @assert isequal(unique(x), NullableArray([1, nothing, -2, 4], Int, Void))
+    x = DataArray2([1, nothing, -2, 1, nothing, 4], Int, Void)
+    @assert isequal(unique(x), DataArray2([1, nothing, -2, 4], Int, Void))
     @assert isequal(unique(reverse(x)),
-                    NullableArray([4, nothing, 1, -2], Int, Void))
+                    DataArray2([4, nothing, 1, -2], Int, Void))
 
 
 end

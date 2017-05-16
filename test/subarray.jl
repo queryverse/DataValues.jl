@@ -1,12 +1,12 @@
 module TestSubArray
 
 using Base.Test
-using NullableArrays
+using DataArrays2
 using Compat.view
 
 nd = rand(3:5)
 sz = [ rand(3:10) for i in 1:nd ]
-X = NullableArray(rand(sz...), rand(Bool, sz...))
+X = DataArray2(rand(sz...), rand(Bool, sz...))
 
 I = [ rand(1:sz[i]) for i in 1:nd ]
 H = [ rand(1:sz[i]) for i in 1:nd ]

@@ -1,4 +1,4 @@
-using NullableArrays
+using DataArrays2
 
 fatalerrors = length(ARGS) > 0 && ARGS[1] == "-f"
 quiet = length(ARGS) > 0 && ARGS[1] == "-q"
@@ -9,12 +9,11 @@ my_tests = [
     "constructors.jl",
     "primitives.jl",
     "indexing.jl",
-    "map.jl",
-    "broadcast.jl",
+    # "map.jl",
+    # "broadcast.jl",
     "nullablevector.jl",
     "nullablematrix.jl",
     "reduce.jl",
-    "operators.jl",
     "subarray.jl",
     "show.jl",
 ]

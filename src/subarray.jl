@@ -3,7 +3,7 @@ if VERSION >= v"0.5.0-dev+2718"
 else
 const unsafe_getindex = Base.unsafe_getindex
 
-@generated function Base.isnull{T,N,P<:NullableArray,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
+@generated function Base.isnull{T,N,P<:DataArray2,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
     ni = length(I)
     if ni == 1 && length(IV.parameters) == LD  # linear indexing
         meta = Expr(:meta, :inline)
@@ -20,7 +20,7 @@ const unsafe_getindex = Base.unsafe_getindex
     end
 end
 
-@generated function Base.values{T,N,P<:NullableArray,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
+@generated function Base.values{T,N,P<:DataArray2,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
     ni = length(I)
     if ni == 1 && length(IV.parameters) == LD  # linear indexing
         meta = Expr(:meta, :inline)
@@ -38,7 +38,7 @@ end
 end
 end
 
-@generated function anynull{T, N, U<:NullableArray}(S::SubArray{T, N, U})
+@generated function anynull{T, N, U<:DataArray2}(S::SubArray{T, N, U})
     return quote
         isnull = view(S.parent.isnull, S.indexes...)
         @nloops $N i S begin

@@ -39,22 +39,22 @@ else
     end
 end
 
-invoke_broadcast!{F, N}(f::F, dest, As::Vararg{NullableArray, N}) =
+invoke_broadcast!{F, N}(f::F, dest, As::Vararg{DataArray2, N}) =
     invoke(broadcast!, Tuple{F, AbstractArray, Vararg{AbstractArray, N}}, f, dest, As...)
 
 """
-    broadcast(f, As::NullableArray...)
+    broadcast(f, As::DataArray2...)
 
-Call `broadcast` with nullable lifting semantics and return a `NullableArray`.
-Lifting means calling function `f` on the the values wrapped inside `Nullable` entries
+Call `broadcast` with nullable lifting semantics and return a `DataArray2`.
+Lifting means calling function `f` on the the values wrapped inside `DataValue` entries
 of the input arrays, and returning null if any entry is missing.
 
 Note that this method's signature specifies the source `As` arrays as all
-`NullableArray`s. Thus, calling `broadcast` on arguments consisting
-of both `Array`s and `NullableArray`s will fall back to the standard implementation
+`DataArray2`s. Thus, calling `broadcast` on arguments consisting
+of both `Array`s and `DataArray2`s will fall back to the standard implementation
 of `broadcast` (i.e. without lifting).
 """
-function Base.broadcast{F}(f::F, As::NullableArray...)
+function Base.broadcast{F}(f::F, As::DataArray2...)
     # These definitions are needed to avoid allocation due to splatting
     @inline f2(x1) = lift(f, (x1,))
     @inline f2(x1, x2) = lift(f, (x1, x2))
@@ -66,23 +66,23 @@ function Base.broadcast{F}(f::F, As::NullableArray...)
     @inline f2(x...) = lift(f, x)
 
     T = nullable_broadcast_eltype(f, As...)
-    dest = similar(NullableArray{T}, broadcast_indices(As...))
+    dest = similar(DataArray2{T}, broadcast_indices(As...))
     invoke_broadcast!(f2, dest, As...)
 end
 
 """
-    broadcast!(f, dest::NullableArray, As::NullableArray...)
+    broadcast!(f, dest::DataArray2, As::DataArray2...)
 
 Call `broadcast!` with nullable lifting semantics.
-Lifting means calling function `f` on the the values wrapped inside `Nullable` entries
+Lifting means calling function `f` on the the values wrapped inside `DataValue` entries
 of the input arrays, and returning null if any entry is missing.
 
 Note that this method's signature specifies the destination `dest` array as well as the
-source `As` arrays as all `NullableArray`s. Thus, calling `broadcast!` on a arguments
-consisting of both `Array`s and `NullableArray`s will fall back to the standard implementation
+source `As` arrays as all `DataArray2`s. Thus, calling `broadcast!` on a arguments
+consisting of both `Array`s and `DataArray2`s will fall back to the standard implementation
 of `broadcast!` (i.e. without lifting).
 """
-function Base.broadcast!{F}(f::F, dest::NullableArray, As::NullableArray...)
+function Base.broadcast!{F}(f::F, dest::DataArray2, As::DataArray2...)
     # These definitions are needed to avoid allocation due to splatting
     @inline f2(x1) = lift(f, (x1,))
     @inline f2(x1, x2) = lift(f, (x1, x2))
@@ -97,7 +97,7 @@ function Base.broadcast!{F}(f::F, dest::NullableArray, As::NullableArray...)
 end
 
 # To fix ambiguity
-function Base.broadcast!{F}(f::F, dest::NullableArray)
+function Base.broadcast!{F}(f::F, dest::DataArray2)
     f2() = lift(f)
     invoke_broadcast!(f2, dest)
 end
@@ -113,7 +113,7 @@ if VERSION < v"0.6.0-dev.1632"
         (:(@compat Base.:.>=), :>=)
     )
         @eval begin
-            ($op)(X::NullableArray, Y::NullableArray) = broadcast($scalar_op, X, Y)
+            ($op)(X::DataArray2, Y::DataArray2) = broadcast($scalar_op, X, Y)
         end
     end
 end

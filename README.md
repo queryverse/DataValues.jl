@@ -1,49 +1,38 @@
 
-NullableArrays.jl
+DataArrays2.jl
 =================
-[![Build Status](https://travis-ci.org/JuliaStats/NullableArrays.jl.svg?branch=master)](https://travis-ci.org/JuliaStats/NullableArrays.jl)
+[![Build Status](https://travis-ci.org/davidanthoff/DataArrays2.jl.svg?branch=master)](https://travis-ci.org/davidanthoff/DataArrays2.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/r6grjnpthfp3bfe5?svg=true)](https://ci.appveyor.com/project/nalimilan/nullablearrays-jl)
-[![Coveralls](https://coveralls.io/repos/github/JuliaStats/NullableArrays.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaStats/NullableArrays.jl?branch=master)
-[![codecov.io](http://codecov.io/github/JuliaStats/NullableArrays.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaStats/NullableArrays.jl?branch=master)
-[![NullableArrays](http://pkg.julialang.org/badges/NullableArrays_0.4.svg)](http://pkg.julialang.org/?pkg=NullableArrays)
-[![NullableArrays](http://pkg.julialang.org/badges/NullableArrays_0.5.svg)](http://pkg.julialang.org/?pkg=NullableArrays)
+[![DataArrays2](http://pkg.julialang.org/badges/DataArrays2_0.6.svg)](http://pkg.julialang.org/?pkg=DataArrays2)
+[![codecov.io](http://codecov.io/github/davidanthoff/DataArrays2.jl/coverage.svg?branch=master)](http://codecov.io/github/davidanthoff/DataArrays2.jl?branch=master)
 
-NullableArrays.jl provides the `NullableArray{T, N}` type and its respective interface for use in storing and managing data with missing values.
+DataArrays2.jl provides the `DataArray2{T, N}` type and its respective interface for use in storing and managing data with missing values.
 
 
-`NullableArray{T, N}` is implemented as a subtype of `AbstractArray{Nullable{T}, N}` and inherits functionality from the `AbstractArray` interface.
-
-NullableArrays.jl is a registered Julia package and currently (`v0.0.1`) in beta release. It is available through the `Pkg.add()` command:
-
-```julia
-julia> Pkg.add("NullableArrays")
-```
-
-As of 01/01/2016, [David Gold](https://github.com/davidagold) is the lead maintainer of this package.
-
+`DataArray2{T, N}` is implemented as a subtype of `AbstractArray{DataValue{T}, N}` and inherits functionality from the `AbstractArray` interface.
 
 Missing Values
 ==============
-The central contribution of NullableArrays.jl is to provide a data structure that uses a single type, namely `Nullable{T}` to represent both present and missing values. `Nullable{T}` is a specialized container type that contains precisely either one or zero values. A `Nullable{T}` object that contains a value represents a present value of type `T` that, under other circumstances, might have been missing, whereas an empty `Nullable{T}` object represents a missing value that, under other circumstances, would have been of type `T` had it been present.
+The central contribution of DataArrays2.jl is to provide a data structure that uses a single type, namely `DataValue{T}` to represent both present and missing values. `DataValue{T}` is a specialized container type that contains precisely either one or zero values. A `DataValue{T}` object that contains a value represents a present value of type `T` that, under other circumstances, might have been missing, whereas an empty `DataValue{T}` object represents a missing value that, under other circumstances, would have been of type `T` had it been present.
 
-Indexing into a `NullableArray{T}` is thus "type-stable" in the sense that `getindex(X::NullableArray{T}, i)` will always return an object of type `Nullable{T}` regardless of whether the returned entry is present or missing. In general, this behavior more robustly supports the Julia compiler's ability to produce specialized lower-level code than do analogous data structures that use a token `NA` type to represent missingness.
+Indexing into a `DataArray2{T}` is thus "type-stable" in the sense that `getindex(X::DataArray2{T}, i)` will always return an object of type `DataValue{T}` regardless of whether the returned entry is present or missing. In general, this behavior more robustly supports the Julia compiler's ability to produce specialized lower-level code than do analogous data structures that use a token `NA` type to represent missingness.
 
 Constructors
 ============
-There are a number of ways to construct a `NullableArray` object. Passing a single `Array{T, N}` object to the `NullableArray()` constructor will create a `NullableArray{T, N}` object with all present values:
+There are a number of ways to construct a `DataArray2` object. Passing a single `Array{T, N}` object to the `DataArray2()` constructor will create a `DataArray2{T, N}` object with all present values:
 ```julia
-julia> julia> NullableArray(collect(1:5))
-5-element NullableArray{Int64,1}:
+julia> julia> DataArray2(collect(1:5))
+5-element DataArray2{Int64,1}:
  1
  2
  3
  4
  5
  ```
- To indicate that certain values ought to be represented as missing, one can pass an additional `Array{Bool, N}` argument; any index `i` for which the latter argument contains a `true` entry will return an missing value from the resultant `NullableArray` object:
+ To indicate that certain values ought to be represented as missing, one can pass an additional `Array{Bool, N}` argument; any index `i` for which the latter argument contains a `true` entry will return an missing value from the resultant `DataArray2` object:
  ```julia
-julia> X = NullableArray([1, 2, 3, 4, 5], [true, false, false, true, false])
-5-element NullableArray{Int64,1}:
+julia> X = DataArray2([1, 2, 3, 4, 5], [true, false, false, true, false])
+5-element DataArray2{Int64,1}:
  #NULL
      2
      3
@@ -52,21 +41,21 @@ julia> X = NullableArray([1, 2, 3, 4, 5], [true, false, false, true, false])
  ```
  Note that the sizes of the two `Array` arguments passed to the above constructor method must be equal.
  
- `NullableArray`s are designed to look and feel like regular `Array`s where possible and appropriate. Thus `display`ing a `NullableArray` object prints the values of present entries and `#NULL` designator for missing entries. It is important to note, however, that there is no such `#NULL` object, and that indexing into a `NullableArray` *always* returns a `Nullable` object, regardless of whether the entry at the specified index is missing or present:
+ `DataArray2`s are designed to look and feel like regular `Array`s where possible and appropriate. Thus `display`ing a `DataArray2` object prints the values of present entries and `#NULL` designator for missing entries. It is important to note, however, that there is no such `#NULL` object, and that indexing into a `DataArray2` *always* returns a `DataValue` object, regardless of whether the entry at the specified index is missing or present:
 
 ```julia
 julia> X[1]
-Nullable{Int64}()
+DataValue{Int64}()
 
 julia> X[2]
-Nullable(2)
+DataValue(2)
 ```
 
-One can initialize an empty `NullableArray` object by calling `NullableArray(T, dims)`, where `T` is the desired element type of the resultant `NullableArray` and `dims` is either a tuple or sequence of integer arguments designating the size of the resultant `NullableArray`:
+One can initialize an empty `DataArray2` object by calling `DataArray2(T, dims)`, where `T` is the desired element type of the resultant `DataArray2` and `dims` is either a tuple or sequence of integer arguments designating the size of the resultant `DataArray2`:
 
 ```julia
-julia> NullableArray(Char, 3, 3)
-3x3 NullableArray{Char,2}:
+julia> DataArray2(Char, 3, 3)
+3x3 DataArray2{Char,2}:
  #NULL  #NULL  #NULL
  #NULL  #NULL  #NULL
  #NULL  #NULL  #NULL
@@ -74,7 +63,7 @@ julia> NullableArray(Char, 3, 3)
 
 Indexing
 ========
-Indexing into a `NullableArray{T}` is just like indexing into a regular `Array{T}`, except that the returned object will always be of type `Nullable{T}` rather than type `T`. One can expect any indexing pattern that works on an `Array` to work on a `NullableArray`. This includes using a `NullableArray` to index into any container object that sufficiently implements the `AbstractArray` interface:
+Indexing into a `DataArray2{T}` is just like indexing into a regular `Array{T}`, except that the returned object will always be of type `DataValue{T}` rather than type `T`. One can expect any indexing pattern that works on an `Array` to work on a `DataArray2`. This includes using a `DataArray2` to index into any container object that sufficiently implements the `AbstractArray` interface:
 ```julia
 julia> A = [1:5...]
 5-element Array{Int64,1}:
@@ -84,8 +73,8 @@ julia> A = [1:5...]
  4
  5
 
-julia> X = NullableArray([2, 3])
-2-element NullableArray{Int64,1}:
+julia> X = DataArray2([2, 3])
+2-element DataArray2{Int64,1}:
  2
  3
 
@@ -96,115 +85,24 @@ julia> A[X]
  ```
  Note, however, that attempting to index into any such `AbstractArray` with a null value will incur an error:
 ```julia
-julia> Y = NullableArray([2, 3], [true, false])
-2-element NullableArray{Int64,1}:
+julia> Y = DataArray2([2, 3], [true, false])
+2-element DataArray2{Int64,1}:
  #NULL
      3      
 
 julia> A[Y]
 ERROR: NullException()
- in _checkbounds at /Users/David/.julia/v0.4/NullableArrays/src/indexing.jl:73
+ in _checkbounds at /Users/David/.julia/v0.4/DataArrays2/src/indexing.jl:73
  in getindex at abstractarray.jl:424
  ```
 
-Working with `Nullable`s
-========================
-Using objects of type `Nullable{T}` to represent both present and missing values of type `T` may present an unfamiliar experience to users who have never encountered such specialized container types. This section of the documentation is devoted to explaining the dynamics of working with and illustrating common use patterns involving `Nullable` objects.
-
-A central concern is how to extend methods originally defined for non-`Nullable` arguments to take `Nullable` arguments.
-
-Suppose for instance that I have a method
-```julia
-f(x::Float64, y::Float64) = exp(x * y)
-```
-
-that I wish to `map` over the two columns of `X::NullableArray{Float64, 2}`:
-```julia
-julia> X = NullableArray(rand(10, 2), rand(Bool, 10, 2))
-10x2 NullableArray{Float64,2}:
-     0.0962217      0.057771 
- #NULL              0.655217 
- #NULL          #NULL        
- #NULL              0.691814 
-     0.219243       0.197571 
- #NULL              0.948356 
- #NULL              0.601794 
- #NULL          #NULL        
- #NULL              0.0927559
- #NULL          #NULL  
-```
-As one may expect, simply calling `map(f, X[:,1], X[:,2])` incurs a `MethodError`:
-```julia
-julia> map(f, X[:,1], X[:,2])
-ERROR: MethodError: `f` has no method matching f(::Nullable{Float64}, ::Nullable{Float64})
- [inlined code] from /Users/David/.julia/v0.4/NullableArrays/src/map.jl:93
- in _F_ at /Users/David/.julia/v0.4/NullableArrays/src/map.jl:124
- in map at /Users/David/.julia/v0.4/NullableArrays/src/map.jl:172
-```
-Let `v, w` be two `Nullable{Float64}` objects. If both `v, w` are non-null, the convention is to have `f(v, w)` return a similarly non-null `Nullable{Float64}` object whose `value` field agrees with `f(v.value, w.value)`.  If either of `v, w` is null, the convention is to return an empty `Nullable{Float64}` object, i.e. to propogate the uncertainty introduced by the null argument. Providing a systematic means of extending `f` to `Nullable` arguments in such a way that satisfies the above behavior is sometimes called *lifting* `f` over `Nullable` arguments.
-
-Arguably, the best way to lift existing methods over `Nullable` arguments is to use multiple dispatch. That is, one can very easily extend `f` to handle `Nullable{Float64}` arguments by simply defining an appropriate method:
-```julia
-function f(x::Nullable{Float64}, y::Nullable{Float64})
-    if isnull(x) | isnull(y)
-        return Nullable{Float64}()
-    else
-        return Nullable(f(x.value, y.value))
-    end
-end
-```
-Now `broadcast` works as one would expect:
-```julia
-julia> broadcast(f, X[:,1], X[:,2])
-10-element NullableArray{Float64,1}:
-     1.00557
- #NULL      
- #NULL      
- #NULL      
-     1.04427
- #NULL      
- #NULL      
- #NULL      
- #NULL      
- #NULL 
-```
-
-The convention is not to support signatures of mixed `Nullable` and non `Nullable` arguments for solely the purposes of lifting. This reflects both conceptual concerns as well practical limitations -- in particular, to cover all possible combinations of `Nullable` and non-`Nullable` arguments for a signature of length N would require 2^N method definitions. If one finds that one is calling a function `f` on both `Nullable` and non-`Nullable` arguments, it is typically best to wrap the non-`Nullable` arguments into `Nullable` arguments and invoke the lifted version. Alternatively, one can instead pass their respective `value` fields to `f` -- **HOWEVER**, this approach is both less safe and less general and should only be used if one is certain that the `Nullable` arguments are non-null.
-
-The present package also offers means of lifting a function `f` over the entries of a `NullableArray` `X` when the two are passed as arguments to methods such as `map`, `broadcast` or `mapreduce`. The former two (and their mutating variants) offer the `lift` keyword argument that will lift `f` over `X` without requiring the user to define a new method for `f`:
-
-```julia
-julia> g(x::Float64) = 2x
-g (generic function with 1 method)
-
-julia> map(g, X; lift=true)
-10x2 NullableArray{Float64,2}:
-     0.192443      0.115542
- #NULL             1.31043 
- #NULL         #NULL       
- #NULL             1.38363 
-     0.438486      0.395142
- #NULL             1.89671 
- #NULL             1.20359 
- #NULL         #NULL       
- #NULL             0.185512
- #NULL         #NULL  
-```
-
-`mapreduce` and `reduce` both offer the `skipnull` keyword argument, which directs the method to skip over the null entries of the argument `NullableArray` when reducing. Because the null entries are disregarded, setting `skipnull=true` is taken to be an implicit request to lift the supplied method `f` over `X`:
-
-```julia
-julia> mapreduce(g, +, X[:,1]; skipnull=true)
-Nullable(0.6309288649002225)
-```
-
-`NullableArray` Implementation Details
+`DataArray2` Implementation Details
 ======================
-Under the hood of each `NullableArray{T, N}` object are two fields: a `values::Array{T, N}` field and an `isnull::Array{Bool, N}` field:
+Under the hood of each `DataArray2{T, N}` object are two fields: a `values::Array{T, N}` field and an `isnull::Array{Bool, N}` field:
 ```julia
-julia> fieldnames(NullableArray)
+julia> fieldnames(DataArray2)
 2-element Array{Symbol,1}:
  :values
  :isnull
  ```
-The `isnull` array designates whether indexing into an `X::NullableArray` at a given index `i` ought to return a present or missing value.
+The `isnull` array designates whether indexing into an `X::DataArray2` at a given index `i` ought to return a present or missing value.
