@@ -8,7 +8,6 @@ DataArrays2.jl
 
 DataArrays2.jl provides the `DataArray2{T, N}` type and its respective interface for use in storing and managing data with missing values.
 
-
 `DataArray2{T, N}` is implemented as a subtype of `AbstractArray{DataValue{T}, N}` and inherits functionality from the `AbstractArray` interface.
 
 Missing Values
