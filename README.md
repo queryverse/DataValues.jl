@@ -2,7 +2,7 @@
 DataValueArrays.jl
 =================
 [![Build Status](https://travis-ci.org/davidanthoff/DataValueArrays.jl.svg?branch=master)](https://travis-ci.org/davidanthoff/DataValueArrays.jl)
-[![Build status](https://ci.appveyor.com/api/projects/status/hspknlh93ma48ixr/branch/master?svg=true)](https://ci.appveyor.com/project/davidanthoff/datavaluearrays-jl/branch/master)(https://ci.appveyor.com/project/davidanthoff/DataValueArrays-jl/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/hspknlh93ma48ixr/branch/master?svg=true)](https://ci.appveyor.com/project/davidanthoff/datavaluearrays-jl/branch/master)
 [![DataValueArrays](http://pkg.julialang.org/badges/DataValueArrays_0.6.svg)](http://pkg.julialang.org/?pkg=DataValueArrays)
 [![codecov.io](http://codecov.io/github/davidanthoff/DataValueArrays.jl/coverage.svg?branch=master)](http://codecov.io/github/davidanthoff/DataValueArrays.jl?branch=master)
 
