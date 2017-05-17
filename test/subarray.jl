@@ -1,4 +1,4 @@
-module TestSubArray
+@testset "SubArrays" begin
 
 using Base.Test
 using DataArrays2
@@ -22,4 +22,4 @@ for i in 1:nd
     @test any(isnull, S) == any(isnull, X[J...])
 end
 
-end # module TestSubArray
+end

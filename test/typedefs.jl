@@ -1,26 +1,28 @@
-module TestTypeDefs
-    using Base.Test
-    using DataArrays2
+@testset "TypeDefs" begin
 
-    x = DataArray2(
-        [1, 2, 3],
-        [false, false, true]
-    )
+using Base.Test
+using DataArrays2
 
-    y = DataArray2(
-        [
-            1 2;
-            3 4;
-        ],
-        [
-            false false;
-            true false;
-        ],
-    )
+x = DataArray2(
+    [1, 2, 3],
+    [false, false, true]
+)
 
-    @test isa(x, DataArray2{Int, 1})
-    @test isa(x, DataVector2{Int})
+y = DataArray2(
+    [
+        1 2;
+        3 4;
+    ],
+    [
+        false false;
+        true false;
+    ],
+)
 
-    @test isa(y, DataArray2{Int, 2})
-    @test isa(y, DataMatrix2{Int})
+@test isa(x, DataArray2{Int, 1})
+@test isa(x, DataVector2{Int})
+
+@test isa(y, DataArray2{Int, 2})
+@test isa(y, DataMatrix2{Int})
+
 end

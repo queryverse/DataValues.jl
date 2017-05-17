@@ -1,4 +1,4 @@
-module TestShow
+@testset "Show" begin
 
 using Base.Test
 using DataArrays2
@@ -55,4 +55,4 @@ for typ in (Float64, Int, UInt, Char)
     typeof(X)
 end
 
-end # module TestShow
+end
