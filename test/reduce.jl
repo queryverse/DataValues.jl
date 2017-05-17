@@ -1,6 +1,6 @@
 @testset "Reduce" begin
 
-using DataArrays2
+using DataValueArrays
 using Base.Test
 
 srand(1)
@@ -18,8 +18,8 @@ for N in (10, 2050)
         j = rand(1:N)
     end
     M[j] = false
-    X = DataArray2(A)
-    Y = DataArray2(A, M)
+    X = DataValueArray(A)
+    Y = DataValueArray(A, M)
     B = A[find(x->!x, M)]
 
     @test isequal(mapreduce(f, +, X), DataValue(mapreduce(f, +, X.values)))
@@ -63,8 +63,8 @@ for N in (10, 2050)
 
     H = rand(Bool, N)
     G = H[find(x->!x, M)]
-    U = DataArray2(H)
-    V = DataArray2(H, M)
+    U = DataValueArray(H)
+    V = DataValueArray(H, M)
 
     for op in (
         &,

@@ -1,6 +1,6 @@
 __precompile__(true)
 
-module DataArrays2
+module DataValueArrays
 
 using Compat
 using Compat.view
@@ -8,9 +8,9 @@ using Reexport
 @reexport using Base.Cartesian
 @reexport using DataValues
 
-export DataArray2,
-       DataVector2,
-       DataMatrix2,
+export DataValueArray,
+       DataValueVector,
+       DataValueMatrix,
 
        # Macros
 

@@ -1,7 +1,7 @@
 # interface for skipping null entries
 import Compat: @functorize
 
-function skipnull_init(f, op, X::DataArray2,
+function skipnull_init(f, op, X::DataValueArray,
                        ifirst::Int, ilast::Int)
     # Get first non-null element
     ifirst = Base.findnext(x -> x == false, X.isnull, ifirst)
@@ -16,7 +16,7 @@ function skipnull_init(f, op, X::DataArray2,
 end
 
 # sequential map-reduce
-function mapreduce_seq_impl_skipnull(f, op, X::DataArray2,
+function mapreduce_seq_impl_skipnull(f, op, X::DataValueArray,
                                      ifirst::Int, ilast::Int)
     # initialize first reduction
     v, i = skipnull_init(f, op, X, ifirst, ilast)
@@ -32,7 +32,7 @@ function mapreduce_seq_impl_skipnull(f, op, X::DataArray2,
 end
 
 # pairwise map-reduce
-function mapreduce_pairwise_impl_skipnull{T}(f, op, X::DataArray2{T},
+function mapreduce_pairwise_impl_skipnull{T}(f, op, X::DataValueArray{T},
                                              ifirst::Int, ilast::Int,
                                             #  n_notnull::Int, blksize::Int)
                                             blksize::Int)
@@ -62,15 +62,15 @@ else
     sum_pairwise_blocksize(T) = Base.pairwise_blocksize(T, +)
 end
 
-mapreduce_impl_skipnull{T}(f, op, X::DataArray2{T}) =
+mapreduce_impl_skipnull{T}(f, op, X::DataValueArray{T}) =
     mapreduce_seq_impl_skipnull(f, op, X, 1, length(X.values))
-mapreduce_impl_skipnull(f, op::typeof(@functorize(+)), X::DataArray2) =
+mapreduce_impl_skipnull(f, op::typeof(@functorize(+)), X::DataValueArray) =
     mapreduce_pairwise_impl_skipnull(f, op, X, 1, length(X.values),
                                    max(128, sum_pairwise_blocksize(f)))
 
 # general mapreduce interface
 
-function _mapreduce_skipnull{T}(f, op, X::DataArray2{T}, missingdata::Bool)
+function _mapreduce_skipnull{T}(f, op, X::DataValueArray{T}, missingdata::Bool)
     n = length(X)
     !missingdata && return DataValue(Base.mapreduce_impl(f, op, X.values, 1, n))
 
@@ -82,14 +82,14 @@ function _mapreduce_skipnull{T}(f, op, X::DataArray2{T}, missingdata::Bool)
     return mapreduce_impl_skipnull(f, op, X)
 end
 
-function Base._mapreduce(f, op, X::DataArray2, missingdata)
+function Base._mapreduce(f, op, X::DataValueArray, missingdata)
     missingdata && return Base._mapreduce(f, op, X)
     DataValue(Base._mapreduce(f, op, X.values))
 end
 
 # to fix ambiguity warnings
 function Base.mapreduce(f, op::Union{typeof(@functorize(&)), typeof(@functorize(|))},
-                        X::DataArray2, skipnull::Bool = false)
+                        X::DataValueArray, skipnull::Bool = false)
     missingdata = any(isnull, X)
     if skipnull
         return _mapreduce_skipnull(f, op, X, missingdata)
@@ -106,16 +106,16 @@ else
 end
 
 """
-    mapreduce(f, op::Function, X::DataArray2; [skipnull::Bool=false])
+    mapreduce(f, op::Function, X::DataValueArray; [skipnull::Bool=false])
 
 Map a function `f` over the elements of `X` and reduce the result under the
 operation `op`. One can set the behavior of this method to skip the null entries
 of `X` by setting the keyword argument `skipnull` equal to true. If `skipnull`
 behavior is enabled, `f` will be automatically lifted over the elements of `X`.
-Note that, in general, mapreducing over a `DataArray2` will return a
+Note that, in general, mapreducing over a `DataValueArray` will return a
 `DataValue` object regardless of whether `skipnull` is set to `true` or `false`.
 """
-function Base.mapreduce(f, op::Function, X::DataArray2;
+function Base.mapreduce(f, op::Function, X::DataValueArray;
                         skipnull::Bool = false)
     missingdata = any(isnull, X)
     if skipnull
@@ -126,7 +126,7 @@ function Base.mapreduce(f, op::Function, X::DataArray2;
     end
 end
 
-function Base.mapreduce(f, op, X::DataArray2; skipnull::Bool = false)
+function Base.mapreduce(f, op, X::DataValueArray; skipnull::Bool = false)
     missingdata = any(isnull, X)
     if skipnull
         return _mapreduce_skipnull(f, op, X, missingdata)
@@ -136,16 +136,16 @@ function Base.mapreduce(f, op, X::DataArray2; skipnull::Bool = false)
 end
 
 """
-    mapreduce(f, op::Function, X::DataArray2; [skipnull::Bool=false])
+    mapreduce(f, op::Function, X::DataValueArray; [skipnull::Bool=false])
 
 Reduce `X`under the operation `op`. One can set the behavior of this method to
 skip the null entries of `X` by setting the keyword argument `skipnull` equal
 to true. If `skipnull` behavior is enabled, `f` will be automatically lifted
 over the elements of `X`. Note that, in general, mapreducing over a
-`DataArray2` will return a `DataValue` object regardless of whether `skipnull`
+`DataValueArray` will return a `DataValue` object regardless of whether `skipnull`
 is set to `true` or `false`.
 """
-Base.reduce(op, X::DataArray2; skipnull::Bool = false) =
+Base.reduce(op, X::DataValueArray; skipnull::Bool = false) =
     mapreduce(@functorize(identity), op, X; skipnull = skipnull)
 
 # standard reductions
@@ -158,17 +158,17 @@ for (fn, op) in ((:(Base.sum), @functorize(+)),
         # supertype(typeof(@functorize(abs))) returns Func{1} on Julia 0.4,
         # and Function on 0.5
         $fn(f::Union{Function,supertype(typeof(@functorize(abs)))},
-            X::DataArray2;
+            X::DataValueArray;
             skipnull::Bool = false) =
                 mapreduce(f, $op, X; skipnull = skipnull)
-        $fn(X::DataArray2; skipnull::Bool = false) =
+        $fn(X::DataValueArray; skipnull::Bool = false) =
             mapreduce(@functorize(identity), $op, X; skipnull = skipnull)
     end
 end
 
 for (fn, f, op) in ((:(Base.sumabs), @functorize(abs), @functorize(+)),
                     (:(Base.sumabs2), @functorize(abs2), @functorize(+)))
-    @eval $fn(X::DataArray2; skipnull::Bool = false) =
+    @eval $fn(X::DataValueArray; skipnull::Bool = false) =
         mapreduce($f, $op, X; skipnull=skipnull)
 end
 
@@ -176,14 +176,14 @@ end
 for op in (@functorize(scalarmin), @functorize(scalarmax))
     @eval begin
         function Base._mapreduce{T}(::typeof(@functorize(identity)), ::$(typeof(op)),
-                                    X::DataArray2{T}, missingdata)
+                                    X::DataValueArray{T}, missingdata)
             missingdata && return DataValue{T}()
             DataValue(Base._mapreduce(@functorize(identity), $op, X.values))
         end
     end
 end
 
-function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmin)), X::DataArray2{T},
+function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmin)), X::DataValueArray{T},
                                 first::Int, last::Int)
     i = first
     v = f(X[i])
@@ -200,7 +200,7 @@ function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmin)), X::DataAr
     return v
 end
 
-function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmax)), X::DataArray2{T},
+function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmax)), X::DataValueArray{T},
                                 first::Int, last::Int)
     i = first
     v = f(X[i])
@@ -217,7 +217,7 @@ function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmax)), X::DataAr
     return v
 end
 
-function Base.extrema{T}(X::DataArray2{T}; skipnull::Bool = false)
+function Base.extrema{T}(X::DataValueArray{T}; skipnull::Bool = false)
     length(X) > 0 || throw(ArgumentError("collection must be non-empty"))
     vmin = DataValue{T}()
     vmax = DataValue{T}()

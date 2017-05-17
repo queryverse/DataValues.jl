@@ -1,6 +1,6 @@
 using Compat
 
-@compat DataSubArray2{T,N,P<:DataArray2,IV,LD} = SubArray{T,N,P,IV,LD}
+@compat DataSubArray2{T,N,P<:DataValueArray,IV,LD} = SubArray{T,N,P,IV,LD}
 
 @inline function Base.isnull(V::DataSubArray2, I::Int...)
     @boundscheck checkbounds(V, I...)
@@ -12,7 +12,7 @@ end
     @inbounds return V.parent.values[Base.reindex(V, V.indexes, I)...]
 end
 
-@compat FastDataSubArray2{T,N,P<:DataArray2,IV} = SubArray{T,N,P,IV,true}
+@compat FastDataSubArray2{T,N,P<:DataValueArray,IV} = SubArray{T,N,P,IV,true}
 
 @inline function Base.isnull(V::FastDataSubArray2, i::Int)
     @boundscheck checkbounds(V, i)
@@ -25,7 +25,7 @@ end
 end
 
 # We can avoid a multiplication if the first parent index is a Colon or UnitRange
-@compat FastDataContiguousSubArray2{T,N,P<:DataArray2,I<:Tuple{Union{Colon, UnitRange}, Vararg{Any}}} = SubArray{T,N,P,I,true}
+@compat FastDataContiguousSubArray2{T,N,P<:DataValueArray,I<:Tuple{Union{Colon, UnitRange}, Vararg{Any}}} = SubArray{T,N,P,I,true}
 
 @inline function Base.isnull(V::FastDataContiguousSubArray2, i::Int)
     @boundscheck checkbounds(V, i)

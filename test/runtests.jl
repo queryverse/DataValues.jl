@@ -1,4 +1,4 @@
-using DataArrays2
+using DataValueArrays
 using Base.Test
 
 my_tests = [
@@ -20,7 +20,7 @@ immutable SurvEvent
     censored::Bool
 end
 
-@testset "DataArrays2" begin
+@testset "DataValueArrays" begin
 
 for my_test in my_tests
     include(my_test)

@@ -1,21 +1,21 @@
 """
-    push!{T, V}(X::DataVector2{T}, v::V)
+    push!{T, V}(X::DataValueVector{T}, v::V)
 
 Insert `v` at the end of `X`, which registers `v` as a present value.
 """
-function Base.push!{T, V}(X::DataVector2{T}, v::V)
+function Base.push!{T, V}(X::DataValueVector{T}, v::V)
     push!(X.values, v)
     push!(X.isnull, false)
     return X
 end
 
 """
-    push!{T, V}(X::DataVector2{T}, v::DataValue{V})
+    push!{T, V}(X::DataValueVector{T}, v::DataValue{V})
 
 Insert a value at the end of `X` from a `DataValue` value `v`. If `v` is null
 then this method adds a null entry at the end of `X`. Returns `X`.
 """
-function Base.push!{T, V}(X::DataVector2{T}, v::DataValue{V})
+function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{V})
     if isnull(v)
         resize!(X.values, length(X.values) + 1)
         push!(X.isnull, true)
@@ -27,23 +27,23 @@ function Base.push!{T, V}(X::DataVector2{T}, v::DataValue{V})
 end
 
 """
-    pop!{T}(X::DataVector2{T})
+    pop!{T}(X::DataValueVector{T})
 
 Remove the last entry from `X` and return it. If the value in that entry is
 missing, then this method returns `DataValue{T}()`.
 """
-function Base.pop!{T}(X::DataVector2{T}) # -> T
+function Base.pop!{T}(X::DataValueVector{T}) # -> T
     val, isnull = pop!(X.values), pop!(X.isnull)
     isnull ? DataValue{T}() : DataValue(val)
 end
 
 """
-    unshift!(X::DataVector2, v::DataValue)
+    unshift!(X::DataValueVector, v::DataValue)
 
 Insert a value at the beginning of `X` from a `DataValue` value `v`. If `v` is
 null then this method inserts a null entry at the beginning of `X`. Returns `X`.
 """
-function Base.unshift!(X::DataVector2, v::DataValue) # -> DataVector2{T}
+function Base.unshift!(X::DataValueVector, v::DataValue) # -> DataValueVector{T}
     if isnull(v)
         ccall(:jl_array_grow_beg, Void, (Any, UInt), X.values, 1)
         unshift!(X.isnull, true)
@@ -55,22 +55,22 @@ function Base.unshift!(X::DataVector2, v::DataValue) # -> DataVector2{T}
 end
 
 """
-    unshift!(X::DataVector2, v)
+    unshift!(X::DataValueVector, v)
 
 Insert a value `v` at the beginning of `X` and return `X`.
 """
-function Base.unshift!(X::DataVector2, v) # -> DataVector2{T}
+function Base.unshift!(X::DataValueVector, v) # -> DataValueVector{T}
     unshift!(X.values, v)
     unshift!(X.isnull, false)
     return X
 end
 
 """
-    shift!{T}(X::DataVector2{T})
+    shift!{T}(X::DataValueVector{T})
 
 Remove the first entry from `X` and return it as a `DataValue` object.
 """
-function Base.shift!{T}(X::DataVector2{T}) # -> DataValue{T}
+function Base.shift!{T}(X::DataValueVector{T}) # -> DataValue{T}
     val, isnull = shift!(X.values), shift!(X.isnull)
     if isnull
         return DataValue{T}()
@@ -82,13 +82,13 @@ end
 const _default_splice = []
 
 """
-    splice!(X::DataVector2, i::Integer, [ins])
+    splice!(X::DataValueVector, i::Integer, [ins])
 
 Remove the item at index `i` and return the removed item. Subsequent items
 are shifted down to fill the resulting gap. If specified, replacement values from
 an ordered collection will be spliced in place of the removed item.
 """
-function Base.splice!(X::DataVector2, i::Integer, ins=_default_splice)
+function Base.splice!(X::DataValueVector, i::Integer, ins=_default_splice)
     v = X[i]
     m = length(ins)
     if m == 0
@@ -107,7 +107,7 @@ function Base.splice!(X::DataVector2, i::Integer, ins=_default_splice)
 end
 
 """
-    splice!{T<:Integer}(X::DataVector2, rng::UnitRange{T}, [ins])
+    splice!{T<:Integer}(X::DataValueVector, rng::UnitRange{T}, [ins])
 
 Remove items in the specified index range, and return a collection containing
 the removed items. Subsequent items are shifted down to fill the resulting gap.
@@ -117,7 +117,7 @@ place of the removed items.
 To insert `ins` before an index `n` without removing any items, use
 `splice!(X, n:n-1, ins)`.
 """
-function Base.splice!{T<:Integer}(X::DataVector2,
+function Base.splice!{T<:Integer}(X::DataValueVector,
                                   rng::UnitRange{T},
                                   ins=_default_splice) # ->
     vs = X[rng]
@@ -174,21 +174,21 @@ function Base.splice!{T<:Integer}(X::DataVector2,
 end
 
 """
-    deleteat!(X::DataVector2, inds)
+    deleteat!(X::DataValueVector, inds)
 
 Delete the entry at `inds` from `X` and then return `X`. Note that `inds` may
 be either a single scalar index or a collection of sorted, pairwise unique
 indices. Subsequent items after deleted entries are shifted down to fill the
 resulting gaps.
 """
-function Base.deleteat!(X::DataVector2, inds)
+function Base.deleteat!(X::DataValueVector, inds)
     deleteat!(X.values, inds)
     deleteat!(X.isnull, inds)
     return X
 end
 
 """
-    append!(X::DataVector2, items::AbstractVector)
+    append!(X::DataValueVector, items::AbstractVector)
 
 Add the elements of `items` to the end of `X`.
 
@@ -196,7 +196,7 @@ Note that `append!(X, [1, 2, 3])` is equivalent to `push!(X, 1, 2, 3)`,
 where the items to be added to `X` are passed individually to `push!` and as a
 collection to `append!`.
 """
-function Base.append!(X::DataVector2, items::AbstractVector)
+function Base.append!(X::DataValueVector, items::AbstractVector)
     old_length = length(X)
     nitems = length(items)
     resize!(X, old_length + nitems)
@@ -205,7 +205,7 @@ function Base.append!(X::DataVector2, items::AbstractVector)
 end
 
 """
-    prepend!(X::DataVector2, items::AbstractVector)
+    prepend!(X::DataValueVector, items::AbstractVector)
 
 Add the elements of `items` to the beginning of `X`.
 
@@ -213,7 +213,7 @@ Note that `prepend!(X, [1, 2, 3])` is equivalent to `unshift!(X, 1, 2, 3)`,
 where the items to be added to `X` are passed individually to `unshift!` and as a
 collection to `prepend!`.
 """
-function Base.prepend!(X::DataVector2, items::AbstractVector)
+function Base.prepend!(X::DataValueVector, items::AbstractVector)
     old_length = length(X)
     nitems = length(items)
     ccall(:jl_array_grow_beg, Void, (Any, UInt), X.values, nitems)
@@ -227,46 +227,46 @@ function Base.prepend!(X::DataVector2, items::AbstractVector)
 end
 
 """
-    sizehint!(X::DataVector2, newsz::Integer)
+    sizehint!(X::DataValueVector, newsz::Integer)
 
 Suggest that collection `X` reserve capacity for at least `newsz` elements.
 This can improve performance.
 """
-function Base.sizehint!(X::DataVector2, newsz::Integer)
+function Base.sizehint!(X::DataValueVector, newsz::Integer)
     sizehint!(X.values, newsz)
     sizehint!(X.isnull, newsz)
 end
 
 """
-    padnull!(X::DataVector2, front::Integer, back::Integer)
+    padnull!(X::DataValueVector, front::Integer, back::Integer)
 
 Insert `front` null entries at the beginning of `X` and add `back` null entries
 at the end of `X`. Returns `X`.
 """
-function padnull!{T}(X::DataVector2{T}, front::Integer, back::Integer)
+function padnull!{T}(X::DataValueVector{T}, front::Integer, back::Integer)
     prepend!(X, fill(DataValue{T}(), front))
     append!(X, fill(DataValue{T}(), back))
     return X
 end
 
 """
-    padnull(X::DataVector2, front::Integer, back::Integer)
+    padnull(X::DataValueVector, front::Integer, back::Integer)
 
 return a copy of `X` with `front` null entries inserted at the beginning of
 the copy and `back` null entries inserted at the end.
 """
-function padnull(X::DataVector2, front::Integer, back::Integer)
+function padnull(X::DataValueVector, front::Integer, back::Integer)
     return padnull!(copy(X), front, back)
 end
 
 """
-    reverse!(X::DataVector2, [s], [n])
+    reverse!(X::DataValueVector, [s], [n])
 
 Modify `X` by reversing the first `n` elements starting at index `s`
 (inclusive). If unspecified, `s` and `n` will default to `1` and `length(X)`,
 respectively.
 """
-function Base.reverse!(X::DataVector2, s=1, n=length(X))
+function Base.reverse!(X::DataValueVector, s=1, n=length(X))
     if isbits(eltype(X)) || !any(isnull, X)
         reverse!(X.values, s, n)
         reverse!(X.isnull, s, n)
@@ -290,23 +290,23 @@ function Base.reverse!(X::DataVector2, s=1, n=length(X))
 end
 
 """
-    reverse(X::DataVector2, [s], [n])
+    reverse(X::DataValueVector, [s], [n])
 
 Return a copy of `X` with the first `n` elements starting at index `s`
 (inclusive) reversed. If unspecified, `s` and `n` will default to `1` and
 `length(X)`, respectively.
 """
-function Base.reverse(X::DataVector2, s=1, n=length(X))
+function Base.reverse(X::DataValueVector, s=1, n=length(X))
     return reverse!(copy(X), s, n)
 end
 
 """
-    empty!(X::DataVector2) -> DataVector2
+    empty!(X::DataValueVector) -> DataValueVector
 
-Remove all elements from a `DataVector2`. Returns `DataVector2{T}()`,
+Remove all elements from a `DataValueVector`. Returns `DataValueVector{T}()`,
 where `T` is the `eltype` of `X`.
 """
-function Base.empty!(X::DataVector2)
+function Base.empty!(X::DataValueVector)
     empty!(X.values)
     empty!(X.isnull)
     return X

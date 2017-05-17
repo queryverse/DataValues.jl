@@ -1,11 +1,11 @@
 @testset "Indexing" begin
 
 using Base.Test
-using DataArrays2
-import DataArrays2: unsafe_getindex_notnull,
+using DataValueArrays
+import DataValueArrays: unsafe_getindex_notnull,
                         unsafe_getvalue_notnull
 
-x = DataArray2(Int, (5, 2))
+x = DataValueArray(Int, (5, 2))
 
 for i in eachindex(x)
     x[i] = i
@@ -29,12 +29,12 @@ end
 
 _values = rand(10, 10)
 _isnull = rand(Bool, 10, 10)
-X = DataArray2(_values, _isnull)
+X = DataValueArray(_values, _isnull)
 
-# Base.getindex{T, N}(X::DataArray2{T, N})
+# Base.getindex{T, N}(X::DataValueArray{T, N})
 @test isequal(getindex(X), X[1])
 
-# Base.getindex{T, N}(X::DataArray2{T, N}, I::DataValue{Int}...)
+# Base.getindex{T, N}(X::DataValueArray{T, N}, I::DataValue{Int}...)
 @test_throws NullException getindex(X, DataValue{Int}(), DataValue{Int}())
 if _isnull[1]
     @test isnull(getindex(X, DataValue(1)))
@@ -90,12 +90,12 @@ end
 
 # range indexing
 Z_values = reshape(collect(1:125), (5,5,5))
-Z = DataArray2(Z_values)
+Z = DataValueArray(Z_values)
 
 if VERSION > v"0.5.0-dev+1195" # PR #13612 in JuliaLang
-    @test isequal(Z[1, 1:4, 1], DataArray2([1, 6, 11, 16]))
+    @test isequal(Z[1, 1:4, 1], DataValueArray([1, 6, 11, 16]))
 else
-    @test isequal(Z[1, 1:4, 1], DataArray2([1 6 11 16]))
+    @test isequal(Z[1, 1:4, 1], DataValueArray([1 6 11 16]))
 end
 
 # getindex with AbstractVector{Bool}
@@ -110,11 +110,11 @@ for i = 1:length(rg)
     end
 end
 
-# getindex with DataVector2 with null entries throws error
-@test_throws NullException X[DataArray2([1, 2, 3, nothing], Int, Void)]
+# getindex with DataValueVector with null entries throws error
+@test_throws NullException X[DataValueArray([1, 2, 3, nothing], Int, Void)]
 
-# getindex with DataVector2 and non-null entries
-@test isequal(X[DataArray2([1, 2, 3])], X[[1, 2, 3]])
+# getindex with DataValueVector and non-null entries
+@test isequal(X[DataValueArray([1, 2, 3])], X[[1, 2, 3]])
 
 # indexing with DataValues
 
@@ -122,7 +122,7 @@ n = rand(1:5)
 siz = [ rand(2:5) for i in n ]
 A = rand(siz...)
 M = rand(Bool, siz...)
-Z = DataArray2(A, M)
+Z = DataValueArray(A, M)
 i = rand(1:length(Z))
 @test isequal(Z[DataValue(i)], Z[i])
 I = [ rand(1:size(Z,i)) for i in 1:n ]
@@ -136,19 +136,19 @@ _values = rand(10, 10)
 for i = 1:100
     X[i] = _values[i]
 end
-@test isequal(X, DataArray2(_values))
+@test isequal(X, DataValueArray(_values))
 
 _values = rand(10, 10)
 for i = 1:10, j = 1:10
     X[i, j] = _values[i, j]
 end
-@test isequal(X, DataArray2(_values))
+@test isequal(X, DataValueArray(_values))
 
 _values = rand(10, 10)
 for i = 1:10, j = 1:10
     X[i, j] = DataValue(_values[i, j])
 end
-@test isequal(X, DataArray2(_values))
+@test isequal(X, DataValueArray(_values))
 
 
 # ----- test nullify! -----#
@@ -183,7 +183,7 @@ end
 
 #----- test UNSAFE INDEXING -----#
 
-X = DataArray2([1, 2, 3, 4, 5], [true, false, false, false, false])
+X = DataValueArray([1, 2, 3, 4, 5], [true, false, false, false, false])
 
 @test isequal(unsafe_getindex_notnull(X, 1), DataValue(1))
 @test isequal(unsafe_getindex_notnull(X, 2), DataValue(2))
@@ -192,7 +192,7 @@ X = DataArray2([1, 2, 3, 4, 5], [true, false, false, false, false])
 
 #----- test Base.checkbounds -----#
 
-X = DataArray2([1:10...])
+X = DataValueArray([1:10...])
 b = vcat(false, fill(true, 9))
 
 if VERSION >= v"0.5.0-dev+4697"
@@ -201,33 +201,33 @@ if VERSION >= v"0.5.0-dev+4697"
     @test checkindex(Bool, 1:10, DataValue(1)) == true
     @test isequal(X[DataValue(1)], DataValue(1))
 
-    # Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataArray2{Bool, N})
-    @test checkindex(Bool, 1:5, DataArray2([true, false, true, false, true]))
-    @test isequal(X[b], DataArray2([2:10...]))
+    # Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataValueArray{Bool, N})
+    @test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
+    @test isequal(X[b], DataValueArray([2:10...]))
 
-    # Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataArray2{T})
-    @test checkindex(Bool, 1:10, DataArray2([1:10...]))
-    @test checkindex(Bool, 1:10, DataArray2([10, 11])) == false
-    @test_throws BoundsError checkbounds(X, DataArray2([10, 11]))
+    # Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataValueArray{T})
+    @test checkindex(Bool, 1:10, DataValueArray([1:10...]))
+    @test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
+    @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
 else
     # Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, x::DataValue{T})
     @test_throws NullException checkbounds(Bool, 1, DataValue(1, true))
     @test checkbounds(Bool, 10, DataValue(1)) == true
     @test isequal(X[DataValue(1)], DataValue(1))
 
-    # Base.checkbounds(::Type{Bool}, sz::Int, X::DataVector2{Bool})
-    @test checkbounds(Bool, 5, DataArray2([true, false, true, false, true]))
-    @test isequal(X[b], DataArray2([2:10...]))
+    # Base.checkbounds(::Type{Bool}, sz::Int, X::DataValueVector{Bool})
+    @test checkbounds(Bool, 5, DataValueArray([true, false, true, false, true]))
+    @test isequal(X[b], DataValueArray([2:10...]))
 
-    # Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, I::DataArray2{T})
-    @test checkbounds(Bool, 10, DataArray2([1:10...]))
-    @test checkbounds(Bool, 10, DataArray2([10, 11])) == false
-    @test_throws BoundsError checkbounds(X, DataArray2([10, 11]))
+    # Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, I::DataValueArray{T})
+    @test checkbounds(Bool, 10, DataValueArray([1:10...]))
+    @test checkbounds(Bool, 10, DataValueArray([10, 11])) == false
+    @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
 end
 
 #---- test Base.to_index -----#
 
-# Base.to_index(X::DataArray2)
+# Base.to_index(X::DataValueArray)
 @test Base.to_index(X) == [1:10...]
 push!(X, DataValue{Int}())
 @test_throws NullException Base.to_index(X)

@@ -4,7 +4,7 @@ if VERSION < v"0.5.0-dev+3610"
     using Base: tty_size, alignment, print_matrix_row, strwidth, showcompact_lim,
                 undef_ref_alignment, undef_ref_str
 
-    function Base.show(io::IO, X::DataArray2)
+    function Base.show(io::IO, X::DataValueArray)
         print(io, typeof(X))
         Base.show_vector(io, X, "[", "]")
     end
@@ -15,7 +15,7 @@ if VERSION < v"0.5.0-dev+3610"
     Base.show(io::IO, ::Type{NULL}) = print(io, "#NULL")
     Base.alignment(io::IO, ::Type{NULL}) = (5,0)
 
-    function Base.show_delim_array(io::IO, X::DataArray2, op, delim, cl,
+    function Base.show_delim_array(io::IO, X::DataValueArray, op, delim, cl,
                                    delim_one, compact=false, i1=1, l=length(X))
         print(io, op)
         newline = true
@@ -56,7 +56,7 @@ if VERSION < v"0.5.0-dev+3610"
         print(io, cl)
     end
 
-    function Base.alignment{T,N,U<:DataArray2}(
+    function Base.alignment{T,N,U<:DataValueArray}(
         io::IO, X::SubArray{T,N,U},
         rows::AbstractVector, cols::AbstractVector,
         cols_if_complete::Integer, cols_otherwise::Integer, sep::Integer
@@ -92,7 +92,7 @@ if VERSION < v"0.5.0-dev+3610"
     end
 
     function Base.alignment(
-        io::IO, X::Union{DataArray2, DataMatrix2},
+        io::IO, X::Union{DataValueArray, DataValueMatrix},
         rows::AbstractVector, cols::AbstractVector,
         cols_if_complete::Integer, cols_otherwise::Integer, sep::Integer
     )
@@ -126,7 +126,7 @@ if VERSION < v"0.5.0-dev+3610"
         return a
     end
 
-    function Base.print_matrix_row{T,N,P<:DataArray2}(
+    function Base.print_matrix_row{T,N,P<:DataValueArray}(
         io::IO, X::SubArray{T,N,P}, A::Vector,
         i::Integer, cols::AbstractVector, sep::AbstractString
     )
@@ -167,7 +167,7 @@ if VERSION < v"0.5.0-dev+3610"
     end
 
     function Base.print_matrix_row(io::IO,
-        X::Union{DataVector2, DataMatrix2}, A::Vector,
+        X::Union{DataValueVector, DataValueMatrix}, A::Vector,
         i::Integer, cols::AbstractVector, sep::AbstractString
     )
         if VERSION < v"0.5.0-dev+1936" # compat issues from
@@ -210,7 +210,7 @@ if VERSION < v"0.5.0-dev+3610"
     # from https://github.com/JuliaLang/julia/pull/13825
 
     Base.alignment(::Type{NULL}) = (5,0)
-    function Base.alignment{T,N,U<:DataArray2}(
+    function Base.alignment{T,N,U<:DataValueArray}(
         X::SubArray{T,N,U},
         rows::AbstractVector, cols::AbstractVector,
         cols_if_complete::Integer, cols_otherwise::Integer, sep::Integer
@@ -245,7 +245,7 @@ if VERSION < v"0.5.0-dev+3610"
         return a
     end
     function Base.alignment(
-        X::Union{DataArray2, DataMatrix2},
+        X::Union{DataValueArray, DataValueMatrix},
         rows::AbstractVector, cols::AbstractVector,
         cols_if_complete::Integer, cols_otherwise::Integer, sep::Integer
     )

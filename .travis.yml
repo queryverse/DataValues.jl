@@ -14,6 +14,6 @@ branches:
 # uncomment the following lines to override the default test script
 #script:
 #  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DataArrays2"); Pkg.test("DataArrays2"; coverage=true)'
+#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DataValueArrays"); Pkg.test("DataValueArrays"; coverage=true)'
 after_success:
-  - julia -e 'cd(Pkg.dir("DataArrays2")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'cd(Pkg.dir("DataValueArrays")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'

@@ -1,4 +1,4 @@
-DAtaArrays2.jl is licensed under the MIT License:
+DataValueArrays.jl is licensed under the MIT License:
 
 > Copyright (c) 2012-2017: Harlan Harris, EPRI (Tom Short's code), Chris DuBois,
 > John Myles White, and other contributors.

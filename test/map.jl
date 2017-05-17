@@ -1,7 +1,7 @@
 @testset "Map" begin
 
 using Base.Test
-using DataArrays2
+using DataValueArrays
 
 # create m random arrays each with N dimensions and length dims[i] along
 # dimension i for i=1:N
@@ -12,17 +12,17 @@ n = rand(1:3)
 As = Array[ [rand(dims...) for i in 1:n] ; [rand(Int, dims...) for i in n+1:m] ]
 
 Ms = [ rand(Bool, dims...) for i in 1:m ]
-Xs = Array{DataArray2, 1}()
+Xs = Array{DataValueArray, 1}()
 for i in 1:m
-    push!(Xs, DataArray2(As[i]))
+    push!(Xs, DataValueArray(As[i]))
 end
-Ys = Array{DataArray2, 1}()
+Ys = Array{DataValueArray, 1}()
 for i in 1:m
-    push!(Ys, DataArray2(As[i], Ms[i]))
+    push!(Ys, DataValueArray(As[i], Ms[i]))
 end
 
 C = Array{Float64}(dims...)
-Z = DataArray2(Float64, dims...)
+Z = DataValueArray(Float64, dims...)
 
 R = map(|, Ms...)
 
@@ -37,11 +37,11 @@ for (args, masks) in (
         # map!
         map!(f, args[1][i], args[1][i]) # map!(f, As[i], As[i])
         map!(f, args[2][i], args[2][i]) # map!(f, Xs[i], Xs[i])
-        @test isequal(args[2][i], DataArray2(args[1][i], masks[i]...))
+        @test isequal(args[2][i], DataValueArray(args[1][i], masks[i]...))
         # map
         A = map(f, args[1][i])
         X = map(f, args[2][i])
-        @test isequal(X, DataArray2(A, masks[i]...))
+        @test isequal(X, DataValueArray(A, masks[i]...))
     end
 end
 # 2 arg
@@ -53,11 +53,11 @@ for (args, mask) in (
     # map!
     map!(f, dests[1], args[1][i], args[1][j])
     map!(f, dests[2], args[2][i], args[2][j])
-    @test isequal(dests[2], DataArray2(dests[1], mask...))
+    @test isequal(dests[2], DataValueArray(dests[1], mask...))
     # map
     map(f, args[1][i], args[1][j])
     map(f, args[2][i], args[2][j])
-    @test isequal(dests[2], DataArray2(dests[1], mask...))
+    @test isequal(dests[2], DataValueArray(dests[1], mask...))
 end
 # n arg
 for (args, mask) in (
@@ -66,15 +66,15 @@ for (args, mask) in (
     # map!
     map!(f, dests[1], args[1]...)
     map!(f, dests[2], args[2]...)
-    @test isequal(dests[2], DataArray2(dests[1], mask...))
+    @test isequal(dests[2], DataValueArray(dests[1], mask...))
     # map
     map(f, args[1]...)
     map(f, args[2]...)
-    @test isequal(dests[2], DataArray2(dests[1], mask...))
+    @test isequal(dests[2], DataValueArray(dests[1], mask...))
 end
 
-# test map over empty DataArrays2
-X = DataArray2(Int[])
+# test map over empty DataValueArrays
+X = DataValueArray(Int[])
 h1(x) = 5.0*x
 h2(x) = x
 h2(x...) = prod(x)
@@ -82,37 +82,37 @@ h2(x...) = prod(x)
 Z1 = map(h1, X)
 Z2 = map(h2, X)
 @test isempty(Z1)
-@test isa(Z1, DataArray2{Float64})
+@test isa(Z1, DataValueArray{Float64})
 @test isempty(Z2)
-@test isa(Z2, DataArray2{Int})
+@test isa(Z2, DataValueArray{Int})
 
-# if a function has no method for inner eltype of empty DataArray2,
-# result should be empty DataArray2{Any}() for consistency with generic map()
+# if a function has no method for inner eltype of empty DataValueArray,
+# result should be empty DataValueArray{Any}() for consistency with generic map()
 h3(x::Float64...) = prod(x)
 Z3 = map(h3, X)
 @test isempty(Z3)
-@test isa(Z3, DataArray2{Any})
+@test isa(Z3, DataValueArray{Any})
 Z3 = map(h3, X, X)
 @test isempty(Z3)
-@test isa(Z3, DataVector2{Any})
+@test isa(Z3, DataValueVector{Any})
 Z3 = map(h3, X, X, X)
 @test isempty(Z3)
-@test isa(Z3, DataArray2{Any})
+@test isa(Z3, DataValueArray{Any})
 
-# test map over all null DataArray2
+# test map over all null DataValueArray
 n = rand(10:100)
-Ys = [ DataArray2(rand(Int, n), fill(true, n)) for i in 1:rand(3:5) ]
+Ys = [ DataValueArray(rand(Int, n), fill(true, n)) for i in 1:rand(3:5) ]
 
 Z2 = map(h2, Ys[1])
-@test isequal(Z2, DataArray2(Int, n))
-@test isa(Z2, DataArray2{Int})
+@test isequal(Z2, DataValueArray(Int, n))
+@test isa(Z2, DataValueArray{Int})
 Z2 = map(h2, Ys[1], Ys[2])
-@test isequal(Z2, DataArray2(Int, n))
-@test isa(Z2, DataArray2{Int})
+@test isequal(Z2, DataValueArray(Int, n))
+@test isa(Z2, DataValueArray{Int})
 Z2 = map(h2, Ys...)
-@test isequal(Z2, DataArray2(Int, n))
+@test isequal(Z2, DataValueArray(Int, n))
 if VERSION >= v"0.6.0-dev.2544" # Commit known to work
-    @test isa(Z2, DataArray2{Int})
+    @test isa(Z2, DataValueArray{Int})
 end
 
 end
