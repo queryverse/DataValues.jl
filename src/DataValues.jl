@@ -245,4 +245,11 @@ end
 
 include("broadcast.jl")
 
+function __init__()
+    ops_filename = joinpath(@__DIR__, "..", "deps", "ops.jl")
+    if isfile(ops_filename)
+        include(ops_filename)
+    end
+end
+
 end
