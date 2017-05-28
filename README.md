@@ -30,3 +30,35 @@ semantics for ``DataValue``s.
 ``DataValue`` arguments without the use of the dot broadcast syntax.
 
 Any help with this package would be greatly appreciated!
+
+## Relationship of DataValues.jl with DataValueOperations.jl
+
+The packages [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
+and [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
+go hand in hand. [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
+provides the basic ``DataValue`` type, lifted methods for
+a few very common functions (mostly infix operators) and call-site lifting
+via the ``.`` broadcasting mechanism.
+[DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
+provides as many lifted methods for all sorts of functions as possible.
+It is an implementation of the white listing approach to lifting.
+
+Why have two packages? There is currently a debate whether the call site
+lifting via the ``.`` mechanism is a good solution to the lifting problem,
+or whether it is too cumbersome. The two package solution for the
+``DataValue`` approach allows users to try out the call site lifting approach
+and compare it with a more traditional white list approach that is less
+verbose. If users want to use the call site lifting approach, they should
+use only the [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
+package. If they want to try out the white list approach they should load
+the [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
+package. Please report back what you think of both approaches here or over
+in the [data domain](https://discourse.julialang.org/c/domain/data) on the
+julia forums!
+
+My expectation is that eventually one of these approaches will be picked
+as the only support one, and at that point this will go back to a one-package
+solution.
+
+In this setup the [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
+package will change how the ``DataValue`` type behaves.

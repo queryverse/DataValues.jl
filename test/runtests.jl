@@ -156,6 +156,9 @@ end
 
 @test isequal(Nullable(DataValue("TEST")), Nullable("TEST"))
 
+@test ?Int == DataValue{Int}
+@test ?(43) == DataValue(43)
+
 end
 
 @testset "Base derived tests" begin

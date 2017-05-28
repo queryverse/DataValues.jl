@@ -169,7 +169,7 @@ for op in (:+, :-, :!, :~)
 end
 
 
-for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>)
+for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :scalarmin, :scalarmax)
     @eval begin
         import Base.$(op)
         $op{T1<:Number,T2<:Number}(a::DataValue{T1},b::DataValue{T2}) = isnull(a) || isnull(b) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(get(a), get(b)))
@@ -244,5 +244,12 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
 end
 
 include("broadcast.jl")
+
+function __init__()
+    ops_filename = joinpath(@__DIR__, "..", "deps", "ops.jl")
+    if isfile(ops_filename)
+        include(ops_filename)
+    end
+end
 
 end
