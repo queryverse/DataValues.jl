@@ -9,11 +9,15 @@
 ## Overview
 
 This package provides the type ``DataValue`` that is used to represent
-missing data. Currently the main use of this type is in the
-[Query.jl](https://github.com/davidanthoff/Query.jl) package. The type
-is very similar to ``Nullable`` in julia base. It differs from ``Nullable``,
-by providing a small number of  additional features that make common
-operations on data easier.
+missing data.  The type is very similar to ``Nullable`` in julia base.
+It differs from ``Nullable`` by providing a small number of  additional
+features that make common operations on data easier.
+
+Currently the main use of this type is in the
+[Query.jl](https://github.com/davidanthoff/Query.jl),
+[IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl) and
+[DataValueArrays.jl](https://github.com/davidanthoff/DataValueArrays.jl)
+package.
 
 This repo is based on the following principles/ideas:
 
@@ -28,37 +32,36 @@ semantics for ``DataValue``s.
 ``Bool`` values, i.e. they are normal [predicates](https://en.wikipedia.org/wiki/Predicate_(mathematical_logic)).
 - Common arithmetic inplace operators like ``+`` have methods that lift
 ``DataValue`` arguments without the use of the dot broadcast syntax.
+- The package provides a configurable whitelist approach to lifting (see
+below).
 
 Any help with this package would be greatly appreciated!
 
-## Relationship of DataValues.jl with DataValueOperations.jl
+## Configurable whitelist lifting
 
-The packages [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
-and [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
-go hand in hand. [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
-provides the basic ``DataValue`` type, lifted methods for
-a few very common functions (mostly infix operators) and call-site lifting
-via the ``.`` broadcasting mechanism.
-[DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
-provides as many lifted methods for all sorts of functions as possible.
-It is an implementation of the white listing approach to lifting.
+There is currently a debate whether the call site lifting via the ``.``
+mechanism is a good solution to the lifting problem, or whether it is
+too cumbersome. To gain some data on this question, the package here
+implements both the ``.`` mechanism and a more traditional whitelist
+approach to lifting. The ``.`` call-site lifting approach is always enabled,
+but users can manually enable or disable the whitelist approach by calling
+the ``enable_whitelist_lifting()`` and ``disable_whitelist_lifting()``
+functions. A call to either of these functions will enable or disable whitelist
+lifting as a configuration in the julia package itself, i.e. that choice
+is remembered across julia instances. Whitelist lifting is enabled by
+default in the package.
 
-Why have two packages? There is currently a debate whether the call site
-lifting via the ``.`` mechanism is a good solution to the lifting problem,
-or whether it is too cumbersome. The two package solution for the
-``DataValue`` approach allows users to try out the call site lifting approach
-and compare it with a more traditional white list approach that is less
-verbose. If users want to use the call site lifting approach, they should
-use only the [DataValues.jl](https://github.com/davidanthoff/DataValues.jl)
-package. If they want to try out the white list approach they should load
-the [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
-package. Please report back what you think of both approaches here or over
-in the [data domain](https://discourse.julialang.org/c/domain/data) on the
-julia forums!
+When whitelist lifting is enabled, the package aims to add methods with
+``DataValue`` arguments to many functions from julia base. If you come
+across a function that is missing whitelist lifted methods, please open
+a PR or an issue so that we can add those methods.
 
-My expectation is that eventually one of these approaches will be picked
-as the only support one, and at that point this will go back to a one-package
-solution.
+My expectation is that eventually one of these approaches (``.`` lifting
+and whitelist lifting) will be picked as the only support one, or maybe
+someone will find a third, even better option.
 
-In this setup the [DataValueOperations.jl](https://github.com/davidanthoff/DataValueOperations.jl)
-package will change how the ``DataValue`` type behaves.
+Feedback on these two options would be most welcome. In particular, I would
+very much appreciate any feedback on whether the ``.`` lifting approach
+is indeed too cumbersome or not. Please report back what you think of both
+approaches here or over in the [data domain](https://discourse.julialang.org/c/domain/data)
+on the julia forums!
