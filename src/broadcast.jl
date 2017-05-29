@@ -1,5 +1,3 @@
-using Compat
-
 using Base.Broadcast: check_broadcast_indices, broadcast_indices
 
 Base.@pure nullable_eltypestuple(a) = Tuple{eltype(eltype(a))}

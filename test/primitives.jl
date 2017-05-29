@@ -2,7 +2,6 @@
 
 using Base.Test
 using DataValueArrays
-using Compat.view
 
 n = rand(1:5)
 siz = [ rand(2:5) for i in n ]
@@ -90,11 +89,7 @@ for (dest, src, bigsrc, emptysrc, res1, res2) in Any[set1, set2]
         @test_throws BoundsError copy!(dest, 1, src, idx, 1)
     end
 
-    if VERSION >= v"0.5.0-dev"
-        @test_throws ArgumentError copy!(dest, 1, src, 1, -1)
-    else
-        @test_throws BoundsError copy!(dest, 1, src, 1, -1)
-    end
+    @test_throws ArgumentError copy!(dest, 1, src, 1, -1)
 
     @test_throws BoundsError copy!(dest, bigsrc)
 

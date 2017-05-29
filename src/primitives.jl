@@ -214,7 +214,7 @@ null entries of `X` will be reflected by null entries of the resultant
 `DataValueArray`.
 """
 function Base.isnan(X::DataValueArray) # -> DataValueArray{Bool}
-    return DataValueArray(@compat(isnan.(X.values)), copy(X.isnull))
+    return DataValueArray(isnan.(X.values), copy(X.isnull))
 end
 
 """

@@ -1,5 +1,3 @@
-using Compat
-
 # === Design Notes ===
 #
 # `DataValueArray{T, N}` is a struct-of-arrays representation of
@@ -32,5 +30,5 @@ immutable DataValueArray{T, N} <: AbstractArray{DataValue{T}, N}
     end
 end
 
-@compat DataValueVector{T} = DataValueArray{T, 1}
-@compat DataValueMatrix{T} = DataValueArray{T, 2}
+DataValueVector{T} = DataValueArray{T, 1}
+DataValueMatrix{T} = DataValueArray{T, 2}

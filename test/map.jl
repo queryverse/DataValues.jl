@@ -111,8 +111,6 @@ Z2 = map(h2, Ys[1], Ys[2])
 @test isa(Z2, DataValueArray{Int})
 Z2 = map(h2, Ys...)
 @test isequal(Z2, DataValueArray(Int, n))
-if VERSION >= v"0.6.0-dev.2544" # Commit known to work
-    @test isa(Z2, DataValueArray{Int})
-end
+@test isa(Z2, DataValueArray{Int})
 
 end

@@ -1,5 +1,4 @@
 # interface for skipping null entries
-import Compat: @functorize
 
 function skipnull_init(f, op, X::DataValueArray,
                        ifirst::Int, ilast::Int)
@@ -56,15 +55,11 @@ function mapreduce_pairwise_impl_skipnull{T}(f, op, X::DataValueArray{T},
 end
 
 # from comment: https://github.com/JuliaLang/julia/pull/16217#issuecomment-223768129
-if VERSION < v"0.5.0-dev+4441"
-    sum_pairwise_blocksize = Base.sum_pairwise_blocksize
-else
-    sum_pairwise_blocksize(T) = Base.pairwise_blocksize(T, +)
-end
+sum_pairwise_blocksize(T) = Base.pairwise_blocksize(T, +)
 
 mapreduce_impl_skipnull{T}(f, op, X::DataValueArray{T}) =
     mapreduce_seq_impl_skipnull(f, op, X, 1, length(X.values))
-mapreduce_impl_skipnull(f, op::typeof(@functorize(+)), X::DataValueArray) =
+mapreduce_impl_skipnull(f, op::typeof(+), X::DataValueArray) =
     mapreduce_pairwise_impl_skipnull(f, op, X, 1, length(X.values),
                                    max(128, sum_pairwise_blocksize(f)))
 
@@ -88,7 +83,7 @@ function Base._mapreduce(f, op, X::DataValueArray, missingdata)
 end
 
 # to fix ambiguity warnings
-function Base.mapreduce(f, op::Union{typeof(@functorize(&)), typeof(@functorize(|))},
+function Base.mapreduce(f, op::Union{typeof(&), typeof(|)},
                         X::DataValueArray, skipnull::Bool = false)
     missingdata = any(isnull, X)
     if skipnull
@@ -99,11 +94,7 @@ function Base.mapreduce(f, op::Union{typeof(@functorize(&)), typeof(@functorize(
 end
 
 
-if VERSION >= v"0.5.0-dev+3701"
-    const specialized_binary = identity
-else
-    const specialized_binary = Base.specialized_binary
-end
+const specialized_binary = identity
 
 """
     mapreduce(f, op::Function, X::DataValueArray; [skipnull::Bool=false])
@@ -146,44 +137,44 @@ over the elements of `X`. Note that, in general, mapreducing over a
 is set to `true` or `false`.
 """
 Base.reduce(op, X::DataValueArray; skipnull::Bool = false) =
-    mapreduce(@functorize(identity), op, X; skipnull = skipnull)
+    mapreduce(identity, op, X; skipnull = skipnull)
 
 # standard reductions
 
-for (fn, op) in ((:(Base.sum), @functorize(+)),
-                 (:(Base.prod), @functorize(*)),
-                 (:(Base.minimum), @functorize(scalarmin)),
-                 (:(Base.maximum), @functorize(scalarmax)))
+for (fn, op) in ((:(Base.sum), +),
+                 (:(Base.prod), *),
+                 (:(Base.minimum), Base.scalarmin),
+                 (:(Base.maximum), Base.scalarmax))
     @eval begin
         # supertype(typeof(@functorize(abs))) returns Func{1} on Julia 0.4,
         # and Function on 0.5
-        $fn(f::Union{Function,supertype(typeof(@functorize(abs)))},
+        $fn(f::Union{Function,supertype(typeof(abs))},
             X::DataValueArray;
             skipnull::Bool = false) =
                 mapreduce(f, $op, X; skipnull = skipnull)
         $fn(X::DataValueArray; skipnull::Bool = false) =
-            mapreduce(@functorize(identity), $op, X; skipnull = skipnull)
+            mapreduce(identity, $op, X; skipnull = skipnull)
     end
 end
 
-for (fn, f, op) in ((:(Base.sumabs), @functorize(abs), @functorize(+)),
-                    (:(Base.sumabs2), @functorize(abs2), @functorize(+)))
+for (fn, f, op) in ((:(Base.sumabs), abs, +),
+                    (:(Base.sumabs2), abs2, +))
     @eval $fn(X::DataValueArray; skipnull::Bool = false) =
         mapreduce($f, $op, X; skipnull=skipnull)
 end
 
 # internal methods for Base.minimum and Base.maximum
-for op in (@functorize(scalarmin), @functorize(scalarmax))
+for op in (Base.scalarmin, Base.scalarmax)
     @eval begin
-        function Base._mapreduce{T}(::typeof(@functorize(identity)), ::$(typeof(op)),
+        function Base._mapreduce{T}(::typeof(identity), ::$(typeof(op)),
                                     X::DataValueArray{T}, missingdata)
             missingdata && return DataValue{T}()
-            DataValue(Base._mapreduce(@functorize(identity), $op, X.values))
+            DataValue(Base._mapreduce(identity, $op, X.values))
         end
     end
 end
 
-function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmin)), X::DataValueArray{T},
+function Base.mapreduce_impl{T}(f, op::typeof(Base.scalarmin), X::DataValueArray{T},
                                 first::Int, last::Int)
     i = first
     v = f(X[i])
@@ -200,7 +191,7 @@ function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmin)), X::DataVa
     return v
 end
 
-function Base.mapreduce_impl{T}(f, op::typeof(@functorize(scalarmax)), X::DataValueArray{T},
+function Base.mapreduce_impl{T}(f, op::typeof(Base.scalarmax), X::DataValueArray{T},
                                 first::Int, last::Int)
     i = first
     v = f(X[i])

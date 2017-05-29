@@ -1,7 +1,7 @@
 # DataValueArray is dense and allows fast linear indexing.
 import Base: LinearFast
 
-@compat Base.IndexStyle(::Type{<:DataValueArray}) = IndexLinear()
+Base.IndexStyle(::Type{<:DataValueArray}) = IndexLinear()
 
 # resolve ambiguity created by the two definitions that follow.
 function Base.getindex{T, N}(X::DataValueArray{T, N})
@@ -84,45 +84,25 @@ function unsafe_getvalue_notnull(X::DataValueArray, I::Int...)
     return getindex(X.values, I...)
 end
 
-if VERSION >= v"0.5.0-dev+4697"
-    function Base.checkindex(::Type{Bool}, inds::AbstractUnitRange, i::DataValue)
-        isnull(i) ? throw(NullException()) : checkindex(Bool, inds, get(i))
-    end
-
-    function Base.checkindex{N}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{Bool, N})
-        any(isnull, I) && throw(NullException())
-        checkindex(Bool, inds, I.values)
-    end
-
-    function Base.checkindex{T<:Real}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{T})
-        any(isnull, I) && throw(NullException())
-        b = true
-        for i in 1:length(I)
-            @inbounds v = unsafe_getvalue_notnull(I, i)
-            b &= checkindex(Bool, inds, v)
-        end
-        return b
-    end
-else
-    function Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, x::DataValue{T})
-        isnull(x) ? throw(NullException()) : checkbounds(Bool, sz, get(x))
-     end
-
-    function Base.checkbounds(::Type{Bool}, sz::Int, I::DataValueVector{Bool})
-         any(isnull, I) && throw(NullException())
-        length(I) == sz
-     end
-
-    function Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, I::DataValueArray{T})
-        inbounds = true
-         any(isnull, I) && throw(NullException())
-         for i in 1:length(I)
-             @inbounds v = unsafe_getvalue_notnull(I, i)
-            inbounds &= checkbounds(Bool, sz, v)
-         end
-        return inbounds
-     end
+function Base.checkindex(::Type{Bool}, inds::AbstractUnitRange, i::DataValue)
+    isnull(i) ? throw(NullException()) : checkindex(Bool, inds, get(i))
 end
+
+function Base.checkindex{N}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{Bool, N})
+    any(isnull, I) && throw(NullException())
+    checkindex(Bool, inds, I.values)
+end
+
+function Base.checkindex{T<:Real}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{T})
+    any(isnull, I) && throw(NullException())
+    b = true
+    for i in 1:length(I)
+        @inbounds v = unsafe_getvalue_notnull(I, i)
+        b &= checkindex(Bool, inds, v)
+    end
+    return b
+end
+
 
 function Base.to_index(X::DataValueArray)
     any(isnull, X) && throw(NullException())

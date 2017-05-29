@@ -1,41 +1,38 @@
-if VERSION >= v"0.5.0-dev+2718"
-    include("subarray0_5.jl")
-else
-const unsafe_getindex = Base.unsafe_getindex
+DataSubArray2{T,N,P<:DataValueArray,IV,LD} = SubArray{T,N,P,IV,LD}
 
-@generated function Base.isnull{T,N,P<:DataValueArray,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
-    ni = length(I)
-    if ni == 1 && length(IV.parameters) == LD  # linear indexing
-        meta = Expr(:meta, :inline)
-        if iscontiguous(V)
-            return :($meta; Base.getindex(V.parent.isnull, V.first_index + I[1] - 1))
-        end
-        return :($meta; Base.getindex(V.parent.isnull, V.first_index + V.stride1*(I[1]-1)))
-    end
-    Isyms = [:(I[$d]) for d = 1:ni]
-    exhead, idxs = Base.index_generate(ndims(P), IV, :V, Isyms)
-    quote
-        $exhead
-        Base.getindex(V.parent.isnull, $(idxs...))
-    end
+@inline function Base.isnull(V::DataSubArray2, I::Int...)
+    @boundscheck checkbounds(V, I...)
+    @inbounds return V.parent.isnull[Base.reindex(V, V.indexes, I)...]
 end
 
-@generated function Base.values{T,N,P<:DataValueArray,IV,LD}(V::SubArray{T,N,P,IV,LD}, I::Int...)
-    ni = length(I)
-    if ni == 1 && length(IV.parameters) == LD  # linear indexing
-        meta = Expr(:meta, :inline)
-        if iscontiguous(V)
-            return :($meta; Base.getindex(V.parent.values, V.first_index + I[1] - 1))
-        end
-        return :($meta; Base.getindex(V.parent.values, V.first_index + V.stride1*(I[1]-1)))
-    end
-    Isyms = [:(I[$d]) for d = 1:ni]
-    exhead, idxs = Base.index_generate(ndims(P), IV, :V, Isyms)
-    quote
-        $exhead
-        Base.getindex(V.parent.values, $(idxs...))
-    end
+@inline function Base.values(V::DataSubArray2, I::Int...)
+    @boundscheck checkbounds(V, I...)
+    @inbounds return V.parent.values[Base.reindex(V, V.indexes, I)...]
 end
+
+FastDataSubArray2{T,N,P<:DataValueArray,IV} = SubArray{T,N,P,IV,true}
+
+@inline function Base.isnull(V::FastDataSubArray2, i::Int)
+    @boundscheck checkbounds(V, i)
+    @inbounds return V.parent.isnull[V.first_index + V.stride1*i-1]
+end
+
+@inline function Base.values(V::FastDataSubArray2, i::Int)
+    @boundscheck checkbounds(V, i)
+    @inbounds return V.parent.values[V.first_index + V.stride1*i-1]
+end
+
+# We can avoid a multiplication if the first parent index is a Colon or UnitRange
+FastDataContiguousSubArray2{T,N,P<:DataValueArray,I<:Tuple{Union{Colon, UnitRange}, Vararg{Any}}} = SubArray{T,N,P,I,true}
+
+@inline function Base.isnull(V::FastDataContiguousSubArray2, i::Int)
+    @boundscheck checkbounds(V, i)
+    @inbounds return V.parent.isnull[V.first_index + i - 1]
+end
+
+@inline function Base.values(V::FastDataContiguousSubArray2, i::Int)
+    @boundscheck checkbounds(V, i)
+    @inbounds return V.parent.values[V.first_index + i - 1]
 end
 
 @generated function anynull{T, N, U<:DataValueArray}(S::SubArray{T, N, U})

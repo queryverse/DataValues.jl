@@ -32,16 +32,9 @@ function DataValueArray(T::Type, dims::Int...) # -> DataValueArray
     return DataValueArray(T, dims)
 end
 
-@compat (::Type{DataValueArray{T}}){T}(dims::Dims) = DataValueArray(T, dims)
-@compat (::Type{DataValueArray{T}}){T}(dims::Int...) = DataValueArray(T, dims)
-if VERSION >= v"0.5.0-"
-    @compat (::Type{DataValueArray{T,N}}){T,N}(dims::Vararg{Int,N}) = DataValueArray(T, dims)
-else
-    function Base.convert{T,N}(::Type{DataValueArray{T,N}}, dims::Int...)
-        length(dims) == N || throw(ArgumentError("Wrong number of arguments. Expected $N, got $(length(dims))."))
-        DataValueArray(T, dims)
-    end
-end
+(::Type{DataValueArray{T}}){T}(dims::Dims) = DataValueArray(T, dims)
+(::Type{DataValueArray{T}}){T}(dims::Int...) = DataValueArray(T, dims)
+(::Type{DataValueArray{T,N}}){T,N}(dims::Vararg{Int,N}) = DataValueArray(T, dims)
 
 # The following method constructs a DataValueArray from an Array{Any} argument
 # 'A' that contains some placeholder of type 'T' for null values.
@@ -96,7 +89,7 @@ end
 
 # The following method allows for the construction of zero-element
 # DataValueArrays by calling the parametrized type on zero arguments.
-@compat (::Type{DataValueArray{T, N}}){T, N}() = DataValueArray(T, ntuple(i->0, N))
+(::Type{DataValueArray{T, N}}){T, N}() = DataValueArray(T, ntuple(i->0, N))
 
 
 # ----- Conversion to DataValueArrays ---------------------------------------- #

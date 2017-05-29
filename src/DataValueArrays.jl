@@ -2,8 +2,6 @@ __precompile__(true)
 
 module DataValueArrays
 
-using Compat
-using Compat.view
 using Reexport
 @reexport using Base.Cartesian
 @reexport using DataValues
@@ -29,7 +27,6 @@ include("broadcast.jl")
 include("map.jl")
 include("nullablevector.jl")
 include("reduce.jl")
-include("show.jl")
 include("subarray.jl")
 
 end

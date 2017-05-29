@@ -92,11 +92,7 @@ end
 Z_values = reshape(collect(1:125), (5,5,5))
 Z = DataValueArray(Z_values)
 
-if VERSION > v"0.5.0-dev+1195" # PR #13612 in JuliaLang
-    @test isequal(Z[1, 1:4, 1], DataValueArray([1, 6, 11, 16]))
-else
-    @test isequal(Z[1, 1:4, 1], DataValueArray([1 6 11 16]))
-end
+@test isequal(Z[1, 1:4, 1], DataValueArray([1, 6, 11, 16]))
 
 # getindex with AbstractVector{Bool}
 b = bitrand(10, 10)
@@ -195,35 +191,20 @@ X = DataValueArray([1, 2, 3, 4, 5], [true, false, false, false, false])
 X = DataValueArray([1:10...])
 b = vcat(false, fill(true, 9))
 
-if VERSION >= v"0.5.0-dev+4697"
-    # Base.checkindex(::Type{Bool}, inds::UnitRange, i::DataValue)
-    @test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
-    @test checkindex(Bool, 1:10, DataValue(1)) == true
-    @test isequal(X[DataValue(1)], DataValue(1))
+# Base.checkindex(::Type{Bool}, inds::UnitRange, i::DataValue)
+@test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
+@test checkindex(Bool, 1:10, DataValue(1)) == true
+@test isequal(X[DataValue(1)], DataValue(1))
 
-    # Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataValueArray{Bool, N})
-    @test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
-    @test isequal(X[b], DataValueArray([2:10...]))
+# Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataValueArray{Bool, N})
+@test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
+@test isequal(X[b], DataValueArray([2:10...]))
 
-    # Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataValueArray{T})
-    @test checkindex(Bool, 1:10, DataValueArray([1:10...]))
-    @test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
-    @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
-else
-    # Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, x::DataValue{T})
-    @test_throws NullException checkbounds(Bool, 1, DataValue(1, true))
-    @test checkbounds(Bool, 10, DataValue(1)) == true
-    @test isequal(X[DataValue(1)], DataValue(1))
+# Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataValueArray{T})
+@test checkindex(Bool, 1:10, DataValueArray([1:10...]))
+@test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
+@test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
 
-    # Base.checkbounds(::Type{Bool}, sz::Int, X::DataValueVector{Bool})
-    @test checkbounds(Bool, 5, DataValueArray([true, false, true, false, true]))
-    @test isequal(X[b], DataValueArray([2:10...]))
-
-    # Base.checkbounds{T<:Real}(::Type{Bool}, sz::Int, I::DataValueArray{T})
-    @test checkbounds(Bool, 10, DataValueArray([1:10...]))
-    @test checkbounds(Bool, 10, DataValueArray([10, 11])) == false
-    @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
-end
 
 #---- test Base.to_index -----#
 

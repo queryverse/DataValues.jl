@@ -1,6 +1,5 @@
 using DataValueArrays
 using Base.Test
-using Compat
 
 @testset "Broadcast" begin
 
