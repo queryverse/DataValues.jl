@@ -1,5 +1,3 @@
-using DataValues
-
 function Base.DateTime{T<:AbstractString}(dt::DataValue{T}, format::AbstractString; locale::Base.Dates.Locale=Base.Dates.ENGLISH)
     isnull(dt) ? ?T : ?(DateTime(get(dt), format, locale=locale))
 end
