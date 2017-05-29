@@ -1,6 +1,6 @@
 module DataValues
 
-export DataValue, DataValueException, ?
+export DataValue, DataValueException, ?, enable_whitelist_lifting, disable_whitelist_lifting
 
 import Base.get
 import Base.convert
@@ -243,6 +243,7 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
     end
 end
 
+include("lifting-config.jl")
 include("broadcast.jl")
 include("../deps/ops.jl")
 
