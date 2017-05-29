@@ -1,3 +1,4 @@
+__precompile__()
 module DataValues
 
 export DataValue, DataValueException, ?, enable_whitelist_lifting, disable_whitelist_lifting
