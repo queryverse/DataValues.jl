@@ -57,7 +57,7 @@ across a function that is missing whitelist lifted methods, please open
 a PR or an issue so that we can add those methods.
 
 My expectation is that eventually one of these approaches (``.`` lifting
-and whitelist lifting) will be picked as the only support one, or maybe
+and whitelist lifting) will be picked as the only supported one, or maybe
 someone will find a third, even better option.
 
 Feedback on these two options would be most welcome. In particular, I would
