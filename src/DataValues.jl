@@ -1,7 +1,7 @@
 __precompile__()
 module DataValues
 
-export DataValue, DataValueException, ?, enable_whitelist_lifting, disable_whitelist_lifting
+export DataValue, DataValueException, ?, NA, enable_whitelist_lifting, disable_whitelist_lifting
 
 import Base.get
 import Base.convert
@@ -22,6 +22,8 @@ end
 
 struct DataValueException <: Exception
 end
+
+const NA = DataValue{Union{}}()
 
 ?{T}(::Type{T}) = DataValue{T}
 ?(v) = DataValue(v)
@@ -109,6 +111,9 @@ end
 
 import Base.==
 import Base.!=
+
+Base.zero{T<:Number}(::Type{DataValues.DataValue{T}}) = DataValue{T}(zero(T))
+Base.zero{T<:Number}(x::DataValues.DataValue{T}) = DataValue{T}(zero(T))
 
 # C# spec section 7.10.9
 
