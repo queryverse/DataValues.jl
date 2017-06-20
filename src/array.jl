@@ -56,3 +56,8 @@ end
     X.isnull[i] = false
     return v
 end
+
+@inline function Base.setindex!(X::DataValueArray, v::DataValue{Union{}}, i::Int)
+    X.isnull[i] = true
+    return v
+end
