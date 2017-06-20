@@ -112,6 +112,9 @@ end
 import Base.==
 import Base.!=
 
+Base.zero{T<:Number}(::Type{DataValues.DataValue{T}}) = DataValue{T}(zero(T))
+Base.zero{T<:Number}(x::DataValues.DataValue{T}) = DataValue{T}(zero(T))
+
 # C# spec section 7.10.9
 
 =={T}(a::DataValue{T},b::DataValue{Union{}}) = isnull(a)
