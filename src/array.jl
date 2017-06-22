@@ -73,3 +73,31 @@ end
     X.isnull[i] = true
     return v
 end
+
+function Base.push!{T, V}(X::DataValueVector{T}, v::V)
+    push!(X.values, v)
+    push!(X.isnull, false)
+    return X
+end
+
+function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{V})
+    if isnull(v)
+        resize!(X.values, length(X.values) + 1)
+        push!(X.isnull, true)
+    else
+        push!(X.values, v.value)
+        push!(X.isnull, false)
+    end
+    return X
+end
+
+function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{Union{}})
+    resize!(X.values, length(X.values) + 1)
+    push!(X.isnull, true)
+    return X
+end
+
+function Base.pop!{T}(X::DataValueVector{T})
+    val, isnull = pop!(X.values), pop!(X.isnull)
+    isnull ? DataValue{T}() : DataValue(val)
+end
