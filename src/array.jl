@@ -19,6 +19,9 @@ immutable DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
     end
 end
 
+const DataValueVector{T} = DataValueArray{T, 1}
+const DataValueMatrix{T} = DataValueArray{T, 2}
+
 Array{T,N}(d::NTuple{N,Int}) where {T<:DataValue,N} =DataValueArray{eltype(T),N}(d)
 Array{T,1}(m::Int) where {T<:DataValue} = DataValueArray{eltype(T),1}(m)
 Array{T,2}(m::Int, n::Int) where {T<:DataValue} = DataValueArray{eltype(T),2}(m,n)
