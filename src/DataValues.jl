@@ -249,6 +249,17 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
     end
 end
 
+isless{S,T}(x::S, y::DataValue{T}) = isnull(y) ? true : isless(x, get(y))
+
+isless{S,T}(x::DataValue{S}, y::T) = isnull(x) ? false : isless(get(x), y)
+
+isless(x::DataValue{Union{}}, y::DataValue{Union{}}) = false
+
+isless(x, y::DataValue{Union{}}) = true
+
+isless(x::DataValue{Union{}}, y) = false
+
+
 include("lifting-config.jl")
 include("broadcast.jl")
 include("../deps/ops.jl")
