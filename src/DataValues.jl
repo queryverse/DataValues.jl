@@ -185,6 +185,9 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :scalarmin, :scalarmax)
 end
 
 ^{T<:Number}(x::DataValue{T},p::Integer) = isnull(x) ? DataValue{T}() : DataValue(get(x)^p)
+(/)(x::DataValue{T}, y::DataValue{S}) where {T<:Integer,S<:Integer} = (isnull(x) | isnull(y)) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)) / float(get(y)))
+(/)(x::DataValue{T}, y::S) where {T<:Integer,S<:Integer} = isnull(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)) / float(y))
+(/)(x::T, y::DataValue{S}) where {T<:Integer,S<:Integer} = isnull(y) ? DataValue{Float64}() : DataValue{Float64}(float(x) / float(get(y)))
 
 =={T1,T2}(a::DataValue{T1},b::DataValue{T2}) = isnull(a) && isnull(b) ? true : !isnull(a) && !isnull(b) ? get(a)==get(b) : false
 =={T1,T2}(a::DataValue{T1},b::T2) = isnull(a) ? false : get(a)==b
@@ -248,6 +251,17 @@ function isless{S,T}(x::DataValue{S}, y::DataValue{T})
         return isless(x.value, y.value)
     end
 end
+
+isless{S,T}(x::S, y::DataValue{T}) = isnull(y) ? true : isless(x, get(y))
+
+isless{S,T}(x::DataValue{S}, y::T) = isnull(x) ? false : isless(get(x), y)
+
+isless(x::DataValue{Union{}}, y::DataValue{Union{}}) = false
+
+isless(x, y::DataValue{Union{}}) = true
+
+isless(x::DataValue{Union{}}, y) = false
+
 
 include("lifting-config.jl")
 include("broadcast.jl")
