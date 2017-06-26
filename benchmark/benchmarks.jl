@@ -11,9 +11,9 @@ using CategoricalArrays
     end
 
     ca = CategoricalArray(repeat(string.('A':'J'), outer=1000))
-    nca = NullableCategoricalArray(repeat([Nullable(); string.('A':'J')], outer=1000))
+    nca = DataValueCategoricalArray(repeat([DataValue(); string.('A':'J')], outer=1000))
     @bench "CategoricalArray" sumequals(ca, "D")
-    @bench "NullableCategoricalArray" sumequals(nca, Nullable("D"))
+    @bench "DataValueCategoricalArray" sumequals(nca, DataValue("D"))
 end
 
 @benchgroup "isequal(A, v::CategoricalValue)" begin
@@ -26,7 +26,7 @@ end
     end
 
     ca = CategoricalArray(repeat(string.('A':'J'), outer=1000))
-    nca = NullableCategoricalArray(repeat([Nullable(); string.('A':'J')], outer=1000))
+    nca = DataValueCategoricalArray(repeat([DataValue(); string.('A':'J')], outer=1000))
     @bench "CategoricalArray" sumequals(ca, ca[1])
-    @bench "NullableCategoricalArray" sumequals(nca, nca[1])
+    @bench "DataValueCategoricalArray" sumequals(nca, nca[1])
 end

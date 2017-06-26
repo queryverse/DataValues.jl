@@ -11,12 +11,12 @@ Base.promote_rule{S, T}(::Type{CategoricalValue{S}}, ::Type{T}) = promote_type(S
 Base.promote_rule{T}(::Type{CategoricalValue}, ::Type{T}) = T
 
 # To fix ambiguities with definitions from Base
-Base.convert{S}(::Type{Nullable{S}}, x::CategoricalValue{Nullable}) =
-    convert(Nullable{S}, index(x.pool)[x.level])
-Base.convert{S}(::Type{Nullable}, x::CategoricalValue{S}) = convert(Nullable{S}, x)
-Base.convert{T}(::Type{Nullable{CategoricalValue{Nullable{T}}}},
-                x::CategoricalValue{Nullable{T}}) =
-    Nullable(x)
+Base.convert{S}(::Type{DataValue{S}}, x::CategoricalValue{DataValue}) =
+    convert(DataValue{S}, index(x.pool)[x.level])
+Base.convert{S}(::Type{DataValue}, x::CategoricalValue{S}) = convert(DataValue{S}, x)
+Base.convert{T}(::Type{DataValue{CategoricalValue{DataValue{T}}}},
+                x::CategoricalValue{DataValue{T}}) =
+    DataValue(x)
 Base.convert{T}(::Type{Ref}, x::CategoricalValue{T}) = RefValue{T}(x)
 Base.convert(::Type{Any}, x::CategoricalArrays.CategoricalValue) = x
 

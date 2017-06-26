@@ -71,20 +71,20 @@ end
 @compat CategoricalVector{T, R} = CategoricalArray{T, 1, R}
 @compat CategoricalMatrix{T, R} = CategoricalArray{T, 2, R}
 
-## Nullable Arrays
+## DataValue Arrays
 
-@compat abstract type AbstractNullableCategoricalArray{T, N, R} <: AbstractArray{Nullable{CategoricalValue{T, R}}, N} end
-@compat AbstractNullableCategoricalVector{T, R} = AbstractNullableCategoricalArray{T, 1, R}
-@compat AbstractNullableCategoricalMatrix{T, R} = AbstractNullableCategoricalArray{T, 2, R}
+@compat abstract type AbstractDataValueCategoricalArray{T, N, R} <: AbstractArray{DataValue{CategoricalValue{T, R}}, N} end
+@compat AbstractDataValueCategoricalVector{T, R} = AbstractDataValueCategoricalArray{T, 1, R}
+@compat AbstractDataValueCategoricalMatrix{T, R} = AbstractDataValueCategoricalArray{T, 2, R}
 
-immutable NullableCategoricalArray{T, N, R <: Integer} <: AbstractNullableCategoricalArray{T, N, R}
+immutable DataValueCategoricalArray{T, N, R <: Integer} <: AbstractDataValueCategoricalArray{T, N, R}
     refs::Array{R, N}
     pool::CategoricalPool{T, R, CategoricalValue{T, R}}
 end
-@compat NullableCategoricalVector{T, R} = NullableCategoricalArray{T, 1, R}
-@compat NullableCategoricalMatrix{T, R} = NullableCategoricalArray{T, 2, R}
+@compat DataValueCategoricalVector{T, R} = DataValueCategoricalArray{T, 1, R}
+@compat DataValueCategoricalMatrix{T, R} = DataValueCategoricalArray{T, 2, R}
 
 ## Type Aliases
 
-@compat CatArray{T, N, R} = Union{CategoricalArray{T, N, R}, NullableCategoricalArray{T, N, R}}
-@compat CatVector{T, R} = Union{CategoricalVector{T, R}, NullableCategoricalVector{T, R}}
+@compat CatArray{T, N, R} = Union{CategoricalArray{T, N, R}, DataValueCategoricalArray{T, N, R}}
+@compat CatVector{T, R} = Union{CategoricalVector{T, R}, DataValueCategoricalVector{T, R}}

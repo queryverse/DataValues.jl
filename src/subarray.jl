@@ -9,5 +9,5 @@ end
 function unique{T,N,P<:CatArray}(sa::SubArray{T,N,P})
     A = parent(sa)
     refs = view(A.refs, sa.indexes...)
-    _unique(eltype(P) <: Nullable ? NullableArray : Array, refs, A.pool)
+    _unique(eltype(P) <: DataValue ? DataValueArray : Array, refs, A.pool)
 end

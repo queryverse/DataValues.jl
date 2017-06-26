@@ -1,10 +1,10 @@
 # Implementation details
 
-`CategoricalArray` and `NullableCategoricalArray` share a common implementation for the most part, with the main differences being their element types. They are based on the `CategoricalPool` type, which keeps track of the levels and associates them with an integer reference (for internal use). They offer methods to set levels, change their order while preserving the references, and efficiently get the integer index corresponding to a level and vice-versa. They are also parameterized on the type used to store the references, so that small pools can use as little memory as possible. Finally, they keep a vector of value objects (`CategoricalValue`), so that `getindex` can return the existing object instead of allocating a new one.
+`CategoricalArray` and `DataValueCategoricalArray` share a common implementation for the most part, with the main differences being their element types. They are based on the `CategoricalPool` type, which keeps track of the levels and associates them with an integer reference (for internal use). They offer methods to set levels, change their order while preserving the references, and efficiently get the integer index corresponding to a level and vice-versa. They are also parameterized on the type used to store the references, so that small pools can use as little memory as possible. Finally, they keep a vector of value objects (`CategoricalValue`), so that `getindex` can return the existing object instead of allocating a new one.
 
 Array types are made of two fields:
 
-- `refs`: an integer vector giving the index of the level in the pool for each element. For `NullableCategoricalArray`, `0` indicates a missing value.
+- `refs`: an integer vector giving the index of the level in the pool for each element. For `DataValueCategoricalArray`, `0` indicates a missing value.
 - `pool`: the `CategoricalPool` object keeping the levels of the array.
 
 Whether an array (and its values) are ordered or not is stored as a property of the pool.

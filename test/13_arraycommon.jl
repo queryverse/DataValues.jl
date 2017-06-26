@@ -2,11 +2,11 @@ module TestArrayCommon
 
 using Base.Test
 using CategoricalArrays
-using NullableArrays
+using DataValues
 using CategoricalArrays: DefaultRefType, index
 using Compat
 
-# == currently throws an error for Nullables
+# == currently throws an error for DataValues
 (==) = isequal
 
 
@@ -65,7 +65,7 @@ using Compat
     (["A", "B", "C", "D", "E", "G", "F"], false)
 
 
-for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableArray))
+for (CA, A) in ((CategoricalArray, Array), (DataValueCategoricalArray, DataValueArray))
     # Test vcat()
 
     # Test that vcat of compress arrays uses a reftype that doesn't overflow
@@ -164,9 +164,9 @@ for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableAr
     y = CA(["X", "Z", "Y", "X"])
     a = A(["Z", "Y", "X", "Young"])
     # Test with null values
-    if CA === NullableCategoricalArray
-        x[3] = Nullable()
-        y[3] = a[2] = Nullable()
+    if CA === DataValueCategoricalArray
+        x[3] = DataValue()
+        y[3] = a[2] = DataValue()
     end
     @test copy!(x, 1, y, 2) === x
     @test x == a
@@ -194,8 +194,8 @@ for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableAr
     @test resize!(x, 3) === x
     @test x == A(["Old", "Young", "Middle"])
     @test resize!(x, 4) === x
-    if CA === NullableCategoricalArray
-        @test x == A(["Old", "Young", "Middle", Nullable()])
+    if CA === DataValueCategoricalArray
+        @test x == A(["Old", "Young", "Middle", DataValue()])
     else
         @test x[1:3] == A(["Old", "Young", "Middle"])
         @test !isassigned(x, 4)
@@ -319,11 +319,11 @@ for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableAr
     @test isordered(x)
 
     # Test with null values
-    if CA === NullableCategoricalArray
-        x[3] = Nullable()
+    if CA === DataValueCategoricalArray
+        x[3] = DataValue()
         y = reshape(x, 1, 4)
         @test isa(y, CA{String, 2, CategoricalArrays.DefaultRefType})
-        @test y == A(["Old" "Young" Nullable() "Young"])
+        @test y == A(["Old" "Young" DataValue() "Young"])
         @test levels(x) == levels(y)
         @test isordered(x)
     end
@@ -346,8 +346,8 @@ for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableAr
         R in (DefaultRefType, UInt8, UInt, Int8, Int),
         (A2, CA2, CVM2, N) in ((Array, CategoricalArray, CategoricalVector, 1),
                                (Array, CategoricalArray, CategoricalMatrix, 2),
-                               (NullableArray, NullableCategoricalArray, NullableCategoricalVector, 1),
-                               (NullableArray, NullableCategoricalArray, NullableCategoricalMatrix, 2))
+                               (DataValueArray, DataValueCategoricalArray, DataValueCategoricalVector, 1),
+                               (DataValueArray, DataValueCategoricalArray, DataValueCategoricalMatrix, 2))
         if CVM2 <: AbstractVector
             x = CA{String, 1, R}(["A", "B"], ordered=ordered_orig)
         else
@@ -438,8 +438,8 @@ for (CA, A) in ((CategoricalArray, Array), (NullableCategoricalArray, NullableAr
     end
 end
 
-# Check that converting from NullableCategoricalArray to CategoricalArray fails with nulls
-x = NullableCategoricalArray(1)
+# Check that converting from DataValueCategoricalArray to CategoricalArray fails with nulls
+x = DataValueCategoricalArray(1)
 @test_throws NullException CategoricalArray(x)
 @test_throws NullException convert(CategoricalArray, x)
 
@@ -455,8 +455,8 @@ ca2 = CategoricalArray([4, 3, 2])
 @test (1 in ca1) === true
 @test (5 in ca1) === false
 
-nca1 = NullableCategoricalArray([1, 2, 3])
-nca2 = NullableCategoricalArray([4, 3, 2])
+nca1 = DataValueCategoricalArray([1, 2, 3])
+nca2 = DataValueCategoricalArray([4, 3, 2])
 
 @test (ca1[1] in nca1) === false
 @test (1 in nca1) === false
@@ -465,7 +465,7 @@ nca2 = NullableCategoricalArray([4, 3, 2])
 @test (nca2[2] in nca1) === true
 @test (nca2[1] in nca1) === false
 
-@test (Nullable(1) in nca1) === true
-@test (Nullable(5) in nca1) === false
+@test (DataValue(1) in nca1) === true
+@test (DataValue(5) in nca1) === false
 
 end

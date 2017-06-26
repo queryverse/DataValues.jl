@@ -1,11 +1,11 @@
-## Common code for CategoricalArray and NullableCategoricalArray
+## Common code for CategoricalArray and DataValueCategoricalArray
 
 import Base: convert, copy, copy!, getindex, setindex!, similar, size,
              unique, vcat, in
 
 # Used for keyword argument default value
 _isordered(x::AbstractCategoricalArray) = isordered(x)
-_isordered(x::AbstractNullableCategoricalArray) = isordered(x)
+_isordered(x::AbstractDataValueCategoricalArray) = isordered(x)
 _isordered(x::Any) = false
 
 function reftype(sz::Int)
@@ -21,7 +21,7 @@ function reftype(sz::Int)
 end
 
 for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
-                  (:NullableCategoricalArray, :NullableCategoricalVector, :NullableCategoricalMatrix))
+                  (:DataValueCategoricalArray, :DataValueCategoricalVector, :DataValueCategoricalMatrix))
     @eval begin
         As = $(string(A))
         Vs = $(string(V))
@@ -51,9 +51,9 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
         ordering of levels or not (see [`isordered`](@ref)).
 
             $As(A::CategoricalArray; ordered::Bool=false)
-            $As(A::NullableCategoricalArray; ordered::Bool=false)
+            $As(A::DataValueCategoricalArray; ordered::Bool=false)
 
-        If `A` is already a `CategoricalArray` or a `NullableCategoricalArray`, its levels
+        If `A` is already a `CategoricalArray` or a `DataValueCategoricalArray`, its levels
         are preserved; the same applies to the ordered property and the reference type unless
         explicitly overriden.
         """ ->
@@ -81,9 +81,9 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
         ordering of levels or not (see [`isordered`](@ref)).
 
             $Vs(A::CategoricalVector; ordered::Bool=false)
-            $Vs(A::NullableCategoricalVector; ordered::Bool=false)
+            $Vs(A::DataValueCategoricalVector; ordered::Bool=false)
 
-        If `A` is already a `CategoricalVector` or a `NullableCategoricalVector`, its levels
+        If `A` is already a `CategoricalVector` or a `DataValueCategoricalVector`, its levels
         are preserved; the same applies to the ordered property and the reference type unless
         explicitly overriden.
         """ ->
@@ -111,9 +111,9 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
         ordering of levels or not (see [`isordered`](@ref)).
 
             $Ms(A::CategoricalMatrix; ordered::Bool=isordered(A))
-            $Ms(A::NullableCategoricalMatrix; ordered::Bool=isordered(A))
+            $Ms(A::DataValueCategoricalMatrix; ordered::Bool=isordered(A))
 
-        If `A` is already a `CategoricalMatrix` or a `NullableCategoricalMatrix`, its levels
+        If `A` is already a `CategoricalMatrix` or a `DataValueCategoricalMatrix`, its levels
         are preserved; the same applies to the ordered property and the reference type unless
         explicitly overriden.
         """ ->
@@ -269,7 +269,7 @@ for (A, V, M) in ((:CategoricalArray, :CategoricalVector, :CategoricalMatrix),
                 throw(LevelsException{T, R}(levels(A)[typemax(R)+1:end]))
             end
 
-            if $A <: CategoricalArray && isa(A, NullableCategoricalArray)
+            if $A <: CategoricalArray && isa(A, DataValueCategoricalArray)
                 any(x -> x == 0, A.refs) && throw(NullException())
             end
 
@@ -418,13 +418,13 @@ copy!{T,N}(dest::CatArray{T, N}, src::CatArray{T, N}) =
     copy!(dest, 1, src, 1, length(src))
 
 arraytype{T<:CategoricalArray}(::Type{T}) = CategoricalArray
-arraytype{T<:NullableCategoricalArray}(::Type{T}) = NullableCategoricalArray
+arraytype{T<:DataValueCategoricalArray}(::Type{T}) = DataValueCategoricalArray
 
 """
     similar(A::CategoricalArray, element_type=eltype(A), dims=size(A))
-    similar(A::NullableCategoricalArray,element_type=eltype(A), dims=size(A))
+    similar(A::DataValueCategoricalArray,element_type=eltype(A), dims=size(A))
 
-For `CategoricalArray` and `NullableCategoricalArray`, preserves the ordered property
+For `CategoricalArray` and `DataValueCategoricalArray`, preserves the ordered property
 of `A` (see [`isordered`](@ref)).
 """
 similar{S, T, M, N, R}(A::CatArray{S, M, R}, ::Type{T}, dims::NTuple{N, Int}) =
@@ -432,7 +432,7 @@ similar{S, T, M, N, R}(A::CatArray{S, M, R}, ::Type{T}, dims::NTuple{N, Int}) =
 
 """
     compress(A::CategoricalArray)
-    compress(A::NullableCategoricalArray)
+    compress(A::DataValueCategoricalArray)
 
 Return a copy of categorical array `A` using the smallest reference type able to hold the
 number of [`levels`](@ref) of `A`.
@@ -447,7 +447,7 @@ end
 
 """
     decompress(A::CategoricalArray)
-    decompress(A::NullableCategoricalArray)
+    decompress(A::DataValueCategoricalArray)
 
 Return a copy of categorical array `A` using the default reference type ($DefaultRefType).
 If `A` is using a small reference type (such as `UInt8` or `UInt16`) the decompressed array
@@ -460,7 +460,7 @@ decompress{T, N}(A::CatArray{T, N}) =
     convert(arraytype(typeof(A)){T, N, DefaultRefType}, A)
 
 arraytype(A::CategoricalArray...) = CategoricalArray
-arraytype(A::CatArray...) = NullableCategoricalArray
+arraytype(A::CatArray...) = DataValueCategoricalArray
 
 function vcat(A::CatArray...)
     ordered = any(isordered, A) && all(a->isordered(a) || isempty(levels(a)), A)
@@ -495,7 +495,7 @@ end
 
 """
     levels(A::CategoricalArray)
-    levels(A::NullableCategoricalArray)
+    levels(A::DataValueCategoricalArray)
 
 Return the levels of categorical array `A`. This may include levels which do not actually appear
 in the data (see [`droplevels!`](@ref)).
@@ -514,8 +514,8 @@ function _levels!(A::CatArray, newlevels::Vector; nullok=false)
         deleted = [!(l in newlevels) for l in index(A.pool)]
         @inbounds for (i, x) in enumerate(A.refs)
             if isa(A, CategoricalArray) && deleted[x]
-                throw(ArgumentError("cannot remove level $(repr(index(A.pool)[x])) as it is used at position $i. Convert array to a Nullable$(typeof(A).name.name) if you want to transform some levels to missing values."))
-            elseif isa(A, NullableCategoricalArray) && !nullok && x > 0 && deleted[x]
+                throw(ArgumentError("cannot remove level $(repr(index(A.pool)[x])) as it is used at position $i. Convert array to a DataValue$(typeof(A).name.name) if you want to transform some levels to missing values."))
+            elseif isa(A, DataValueCategoricalArray) && !nullok && x > 0 && deleted[x]
                 throw(ArgumentError("cannot remove level $(repr(index(A.pool)[x])) as it is used at position $i and nullok=false."))
             end
         end
@@ -541,7 +541,7 @@ function _unique{S<:AbstractArray, T<:Integer}(::Type{S},
                                                refs::AbstractArray{T},
                                                pool::CategoricalPool)
     seen = fill(false, length(index(pool))+1)
-    tracknulls = eltype(S) <: Nullable
+    tracknulls = eltype(S) <: DataValue
     # If we don't track nulls, short-circuit even if none has been seen
     seen[1] = !tracknulls
     batch = 0
@@ -557,14 +557,14 @@ function _unique{S<:AbstractArray, T<:Integer}(::Type{S},
     seennull = shift!(seen)
     res = S(index(pool)[seen][sortperm(pool.order[seen])])
     if tracknulls && seennull
-        push!(res, Nullable{eltype(index(pool))}())
+        push!(res, DataValue{eltype(index(pool))}())
     end
     res
 end
 
 """
     unique(A::CategoricalArray)
-    unique(A::NullableCategoricalArray)
+    unique(A::DataValueCategoricalArray)
 
 Return levels which appear in `A`, in the same order as [`levels`](@ref)
 (and not in their order of appearance). This function is significantly slower than
@@ -574,7 +574,7 @@ function unique end
 
 """
     droplevels!(A::CategoricalArray)
-    droplevels!(A::NullableCategoricalArray)
+    droplevels!(A::DataValueCategoricalArray)
 
 Drop levels which do not appear in categorical array `A` (so that they will no longer be
 returned by [`levels`](@ref)).
@@ -583,7 +583,7 @@ function droplevels! end
 
 """
     isordered(A::CategoricalArray)
-    isordered(A::NullableCategoricalArray)
+    isordered(A::DataValueCategoricalArray)
 
 Test whether entries in `A` can be compared using `<`, `>` and similar operators,
 using the ordering of levels.
@@ -592,7 +592,7 @@ isordered(A::CatArray) = isordered(A.pool)
 
 """
     ordered!(A::CategoricalArray, ordered::Bool)
-    ordered!(A::NullableCategoricalArray, ordered::Bool)
+    ordered!(A::DataValueCategoricalArray, ordered::Bool)
 
 Set whether entries in `A` can be compared using `<`, `>` and similar operators,
 using the ordering of levels. Return the modified `A`.
@@ -636,8 +636,8 @@ end
 """
     categorical{T}(A::AbstractArray{T}[, compress::Bool]; ordered::Bool=false)
 
-Construct a categorical array with the values from `A`. If `T<:Nullable`, return a
-`NullableCategoricalArray{T}`; else, return a `CategoricalArray{T}`.
+Construct a categorical array with the values from `A`. If `T<:DataValue`, return a
+`DataValueCategoricalArray{T}`; else, return a `CategoricalArray{T}`.
 
 If the element type supports it, levels are sorted in ascending order;
 else, they are kept in their order of appearance in `A`. The `ordered` keyword
@@ -651,34 +651,34 @@ the function where the call is made. Therefore, use this option with caution (th
 one-argument version does not suffer from this problem).
 
     categorical{T}(A::CategoricalArray{T}[, compress::Bool]; ordered::Bool=isordered(A))
-    categorical{T}(A::NullableCategoricalArray{T}[, compress::Bool]; ordered::Bool=isordered(A))
+    categorical{T}(A::DataValueCategoricalArray{T}[, compress::Bool]; ordered::Bool=isordered(A))
 
-If `A` is already a `CategoricalArray` or a `NullableCategoricalArray`, its levels
+If `A` is already a `CategoricalArray` or a `DataValueCategoricalArray`, its levels
 are preserved; the same applies to the ordered property, and to the reference type
 unless `compress` is passed.
 """
 function categorical end
 
 categorical(A::AbstractArray; ordered=_isordered(A)) = CategoricalArray(A, ordered=ordered)
-categorical{T<:Nullable}(A::AbstractArray{T}; ordered=_isordered(A)) =
-    NullableCategoricalArray(A, ordered=ordered)
+categorical{T<:DataValue}(A::AbstractArray{T}; ordered=_isordered(A)) =
+    DataValueCategoricalArray(A, ordered=ordered)
 
 # Type-unstable methods
 function categorical{T, N}(A::AbstractArray{T, N}, compress; ordered=_isordered(A))
     RefType = compress ? reftype(length(unique(A))) : DefaultRefType
     CategoricalArray{T, N, RefType}(A, ordered=ordered)
 end
-function categorical{T<:Nullable, N}(A::AbstractArray{T, N}, compress; ordered=_isordered(A))
+function categorical{T<:DataValue, N}(A::AbstractArray{T, N}, compress; ordered=_isordered(A))
     RefType = compress ? reftype(length(unique(A))) : DefaultRefType
-    NullableCategoricalArray{T, N, RefType}(A, ordered=ordered)
+    DataValueCategoricalArray{T, N, RefType}(A, ordered=ordered)
 end
 function categorical{T, N, R}(A::CategoricalArray{T, N, R}, compress; ordered=_isordered(A))
     RefType = compress ? reftype(length(levels(A))) : R
     CategoricalArray{T, N, RefType}(A, ordered=ordered)
 end
-function categorical{T, N, R}(A::NullableCategoricalArray{T, N, R}, compress; ordered=_isordered(A))
+function categorical{T, N, R}(A::DataValueCategoricalArray{T, N, R}, compress; ordered=_isordered(A))
     RefType = compress ? reftype(length(levels(A))) : R
-    NullableCategoricalArray{T, N, RefType}(A, ordered=ordered)
+    DataValueCategoricalArray{T, N, RefType}(A, ordered=ordered)
 end
 
 
@@ -687,7 +687,7 @@ end
 
 """
     levels!(A::CategoricalArray, newlevels::Vector)
-    levels!(A::NullableCategoricalArray, newlevels::Vector; nullok::Bool=false)
+    levels!(A::DataValueCategoricalArray, newlevels::Vector; nullok::Bool=false)
 
 Set the levels categorical array `A`. The order of appearance of levels will be respected
 by [`levels`](@ref), which may affect display of results in some operations; if `A` is
@@ -696,7 +696,7 @@ using `<`, `>` and similar operators. Reordering levels will never affect the va
 of entries in the array.
 
 If `A` is a `CategoricalArray`, `newlevels` must include all levels which appear in the data.
-The same applies if `A` is a `NullableCategoricalArray`, unless `nullok=false` is passed: in
+The same applies if `A` is a `DataValueCategoricalArray`, unless `nullok=false` is passed: in
 that case, entries corresponding to missing levels will be set to null.
 """
 function levels! end

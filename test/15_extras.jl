@@ -2,16 +2,16 @@ module TestExtras
 
 using Base.Test
 using CategoricalArrays
-using NullableArrays
+using DataValues
 using Compat
 
-# == currently throws an error for Nullables
+# == currently throws an error for DataValues
 const ==  = isequal
 
 # Test cut
 
-for (A, CA) in zip((Array, NullableArray, Array{Nullable}),
-                    (CategoricalArray, NullableCategoricalArray, NullableCategoricalArray))
+for (A, CA) in zip((Array, DataValueArray, Array{DataValue}),
+                    (CategoricalArray, DataValueCategoricalArray, DataValueCategoricalArray))
     x = @inferred cut(A([2, 3, 5]), [1, 3, 6])
     @test x == A(["[1, 3)", "[3, 6)", "[3, 6)"])
     @test isa(x, CA{String, 1})
@@ -38,7 +38,7 @@ for (A, CA) in zip((Array, NullableArray, Array{Nullable}),
         @test err.value.msg == "value 5 (at index 3) does not fall inside the breaks: adapt them manually, or pass extend=true"
     else
         x = @inferred cut(A([2, 3, 5]), [2, 5], nullok=true)
-        @test x == A(["[2, 5)", "[2, 5)", Nullable()])
+        @test x == A(["[2, 5)", "[2, 5)", DataValue()])
         @test isa(x, CA{String, 1})
         @test isordered(x)
         @test levels(x) == ["[2, 5)"]

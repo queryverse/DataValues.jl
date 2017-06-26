@@ -17,7 +17,7 @@ function fill_refs!(refs::AbstractArray, X::AbstractArray,
     end
 end
 
-function fill_refs!{T<:Nullable}(refs::AbstractArray, X::AbstractArray{T},
+function fill_refs!{T<:DataValue}(refs::AbstractArray, X::AbstractArray{T},
                                   breaks::AbstractVector, extend::Bool, nullok::Bool)
     n = length(breaks)
     lower = first(breaks)
@@ -39,7 +39,7 @@ function fill_refs!{T<:Nullable}(refs::AbstractArray, X::AbstractArray{T},
     end
 end
 
-function fill_refs!(refs::AbstractArray, X::NullableArray,
+function fill_refs!(refs::AbstractArray, X::DataValueArray,
                     breaks::AbstractVector, extend::Bool, nullok::Bool)
     n = length(breaks)
     lower = first(breaks)
@@ -63,11 +63,11 @@ end
 
 
 _extrema(X::Any) = extrema(X)
-# NullableArrays provide a more efficient version with higher precedence
-_extrema{T<:Nullable}(X::AbstractArray{T}) = (minimum(X), maximum(X))
+# DataValueArrays provide a more efficient version with higher precedence
+_extrema{T<:DataValue}(X::AbstractArray{T}) = (minimum(X), maximum(X))
 
 unwrap(x::Any) = x
-unwrap(x::Nullable) = x.value
+unwrap(x::DataValue) = x.value
 
 """
     cut(x::AbstractArray, breaks::AbstractVector;
@@ -85,10 +85,10 @@ i.e. the lower bound is included and the upper bound is excluded.
   intervals; if empty, default labels are used.
 
 
-    cut(x::AbstractArray{<:Nullable}, breaks::AbstractVector;
+    cut(x::AbstractArray{<:DataValue}, breaks::AbstractVector;
         extend::Bool=false, labels::AbstractVector=[]), nullok::Bool=false)
 
-For nullable arrays, return a `NullableCategoricalArray`. If `nullok=true`, values outside
+For nullable arrays, return a `DataValueCategoricalArray`. If `nullok=true`, values outside
 of breaks result in null values.
 """
 function cut{T, N, U<:AbstractString}(x::AbstractArray{T, N}, breaks::AbstractVector;
@@ -140,8 +140,8 @@ function cut{T, N, U<:AbstractString}(x::AbstractArray{T, N}, breaks::AbstractVe
     end
 
     pool = CategoricalPool(levs, true)
-    if T <: Nullable
-        NullableCategoricalArray{String, N, DefaultRefType}(refs, pool)
+    if T <: DataValue
+        DataValueCategoricalArray{String, N, DefaultRefType}(refs, pool)
     else
         CategoricalArray{String, N, DefaultRefType}(refs, pool)
     end

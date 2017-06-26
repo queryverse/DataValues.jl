@@ -2,7 +2,7 @@ module TestRecode
     using Base.Test
     using CategoricalArrays
     using CategoricalArrays: DefaultRefType, CatArray, CatVector
-    using NullableArrays
+    using DataValues
 
 
     ## Test recode!, used by recode
@@ -21,12 +21,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1=>100, 2:4=>0, [5; 9:10]=>-1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [6, 7, 8, 100, 0, -1]
             @test !isordered(y)
@@ -44,12 +44,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1=>100, 2:4=>100, [5; 9:10]=>-1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 100, 100, 100, -1, 6, 7, 8, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 100, 100, 100, -1, 6, 7, 8, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [6, 7, 8, 100, -1]
             @test !isordered(y)
@@ -68,12 +68,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1=>100, 2:4=>0, [5; 9:10]=>-1, 100=>1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [6, 7, 8, 100, 0, -1, 1]
             @test !isordered(y)
@@ -91,12 +91,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 100, 1=>100, 2:4=>100, [5; 9:10]=>-1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 100, 100, 100, -1, 100, 100, 100, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 100, 100, 100, -1, 100, 100, 100, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [100, -1]
             @test !isordered(y)
@@ -114,12 +114,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, -10, 1=>100, 2:4=>0, [5; 9:10]=>-1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, -10, -10, -10, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, -10, -10, -10, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [100, 0, -1, -10]
             @test !isordered(y)
@@ -136,11 +136,11 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1.0=>100, 2:4=>0, [5; 9:10]=>-1)
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [6, 7, 8, 100, 0, -1]
             @test !isordered(y)
@@ -158,12 +158,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1=>100, 2:4=>0, [5; 9:10]=>-1, 1:10=>0)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 0, 0, 0, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 0, 0, 0, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [100, 0, -1]
             @test !isordered(y)
@@ -181,12 +181,12 @@ module TestRecode
             @test !isordered(y)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)), x)
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)), x)
         z = @inferred recode!(y, x, 1=>100, 2:4=>0, [5; 9:10]=>-1)
         @test y === z
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(y, CatArray)
             @test levels(y) == [6, 7, 8, 100, 0, -1]
             @test !isordered(y)
@@ -194,8 +194,8 @@ module TestRecode
     end
 
     # Recoding nullable array to non-nullable categorical array: check that error is thrown
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"]))
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"]))
         y = Vector{String}(4)
         @test_throws MethodError recode!(y, x, "a", "c"=>"b")
 
@@ -204,13 +204,13 @@ module TestRecode
     end
 
     # Recoding nullable array with null value and default
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"])),
-        y in (similar(x), Array{Nullable{String}}(size(x)),
-              NullableArray{String}(size(x)), NullableCategoricalArray{String}(size(x)), x)
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
+        y in (similar(x), Array{DataValue{String}}(size(x)),
+              DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
         z = @inferred recode!(y, x, "a", "c"=>"b")
         @test y === z
-        @test isequal(y, Nullable{String}["a", Nullable(), "b", "a"])
+        @test isequal(y, DataValue{String}["a", DataValue(), "b", "a"])
         if isa(y, CatArray)
             @test levels(y) == ["b", "a"]
             @test !isordered(y)
@@ -218,13 +218,13 @@ module TestRecode
     end
 
     # Recoding nullable array with null value and no default
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"])),
-        y in (similar(x), Array{Nullable{String}}(size(x)),
-              NullableArray{String}(size(x)), NullableCategoricalArray{String}(size(x)), x)
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
+        y in (similar(x), Array{DataValue{String}}(size(x)),
+              DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
         z = @inferred recode!(y, x, "c"=>"b")
         @test y === z
-        @test isequal(y, Nullable{String}["a", Nullable(), "b", "d"])
+        @test isequal(y, DataValue{String}["a", DataValue(), "b", "d"])
         if isa(y, CatArray)
             @test levels(y) == ["a", "d", "b"]
             @test !isordered(y)
@@ -232,13 +232,13 @@ module TestRecode
     end
 
     # Recoding nullable array with null value, no default and with null as a key pair
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"])),
-        y in (similar(x), Array{Nullable{String}}(size(x)),
-              NullableArray{String}(size(x)), NullableCategoricalArray{String}(size(x)), x)
-        z = @inferred recode!(y, x, "a", "c"=>"b", Nullable()=>"d")
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
+        y in (similar(x), Array{DataValue{String}}(size(x)),
+              DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
+        z = @inferred recode!(y, x, "a", "c"=>"b", DataValue()=>"d")
         @test y === z
-        @test isequal(y, Nullable{String}["a", "d", "b", "a"])
+        @test isequal(y, DataValue{String}["a", "d", "b", "a"])
         if isa(y, CatArray)
             @test levels(y) == ["b", "d", "a"]
             @test !isordered(y)
@@ -246,13 +246,13 @@ module TestRecode
     end
 
     # Recoding nullable array with null value, no default and with null as a key pair
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"])),
-        y in (similar(x), Array{Nullable{String}}(size(x)),
-              NullableArray{String}(size(x)), NullableCategoricalArray{String}(size(x)), x)
-        z = @inferred recode!(y, x, "c"=>"b", Nullable()=>"d")
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
+        y in (similar(x), Array{DataValue{String}}(size(x)),
+              DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
+        z = @inferred recode!(y, x, "c"=>"b", DataValue()=>"d")
         @test y === z
-        @test isequal(y, Nullable{String}["a", "d", "b", "d"])
+        @test isequal(y, DataValue{String}["a", "d", "b", "d"])
         if isa(y, CatArray)
             @test levels(y) == ["a", "b", "d"]
             @test !isordered(y)
@@ -260,11 +260,11 @@ module TestRecode
     end
 
     # Recoding into array with incompatible size
-    for x in (NullableArray(["a", Nullable(), "c", "d"]),
-              NullableCategoricalArray(["a", Nullable(), "c", "d"])),
-        y in (similar(x, 0), Array{Nullable{String}}(0),
-              NullableArray{String}(0), NullableCategoricalArray{String}(0))
-        @test_throws DimensionMismatch recode!(y, x, "c"=>"b", Nullable()=>"d")
+    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+              DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
+        y in (similar(x, 0), Array{DataValue{String}}(0),
+              DataValueArray{String}(0), DataValueCategoricalArray{String}(0))
+        @test_throws DimensionMismatch recode!(y, x, "c"=>"b", DataValue()=>"d")
     end
 
     # Recoding into array with incompatible element type
@@ -272,9 +272,9 @@ module TestRecode
         y in (similar(x, String), Array{String}(size(x)), CategoricalArray{String}(size(x)))
         @test_throws ArgumentError recode!(y, x, 1=>"a", 2:4=>"b", [5; 9:10]=>"c")
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10)),
-        y in (similar(x), Array{Nullable{Int}}(size(x)),
-              NullableArray{Int}(size(x)), NullableCategoricalArray{Int}(size(x)))
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10)),
+        y in (similar(x), Array{DataValue{Int}}(size(x)),
+              DataValueArray{Int}(size(x)), DataValueCategoricalArray{Int}(size(x)))
         res = @test_throws MethodError recode!(y, x, 1=>"a", 2:4=>"b", [5; 9:10]=>"c")
     end
 
@@ -290,10 +290,10 @@ module TestRecode
             @test !isordered(x)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10))
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10))
         z = @inferred recode!(x, 1=>100, 2:4=>0, [5; 9:10]=>-1)
         @test x === z
-        @test isequal(x, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        @test isequal(x, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(x, CatArray)
             @test levels(x) == [6, 7, 8, 100, 0, -1]
             @test !isordered(x)
@@ -310,10 +310,10 @@ module TestRecode
             @test !isordered(x)
         end
     end
-    for x in (Nullable{Int}[1:10;], NullableArray(1:10), NullableCategoricalArray(1:10))
+    for x in (DataValue{Int}[1:10;], DataValueArray(1:10), DataValueCategoricalArray(1:10))
         z = @inferred recode!(x, 1, 1=>100, 2:4=>0, [5; 9:10]=>-1)
         @test x === z
-        @test isequal(x, Nullable{Int}[100, 0, 0, 0, -1, 1, 1, 1, -1, -1])
+        @test isequal(x, DataValue{Int}[100, 0, 0, 0, -1, 1, 1, 1, -1, -1])
         if isa(x, CatArray)
             @test levels(x) == [100, 0, -1, 1]
             @test !isordered(x)
@@ -324,11 +324,11 @@ module TestRecode
     ## Test recode() promotion
 
     for x in (1:10, [1:10;], CategoricalArray(1:10),
-              NullableArray(1:10), NullableCategoricalArray(1:10))
+              DataValueArray(1:10), DataValueCategoricalArray(1:10))
         # Recoding from Int to Float64 due to a second value being Float64
         y = @inferred recode(x, 1=>100.0, 2:4=>0, [5; 9:10]=>-1)
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 6, 7, 8, -1, -1])
         else
             @test y == [100, 0, 0, 0, -1, 6, 7, 8, -1, -1]
         end
@@ -336,16 +336,16 @@ module TestRecode
             @test isa(y, CatVector{Float64, DefaultRefType})
             @test levels(y) == [6, 7, 8, 100, 0, -1]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{Float64}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{Float64}
         else
             @test typeof(y) === Vector{Float64}
         end
 
         # Recoding from Int to Float64, with Float64 default and all other values Int
         y = @inferred recode(x, -10.0, 1=>100, 2:4=>0, [5; 9:10]=>-1)
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, -10, -10, -10, -1, -1])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, -10, -10, -10, -1, -1])
         else
             @test y == [100, 0, 0, 0, -1, -10, -10, -10, -1, -1]
         end
@@ -353,16 +353,16 @@ module TestRecode
             @test isa(y, CatVector{Float64, DefaultRefType})
             @test levels(y) == [100, 0, -1, -10]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{Float64}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{Float64}
         else
             @test typeof(y) === Vector{Float64}
         end
 
         # Recoding from Int to Any
         y = @inferred recode(x, 1=>"a", 2:4=>0, [5; 9:10]=>-1)
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{Any}["a", 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{Any}["a", 0, 0, 0, -1, 6, 7, 8, -1, -1])
         else
             @test y == ["a", 0, 0, 0, -1, 6, 7, 8, -1, -1]
         end
@@ -370,16 +370,16 @@ module TestRecode
             @test isa(y, CatVector{Any, DefaultRefType})
             @test levels(y) == [6, 7, 8, "a", 0, -1]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{Any}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{Any}
         else
             @test typeof(y) === Vector{Any}
         end
 
         # Recoding from Int to String, with String default
         y = @inferred recode(x, "d", 1=>"a", 2:4=>"b", [5; 9:10]=>"c")
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{String}["a", "b", "b", "b", "c", "d", "d", "d", "c", "c"])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{String}["a", "b", "b", "b", "c", "d", "d", "d", "c", "c"])
         else
             @test y == ["a", "b", "b", "b", "c", "d", "d", "d", "c", "c"]
         end
@@ -387,16 +387,16 @@ module TestRecode
             @test isa(y, CatVector{String, DefaultRefType})
             @test levels(y) == ["a", "b", "c", "d"]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{String}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{String}
         else
             @test typeof(y) === Vector{String}
         end
 
         # Recoding from Int to String, with all original levels recoded
         y = @inferred recode(x, 1:4=>"a", [5; 9:10]=>"b", 6:8=>"c")
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{String}["a", "a", "a", "a", "b", "c", "c", "c", "b", "b"])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{String}["a", "a", "a", "a", "b", "c", "c", "c", "b", "b"])
         else
             @test y == ["a", "a", "a", "a", "b", "c", "c", "c", "b", "b"]
         end
@@ -404,16 +404,16 @@ module TestRecode
             @test isa(y, CatVector{String, DefaultRefType})
             @test levels(y) == ["a", "b", "c"]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{String}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{String}
         else
             @test typeof(y) === Vector{String}
         end
 
         # Recoding from Int to Int/String (i.e. Any), with default String and other values Int
         y = @inferred recode(x, "x", 1=>100, 2:4=>0, [5; 9:10]=>-1)
-        if eltype(x) <: Nullable
-            @test isequal(y, Nullable{Any}[100, 0, 0, 0, -1, "x", "x", "x", -1, -1])
+        if eltype(x) <: DataValue
+            @test isequal(y, DataValue{Any}[100, 0, 0, 0, -1, "x", "x", "x", -1, -1])
         else
             @test y == [100, 0, 0, 0, -1, "x", "x", "x", -1, -1]
         end
@@ -421,8 +421,8 @@ module TestRecode
             @test isa(y, CatVector{Any, DefaultRefType})
             @test levels(y) == [100, 0, -1, "x"]
             @test !isordered(y)
-        elseif eltype(x) <: Nullable
-            @test typeof(y) === NullableVector{Any}
+        elseif eltype(x) <: DataValue
+            @test typeof(y) === DataValueVector{Any}
         else
             @test typeof(y) === Vector{Any}
         end
@@ -437,37 +437,37 @@ module TestRecode
             "This will happen with recode() when not all original levels are recoded " *
             "(i.e. some are preserved) and their type is incompatible with that of recoded levels."
 
-        # Recoding from Int to Nullable{Int} with null default
-        y = @inferred recode(x, Nullable(), 1=>100, 2:4=>0, [5; 9:10]=>-1)
-        @test isequal(y, [100, 0, 0, 0, -1, Nullable(), Nullable(), Nullable(), -1, -1])
+        # Recoding from Int to DataValue{Int} with null default
+        y = @inferred recode(x, DataValue(), 1=>100, 2:4=>0, [5; 9:10]=>-1)
+        @test isequal(y, [100, 0, 0, 0, -1, DataValue(), DataValue(), DataValue(), -1, -1])
         if isa(x, CatArray)
-            @test isa(y, NullableCategoricalVector{Int, DefaultRefType})
+            @test isa(y, DataValueCategoricalVector{Int, DefaultRefType})
             @test levels(y) == [100, 0, -1]
             @test !isordered(y)
         else
-            @test typeof(y) === NullableVector{Int}
+            @test typeof(y) === DataValueVector{Int}
         end
 
-        # Recoding from Int to Nullable{Int} with nullable non-null default
-        y = @inferred recode(x, Nullable(1), 1=>100, 2:4=>0, [5; 9:10]=>-1)
-        @test isequal(y, Nullable{Int}[100, 0, 0, 0, -1, 1, 1, 1, -1, -1])
+        # Recoding from Int to DataValue{Int} with nullable non-null default
+        y = @inferred recode(x, DataValue(1), 1=>100, 2:4=>0, [5; 9:10]=>-1)
+        @test isequal(y, DataValue{Int}[100, 0, 0, 0, -1, 1, 1, 1, -1, -1])
         if isa(x, CatArray)
-            @test isa(y, NullableCategoricalVector{Int, DefaultRefType})
+            @test isa(y, DataValueCategoricalVector{Int, DefaultRefType})
             @test levels(y) == [100, 0, -1, 1]
             @test !isordered(y)
         else
-            @test typeof(y) === NullableVector{Int}
+            @test typeof(y) === DataValueVector{Int}
         end
 
-        # Recoding from Int to Nullable{Int} with null RHS
-        y = @inferred recode(x, 1=>Nullable(), 2:4=>0, [5; 9:10]=>-1)
-        @test isequal(y, [Nullable(), 0, 0, 0, -1, 6, 7, 8, -1, -1])
+        # Recoding from Int to DataValue{Int} with null RHS
+        y = @inferred recode(x, 1=>DataValue(), 2:4=>0, [5; 9:10]=>-1)
+        @test isequal(y, [DataValue(), 0, 0, 0, -1, 6, 7, 8, -1, -1])
         if isa(x, CatArray)
-            @test isa(y, NullableCategoricalVector{Int, DefaultRefType})
+            @test isa(y, DataValueCategoricalVector{Int, DefaultRefType})
             @test levels(y) == [6, 7, 8, 0, -1]
             @test !isordered(y)
         else
-            @test typeof(y) === NullableVector{Int}
+            @test typeof(y) === DataValueVector{Int}
         end
     end
 
@@ -583,21 +583,21 @@ module TestRecode
     @test levels(y) == ["b", "a"]
     @test !isordered(y)
 
-    # Recoding NullableCategoricalArray with null values and no default
-    x = NullableCategoricalArray(["a", "b", "c", "d"])
-    x[2] = Nullable()
+    # Recoding DataValueCategoricalArray with null values and no default
+    x = DataValueCategoricalArray(["a", "b", "c", "d"])
+    x[2] = DataValue()
     y = @inferred recode(x, "c"=>"b")
-    @test isequal(y, ["a", Nullable(), "b", "d"])
-    @test typeof(y) === NullableCategoricalVector{String, DefaultRefType}
+    @test isequal(y, ["a", DataValue(), "b", "d"])
+    @test typeof(y) === DataValueCategoricalVector{String, DefaultRefType}
     @test levels(y) == ["a", "b", "d"]
     @test !isordered(y)
 
-    # Recoding NullableCategoricalArray with null values and non-null default
-    x = NullableCategoricalArray(["a", "b", "c", "d"])
-    x[2] = Nullable()
+    # Recoding DataValueCategoricalArray with null values and non-null default
+    x = DataValueCategoricalArray(["a", "b", "c", "d"])
+    x[2] = DataValue()
     y = @inferred recode(x, "a", "c"=>"b")
-    @test isequal(y, ["a", Nullable(), "b", "a"])
-    @test typeof(y) === NullableCategoricalVector{String, DefaultRefType}
+    @test isequal(y, ["a", DataValue(), "b", "a"])
+    @test typeof(y) === DataValueCategoricalVector{String, DefaultRefType}
     @test levels(y) == ["b", "a"]
     @test !isordered(y)
 end

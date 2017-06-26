@@ -2,12 +2,12 @@ module TestView
 
 using Base.Test
 using CategoricalArrays
-using NullableArrays
+using DataValues
 
-# == currently throws an error for Nullables
+# == currently throws an error for DataValues
 (==) = isequal
 
-for (A, T) in zip((Array, NullableArray), (CategoricalArray, NullableCategoricalArray))
+for (A, T) in zip((Array, DataValueArray), (CategoricalArray, DataValueCategoricalArray))
     for order in (true, false)
         for a in (1:10, 10:-1:1, ["a", "c", "b", "b", "a"])
             for inds in [1:2, :, 1, []]

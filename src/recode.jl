@@ -1,25 +1,25 @@
 # Julia 0.5 support
 _isnull(x::Any) = false
-_isnull(x::Nullable) = isnull(x)
+_isnull(x::DataValue) = isnull(x)
 
 _unsafe_get(x::Any) = x
-_unsafe_get(x::Nullable) = x.value
+_unsafe_get(x::DataValue) = x.value
 
 if VERSION < v"0.6.0" # Fix ambiguities
     recode!(dest::AbstractArray, src::AbstractArray, pair::Pair, pairs::Pair...) =
         recode!(dest, src, nothing, pair, pairs...)
     recode!(dest::CategoricalArray, src::AbstractArray, pair::Pair, pairs::Pair...) =
         recode!(dest, src, nothing, pair, pairs...)
-    recode!(dest::NullableCategoricalArray, src::AbstractArray, pair::Pair, pairs::Pair...) =
+    recode!(dest::DataValueCategoricalArray, src::AbstractArray, pair::Pair, pairs::Pair...) =
         recode!(dest, src, nothing, pair, pairs...)
     recode!(dest::CategoricalArray, src::CatArray, pair::Pair, pairs::Pair...) =
         recode!(dest, src, nothing, pair, pairs...)
-    recode!(dest::NullableCategoricalArray, src::CatArray, pair::Pair, pairs::Pair...) =
+    recode!(dest::DataValueCategoricalArray, src::CatArray, pair::Pair, pairs::Pair...) =
         recode!(dest, src, nothing, pair, pairs...)
 
     recode(a::AbstractArray, pair::Pair, pairs::Pair...) = recode(a, nothing, pair, pairs...)
     recode(a::CategoricalArray, pair::Pair, pairs::Pair...) = recode(a, nothing, pair, pairs...)
-    recode(a::NullableCategoricalArray, pair::Pair, pairs::Pair...) = recode(a, nothing, pair, pairs...)
+    recode(a::DataValueCategoricalArray, pair::Pair, pairs::Pair...) = recode(a, nothing, pair, pairs...)
 end
 
 
@@ -38,11 +38,11 @@ Elements of `src` as well as values from `pairs` will be `convert`ed when possib
 on assignment.
 If an element matches more than one key, the first match is used.
 
-    recode!(dest::AbstractArray, src::AbstractArray{<:Nullable}[, default::Any], pairs::Pair...)
+    recode!(dest::AbstractArray, src::AbstractArray{<:DataValue}[, default::Any], pairs::Pair...)
 
 For a nullable array `src`, automatic lifting is applied: values are unwrapped before
 comparing them to the keys of `pairs` using `isequal`. Null values are never replaced
-with `default`: use `Nullable()` in a pair to recode them.
+with `default`: use `DataValue()` in a pair to recode them.
 """
 function recode! end
 
@@ -59,11 +59,11 @@ function recode!{T}(dest::AbstractArray{T}, src::AbstractArray, default::Any, pa
 
         for j in 1:length(pairs)
             p = pairs[j]
-            if eltype(src) <: Nullable
+            if eltype(src) <: DataValue
                 # FIXME: null values do not match a null inside a tuple or array, since that would
                 # require going over all values in the container (inefficient for ranges)
-                if (!isa(p.first, Union{AbstractArray, Tuple}) && !isa(p.first, Nullable) && isequal(x, Nullable(p.first))) ||
-                   (!isa(p.first, Union{AbstractArray, Tuple}) && isa(p.first, Nullable) && isequal(x, p.first)) ||
+                if (!isa(p.first, Union{AbstractArray, Tuple}) && !isa(p.first, DataValue) && isequal(x, DataValue(p.first))) ||
+                   (!isa(p.first, Union{AbstractArray, Tuple}) && isa(p.first, DataValue) && isequal(x, p.first)) ||
                    (isa(p.first, Union{AbstractArray, Tuple}) && !isnull(x) && unsafe_get(x) in p.first)
                     dest[i] = p.second
                     @goto nextitem
@@ -79,15 +79,15 @@ function recode!{T}(dest::AbstractArray{T}, src::AbstractArray, default::Any, pa
 
         # Value not in any of the pairs
         if _isnull(x)
-            dest[i] = Nullable()
+            dest[i] = DataValue()
         elseif default === nothing
             try
                 dest[i] = x
             catch err
                 isa(err, MethodError) || rethrow(err)
-                v = typeof(x) <: Nullable ? get(x) : x
-                T1 = typeof(x) <: Nullable ? eltype(typeof(x)) : typeof(x)
-                T2 = T <: Nullable ? eltype(T) : T
+                v = typeof(x) <: DataValue ? get(x) : x
+                T1 = typeof(x) <: DataValue ? eltype(typeof(x)) : typeof(x)
+                T2 = T <: DataValue ? eltype(T) : T
                 throw(ArgumentError("cannot `convert` value $(repr(v)) (of type $T1) to type of recoded levels ($T2). " *
                                     "This will happen with recode() when not all original levels are recoded " *
                                     "(i.e. some are preserved) and their type is incompatible with that of recoded levels."))
@@ -126,11 +126,11 @@ function recode!{T}(dest::CatArray{T}, src::AbstractArray, default::Any, pairs::
 
         for j in 1:length(pairs)
             p = pairs[j]
-            if eltype(src) <: Nullable
+            if eltype(src) <: DataValue
                 # FIXME: null values do not match a null inside a tuple or array, since that would
                 # require going over all values in the container (inefficient for ranges)
-                if (!isa(p.first, Union{AbstractArray, Tuple}) && !isa(p.first, Nullable) && isequal(x, Nullable(p.first))) ||
-                   (!isa(p.first, Union{AbstractArray, Tuple}) && isa(p.first, Nullable) && isequal(x, p.first)) ||
+                if (!isa(p.first, Union{AbstractArray, Tuple}) && !isa(p.first, DataValue) && isequal(x, DataValue(p.first))) ||
+                   (!isa(p.first, Union{AbstractArray, Tuple}) && isa(p.first, DataValue) && isequal(x, p.first)) ||
                    (isa(p.first, Union{AbstractArray, Tuple}) && !isnull(x) && unsafe_get(x) in p.first)
                     drefs[i] = dupvals ? pairmap[j] : j
                     @goto nextitem
@@ -146,14 +146,14 @@ function recode!{T}(dest::CatArray{T}, src::AbstractArray, default::Any, pairs::
 
         # Value not in any of the pairs
         if _isnull(x)
-            eltype(dest) <: Nullable || throw(NullException())
+            eltype(dest) <: DataValue || throw(NullException())
             drefs[i] = 0
         elseif default === nothing
             try
                 dest[i] = x # Need a dictionary lookup, and potentially adding a new level
             catch err
                 isa(err, MethodError) || rethrow(err)
-                T1 = typeof(x) <: Nullable ? eltype(typeof(x)) : typeof(x)
+                T1 = typeof(x) <: DataValue ? eltype(typeof(x)) : typeof(x)
                 throw(ArgumentError("cannot `convert` value $(repr(x)) (of type $T1) to type of recoded levels ($T). " *
                                     "This will happen with recode() when not all original levels are recoded "*
                                     "(i.e. some are preserved) and their type is incompatible with that of recoded levels."))
@@ -254,7 +254,7 @@ function recode!{T}(dest::CatArray{T}, src::CatArray, default::Any, pairs::Pair.
 
     @inbounds for i in eachindex(drefs)
         v = indexmap[srefs[i]+1]
-        if !(eltype(dest) <: Nullable)
+        if !(eltype(dest) <: DataValue)
             v > 0 || throw(NullException())
         end
         drefs[i] = v
@@ -321,21 +321,21 @@ julia> recode(1:10, 1=>100, 2:4=>0, [5; 9:10]=>-1)
  -1 
  ```
 
-     recode(a::AbstractArray{<:Nullable}[, default::Any], pairs::Pair...)
+     recode(a::AbstractArray{<:DataValue}[, default::Any], pairs::Pair...)
 
 For a nullable array `a`, automatic lifting is applied: values are unwrapped before
 comparing them to the keys of `pairs` using `isequal`. Null values are never replaced
-with `default`: use `Nullable()` in a pair to recode them.
+with `default`: use `DataValue()` in a pair to recode them.
 
-Return a `NullableArray` unless `default` is provided and not nullable, in which case
+Return a `DataValueArray` unless `default` is provided and not nullable, in which case
 an `Array` is returned.
 
 # Examples
 ```jldoctest
-julia> using NullableArrays
+julia> using DataValues
 
-julia> recode(NullableArray(1:10), 1=>100, 2:4=>0, [5; 9:10]=>-1, 6=>Nullable())
-10-element NullableArrays.NullableArray{Int64,1}:
+julia> recode(DataValueArray(1:10), 1=>100, 2:4=>0, [5; 9:10]=>-1, 6=>DataValue())
+10-element DataValues.DataValueArray{Int64,1}:
  100  
  0    
  0    
@@ -359,8 +359,8 @@ function recode(a::AbstractArray, default::Any, pairs::Pair...)
     # and using a wider type than necessary would be annoying
     T = default === nothing ? V : promote_type(typeof(default), V)
     # TODO: result should not be a nullable array when one of the pairs' LHS is null
-    if T <: Nullable || eltype(a) <: Nullable
-        dest = NullableArray{T <: Nullable ? eltype(T) : T}(size(a))
+    if T <: DataValue || eltype(a) <: DataValue
+        dest = DataValueArray{T <: DataValue ? eltype(T) : T}(size(a))
     else
         dest = Array{T}(size(a))
     end
@@ -374,8 +374,8 @@ function recode{S, N, R}(a::CatArray{S, N, R}, default::Any, pairs::Pair...)
     # and using a wider type than necessary would be annoying
     T = default === nothing ? V : promote_type(typeof(default), V)
     # TODO: result should not be a nullable array when one of the pairs' LHS is null
-    if T <: Nullable || eltype(a) <: Nullable
-        dest = NullableCategoricalArray{T <: Nullable ? eltype(T) : T, N, R}(size(a))
+    if T <: DataValue || eltype(a) <: DataValue
+        dest = DataValueCategoricalArray{T <: DataValue ? eltype(T) : T, N, R}(size(a))
     else
         dest = CategoricalArray{T, N, R}(size(a))
     end
