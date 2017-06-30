@@ -1,5 +1,9 @@
 function Base.DateTime{T<:AbstractString}(dt::DataValue{T}, format::AbstractString; locale::Base.Dates.Locale=Base.Dates.ENGLISH)
-    isnull(dt) ? ?T : ?(DateTime(get(dt), format, locale=locale))
+    isnull(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(get(dt), format, locale=locale))
+end
+
+function Base.Date{T<:AbstractString}(dt::DataValue{T}, format::AbstractString; locale::Base.Dates.Locale=Base.Dates.ENGLISH)
+    isnull(dt) ? DataValue{Date}() : DataValue{Date}(Date(get(dt), format, locale=locale))
 end
 
 for f in (:(Base.abs), :(Base.abs2), :(Base.conj),:(Base.sign))
