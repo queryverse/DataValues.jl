@@ -6,9 +6,6 @@ using DataValues
 using CategoricalArrays: DefaultRefType
 using Compat
 
-# == currently throws an error for DataValues
-(==) = isequal
-
 for ordered in (false, true)
     for R in (CategoricalArrays.DefaultRefType, UInt8, UInt, Int8, Int)
         # Vector with no null values
