@@ -101,3 +101,19 @@ function Base.pop!{T}(X::DataValueVector{T})
     val, isnull = pop!(X.values), pop!(X.isnull)
     isnull ? DataValue{T}() : DataValue(val)
 end
+
+function Base.copy!{T}(dest::DataValueArray{T},
+                    src::DataValueArray{T})
+    length(dest) >= length(src) || throw(BoundsError())
+
+    n = length(src)
+
+    if isbits(T)
+        unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
+    else
+        ccall(:jl_array_ptr_copy, Void, (Any, Ptr{Void}, Any, Ptr{Void}, Int),
+              dest.values, pointer(dest.values, 1), src.values, pointer(src.values, 1), n)
+    end
+    unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
+    return dest
+end
