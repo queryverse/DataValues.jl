@@ -5,9 +5,6 @@ using CategoricalArrays
 using DataValues
 using Compat
 
-# == currently throws an error for DataValues
-const ==  = isequal
-
 # Test cut
 
 for (A, CA) in zip((Array, DataValueArray, Array{DataValue}),
@@ -38,7 +35,11 @@ for (A, CA) in zip((Array, DataValueArray, Array{DataValue}),
         @test err.value.msg == "value 5 (at index 3) does not fall inside the breaks: adapt them manually, or pass extend=true"
     else
         x = @inferred cut(A([2, 3, 5]), [2, 5], nullok=true)
-        @test x == A(["[2, 5)", "[2, 5)", DataValue()])
+        if A <: DataValueArray
+            @test x == A(["[2, 5)", "[2, 5)", ""], [false, false, true])
+        else
+            @test x == A(["[2, 5)", "[2, 5)", DataValue{String}()])
+        end
         @test isa(x, CA{String, 1})
         @test isordered(x)
         @test levels(x) == ["[2, 5)"]

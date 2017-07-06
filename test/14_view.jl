@@ -4,9 +4,6 @@ using Base.Test
 using CategoricalArrays
 using DataValues
 
-# == currently throws an error for DataValues
-(==) = isequal
-
 for (A, T) in zip((Array, DataValueArray), (CategoricalArray, DataValueCategoricalArray))
     for order in (true, false)
         for a in (1:10, 10:-1:1, ["a", "c", "b", "b", "a"])

@@ -52,6 +52,9 @@ end
 @compat Base.:(==)(x::CategoricalValue, y::Any) = index(x.pool)[x.level] == y
 @compat Base.:(==)(x::Any, y::CategoricalValue) = y == x
 
+@compat Base.:(==)(x::CategoricalValue, y::DataValue) = isnull(y) ? false : index(x.pool)[x.level] == get(y)
+@compat Base.:(==)(x::DataValue, y::CategoricalValue) = y == x
+
 @inline function Base.isequal(x::CategoricalValue, y::CategoricalValue)
     if x.pool === y.pool
         return x.level == y.level

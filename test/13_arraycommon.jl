@@ -6,10 +6,6 @@ using DataValues
 using CategoricalArrays: DefaultRefType, index
 using Compat
 
-# == currently throws an error for DataValues
-(==) = isequal
-
-
 # Test that mergelevels handles mutually compatible orderings
 @test CategoricalArrays.mergelevels(true, [6, 2, 4, 8], [2, 3, 5, 4], [2, 4, 8]) ==
     ([6, 2, 3, 5, 4, 8], true)
@@ -195,7 +191,7 @@ for (CA, A) in ((CategoricalArray, Array), (DataValueCategoricalArray, DataValue
     @test x == A(["Old", "Young", "Middle"])
     @test resize!(x, 4) === x
     if CA === DataValueCategoricalArray
-        @test x == A(["Old", "Young", "Middle", DataValue()])
+        @test x == A(["Old", "Young", "Middle", ""], [false, false, false, true])
     else
         @test x[1:3] == A(["Old", "Young", "Middle"])
         @test !isassigned(x, 4)
@@ -323,7 +319,11 @@ for (CA, A) in ((CategoricalArray, Array), (DataValueCategoricalArray, DataValue
         x[3] = DataValue()
         y = reshape(x, 1, 4)
         @test isa(y, CA{String, 2, CategoricalArrays.DefaultRefType})
-        @test y == A(["Old" "Young" DataValue() "Young"])
+        if A <: DataValueArray
+            @test y == A(["Old" "Young" "" "Young"], [false false true false])
+        else
+            @test y == A(["Old" "Young" DataValue{String}() "Young"])
+        end
         @test levels(x) == levels(y)
         @test isordered(x)
     end

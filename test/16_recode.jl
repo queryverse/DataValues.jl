@@ -194,7 +194,7 @@ module TestRecode
     end
 
     # Recoding nullable array to non-nullable categorical array: check that error is thrown
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"]))
         y = Vector{String}(4)
         @test_throws MethodError recode!(y, x, "a", "c"=>"b")
@@ -204,13 +204,13 @@ module TestRecode
     end
 
     # Recoding nullable array with null value and default
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
         y in (similar(x), Array{DataValue{String}}(size(x)),
               DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
         z = @inferred recode!(y, x, "a", "c"=>"b")
         @test y === z
-        @test isequal(y, DataValue{String}["a", DataValue(), "b", "a"])
+        @test isequal(y, DataValue{String}["a", DataValue{String}(), "b", "a"])
         if isa(y, CatArray)
             @test levels(y) == ["b", "a"]
             @test !isordered(y)
@@ -218,7 +218,7 @@ module TestRecode
     end
 
     # Recoding nullable array with null value and no default
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
         y in (similar(x), Array{DataValue{String}}(size(x)),
               DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
@@ -232,7 +232,7 @@ module TestRecode
     end
 
     # Recoding nullable array with null value, no default and with null as a key pair
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
         y in (similar(x), Array{DataValue{String}}(size(x)),
               DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
@@ -246,7 +246,7 @@ module TestRecode
     end
 
     # Recoding nullable array with null value, no default and with null as a key pair
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
         y in (similar(x), Array{DataValue{String}}(size(x)),
               DataValueArray{String}(size(x)), DataValueCategoricalArray{String}(size(x)), x)
@@ -260,7 +260,7 @@ module TestRecode
     end
 
     # Recoding into array with incompatible size
-    for x in (DataValueArray(["a", DataValue(), "c", "d"]),
+    for x in (DataValueArray(["a", "", "c", "d"], [false, true, false, false]),
               DataValueCategoricalArray(["a", DataValue(), "c", "d"])),
         y in (similar(x, 0), Array{DataValue{String}}(0),
               DataValueArray{String}(0), DataValueCategoricalArray{String}(0))

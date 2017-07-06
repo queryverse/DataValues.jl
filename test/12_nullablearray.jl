@@ -98,13 +98,11 @@ for ordered in (false, true)
                 @test ordered!(x, true) === x
                 @test isordered(x) === true
             end
-            @test get(x[1] > x[2])
-            @test get(x[3] > x[2])
+            @test x[1] > x[2]
+            @test x[3] > x[2]
 
             @test ordered!(x, false) === x
             @test isordered(x) === false
-            @test_throws Exception x[1] > x[2]
-            @test_throws Exception x[3] > x[2]
 
             @test x[1] === DataValue(x.pool.valindex[1])
             @test x[2] === DataValue(x.pool.valindex[2])
@@ -239,8 +237,8 @@ for ordered in (false, true)
 
 
         # Vector with null values
-        for a in (DataValue{String}["a", "b", DataValue()],
-                  DataValueArray(DataValue{String}["a", "b", DataValue()]))
+        for a in (DataValue{String}["a", "b", DataValue{String}()],
+                  DataValueArray(["a", "b", "c"], [false, false, true]))
             x = DataValueCategoricalVector{String, R}(a, ordered=ordered)
 
             @test x == a
@@ -687,8 +685,8 @@ for ordered in (false, true)
 
 
         # Matrix with null values
-        for a in (DataValue{String}["a" DataValue() "c"; "b" "a" DataValue()],
-                  DataValueArray(DataValue{String}["a" DataValue() "c"; "b" "a" DataValue()]))
+        for a in (DataValue{String}["a" DataValue{String}() "c"; "b" "a" DataValue{String}()],
+                  DataValueArray(["a" "" "c"; "b" "a" ""], [false true false; false false true]))
             x = DataValueCategoricalMatrix{String, R}(a, ordered=ordered)
 
             @test x == a
@@ -1024,16 +1022,16 @@ r = vcat(ca1, ca2)
 
 x = DataValueCategoricalArray(["Old", "Young", "Middle", DataValue(), "Young"])
 @test levels(x) == ["Middle", "Old", "Young"]
-@test unique(x) == DataValueArray(["Middle", "Old", "Young", DataValue()])
+@test unique(x) == DataValueArray(["Middle", "Old", "Young", ""], [false, false, false, true])
 @test levels!(x, ["Young", "Middle", "Old"]) === x
 @test levels(x) == ["Young", "Middle", "Old"]
-@test unique(x) == DataValueArray(["Young", "Middle", "Old", DataValue()])
+@test unique(x) == DataValueArray(["Young", "Middle", "Old", ""], [false, false, false, true])
 @test levels!(x, ["Young", "Middle", "Old", "Unused"]) === x
 @test levels(x) == ["Young", "Middle", "Old", "Unused"]
-@test unique(x) == DataValueArray(["Young", "Middle", "Old", DataValue()])
+@test unique(x) == DataValueArray(["Young", "Middle", "Old", ""], [false, false, false, true])
 @test levels!(x, ["Unused1", "Young", "Middle", "Old", "Unused2"]) === x
 @test levels(x) == ["Unused1", "Young", "Middle", "Old", "Unused2"]
-@test unique(x) == DataValueArray(["Young", "Middle", "Old", DataValue()])
+@test unique(x) == DataValueArray(["Young", "Middle", "Old", ""], [false, false, false, true])
 
 x = DataValueCategoricalArray([DataValue{String}()])
 @test isa(levels(x), Vector{String}) && isempty(levels(x))
@@ -1049,6 +1047,6 @@ x = DataValueCategoricalArray(repeat(1:1500, inner=10))
 @test levels!(x, [1600:-1:1; 2000]) === x
 x[3] = DataValue()
 @test levels(x) == [1600:-1:1; 2000]
-@test unique(x) == DataValueArray([1500:-1:3; 2; 1; DataValue()])
+@test unique(x) == DataValueArray([1500:-1:3; 2; 1; 0], [fill(false,1500); true])
 
 end
