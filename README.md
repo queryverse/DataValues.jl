@@ -34,6 +34,8 @@ semantics for ``DataValue``s.
 ``DataValue`` arguments without the use of the dot broadcast syntax.
 - The package provides a configurable whitelist approach to lifting (see
 below).
+- One can access or unpack the value within a ``DataValue`` either via the
+``get(x)`` function, or use the ``x[]`` syntax.
 
 Any help with this package would be greatly appreciated!
 
