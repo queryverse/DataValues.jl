@@ -85,6 +85,14 @@ end
 
 get(x::DataValue) = isnull(x) ? throw(DataValueException()) : x.value
 
+"""
+    getindex(x::DataValue)
+
+Attempt to access the value of `x`. Throw a `DataValueException` if the
+value is not present. Usually, this is written as `x[]`.
+"""
+Base.getindex(x::DataValue) = isnull(x) ? throw(DataValueException()) : x.value
+
 get(x::DataValue{Union{}}) = throw(DataValueException())
 get(x::DataValue{Union{}}, y) = y
 

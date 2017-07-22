@@ -1,3 +1,6 @@
+# DataValues.jl v0.2.0 Release Notes
+* Add [] as an alternative to get
+
 # DataValues.jl v0.1.0 Release Notes
 * Add configurable whitelist lifting
 

@@ -298,8 +298,9 @@ for T in types
     x3 = DataValue(one(T))
 
     @test_throws DataValueException get(x1)
-    @test get(x2) === zero(T)
-    @test get(x3) === one(T)
+    @test_throws DataValueException x1[]
+    @test get(x2) === x2[] === zero(T)
+    @test get(x3) === x3[] === one(T)
 end
 
 @test_throws DataValueException get(DataValue())
