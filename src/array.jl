@@ -96,7 +96,7 @@ function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{V})
     return X
 end
 
-function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{Union{}})
+function Base.push!{T}(X::DataValueVector{T}, v::DataValue{Union{}})
     resize!(X.values, length(X.values) + 1)
     push!(X.isnull, true)
     return X
