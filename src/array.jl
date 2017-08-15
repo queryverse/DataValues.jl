@@ -55,6 +55,9 @@ function Base.convert(::Type{DataValueArray{T}}, a::AbstractArray{S,N}) where {T
     DataValueArray{T,N}(convert(Array{S},a), fill(false, size(a)))
 end
 
+Base.isnull(X::DataValueArray, I::Int...) = X.isnull[I...]
+Base.values(X::DataValueArray, I::Int...) = X.values[I...]
+
 Base.size(X::DataValueArray) = size(X.values)
 
 Base.IndexStyle(::Type{<:DataValueArray}) = Base.IndexLinear()
