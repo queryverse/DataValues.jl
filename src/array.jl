@@ -24,6 +24,7 @@ function DataValueArray{T,N}(d::AbstractArray{T,N}, m::AbstractArray{Bool,N})
 end
 
 DataValueArray{T}(d::NTuple{N,Int}) where {T,N} = DataValueArray{T,N}(d)
+
 function DataValueArray{T}(m::Int) where {T}
     res = DataValueArray{T,1}(m)
     fill!(res.isnull, true)
@@ -36,7 +37,6 @@ const DataValueMatrix{T} = DataValueArray{T, 2}
 function Base.convert(::Type{DataValueArray}, a::AbstractArray{T,N}) where {T,N}
     DataValueArray{T,N}(a, fill(false, size(a)))
 end
-
 
 function Base.convert(::Type{DataValueArray{T}}, a::AbstractArray{S,N}) where {T,S,N}
     DataValueArray{T,N}(convert(Array{S},a), fill(false, size(a)))
