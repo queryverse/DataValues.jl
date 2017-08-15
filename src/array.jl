@@ -138,21 +138,17 @@ function Base.copy!{T}(dest::DataValueArray{T},
     unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
     return dest
 end
-function Base.copy!{T}(dest::DataValueArray{T},
-                    src::DataValueArray{T})
-    length(dest) >= length(src) || throw(BoundsError())
 
-    n = length(src)
+"""
+similar(X::DataValueArray, [T], [dims])
 
-    if isbits(T)
-        unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
-    else
-        ccall(:jl_array_ptr_copy, Void, (Any, Ptr{Void}, Any, Ptr{Void}, Int),
-              dest.values, pointer(dest.values, 1), src.values, pointer(src.values, 1), n)
+Allocate an uninitialized `DataValueArray` of element type `T` and with
+size `dims`. If unspecified, `T` and `dims` default to the element type and size
+equal to that of `X`.
+"""
+function Base.similar{T}(X::DataValueArray, ::Type{T}, dims::Dims)
+    T<:DataValue ? DataValueArray{eltype(T)}(dims) : DataValueArray{T}(dims)
     end
-    unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
-    return dest
-end
 
 """
 dropna(X::AbstractVector)
