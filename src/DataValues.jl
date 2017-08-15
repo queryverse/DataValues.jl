@@ -1,8 +1,7 @@
 __precompile__()
 module DataValues
 
-export DataValue, DataValueException, ?, NA, enable_whitelist_lifting, disable_whitelist_lifting,
-    DataValueArray, DataValueVector, DataValueMatrix
+export DataValue, DataValueException, ?, NA, enable_whitelist_lifting, disable_whitelist_lifting
 
 import Base.get
 import Base.convert

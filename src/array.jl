@@ -1,3 +1,5 @@
+export DataValueArray, DataValueVector, DataValueMatrix, dropna, dropna!
+
 immutable DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
     values::Array{T,N}
     isnull::Array{Bool,N}
