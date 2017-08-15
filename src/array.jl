@@ -122,3 +122,70 @@ function Base.copy!{T}(dest::DataValueArray{T},
     unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
     return dest
 end
+function Base.copy!{T}(dest::DataValueArray{T},
+                    src::DataValueArray{T})
+    length(dest) >= length(src) || throw(BoundsError())
+
+    n = length(src)
+
+    if isbits(T)
+        unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
+    else
+        ccall(:jl_array_ptr_copy, Void, (Any, Ptr{Void}, Any, Ptr{Void}, Int),
+              dest.values, pointer(dest.values, 1), src.values, pointer(src.values, 1), n)
+    end
+    unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
+    return dest
+end
+
+"""
+dropna(X::AbstractVector)
+
+Return a vector containing only the non-missing entries of `X`,
+unwrapping `DataValue` entries. A copy is always returned, even when
+`X` does not contain any missing values.
+"""
+function dropna{T}(X::AbstractVector{T})
+    if !(DataValue <: T) && !(T <: DataValue)
+        return copy(X)
+    else
+        Y = filter(x->!isnull(x), X)
+        res = similar(Y, eltype(T))
+        for i in eachindex(Y, res)
+            @inbounds res[i] = isa(Y[i], DataValue) ? Y[i].value : Y[i]
+        end
+        return res
+    end
+end
+dropna(X::DataValueVector) = X.values[(!).(X.isnull)]
+
+"""
+dropna!(X::AbstractVector)
+
+Remove missing entries of `X` in-place and return a `Vector` view of the
+unwrapped `DataValue` entries. If no missing values are present, this is a no-op
+and `X` is returned.
+"""
+function dropna!{T}(X::AbstractVector{T})                 # -> AbstractVector
+    if !(DataValue <: T) && !(T <: DataValue)
+        return X
+    else
+        deleteat!(X, find(isnull, X))
+        res = similar(X, eltype(T))
+        for i in eachindex(X, res)
+            @inbounds res[i] = isa(X[i], DataValue) ? X[i].value : X[i]
+        end
+        return res
+    end
+end
+
+"""
+dropna!(X::DataValueVector)
+
+Remove missing entries of `X` in-place and return a `Vector` view of the
+unwrapped `DataValue` entries.
+"""
+# TODO: replace `find(X.isnull)` with `X.isnull` when
+# https://github.com/JuliaLang/julia/pull/20465 is merged and part of
+# current release (either v0.6 or v1.0)
+dropna!(X::DataValueVector) = deleteat!(X, find(X.isnull)).values # -> Vector
