@@ -27,6 +27,8 @@ end
 
 DataValueArray{T}(d::NTuple{N,Int}) where {T,N} = DataValueArray{T,N}(d)
 
+DataValueArray{T}(d::Vararg{Int,N}) where {T,N} = DataValueArray{T,N}(d)
+
 function DataValueArray{T}(m::Int) where {T}
     res = DataValueArray{T,1}(m)
     fill!(res.isnull, true)
