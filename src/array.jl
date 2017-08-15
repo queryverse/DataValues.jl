@@ -35,6 +35,15 @@ function DataValueArray{T}(m::Int) where {T}
     return res
 end
 
+function DataValueArray(data::Array{T,N}) where {T<:DataValue,N}
+    S = eltype(eltype(data))
+    new_array = DataValueArray{S,N}(size(data))
+    for i in eachindex(data)
+        new_array[i] = data[i]
+    end
+    return new_array
+end
+
 const DataValueVector{T} = DataValueArray{T, 1}
 const DataValueMatrix{T} = DataValueArray{T, 2}
 
