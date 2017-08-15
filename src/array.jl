@@ -5,11 +5,11 @@ immutable DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
     isnull::Array{Bool,N}
 
     function DataValueArray{T,N}(d::NTuple{N,Int}) where {T,N}
-        new{T,N}(Array{T,N}(d), Array{Bool,N}(d))
+        new{T,N}(Array{T,N}(d), fill(true, d))
     end
 
     function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
-        new{T,N}(Array{T,N}(d), Array{Bool,N}(d))
+        new{T,N}(Array{T,N}(d), fill(true, d))
     end    
 
     function DataValueArray{T,N}(d::AbstractArray{T, N}, m::AbstractArray{Bool, N}) where {T,N}
