@@ -47,12 +47,16 @@ end
 const DataValueVector{T} = DataValueArray{T, 1}
 const DataValueMatrix{T} = DataValueArray{T, 2}
 
-function Base.convert(::Type{DataValueArray}, a::AbstractArray{T,N}) where {T,N}
-    DataValueArray{T,N}(a, fill(false, size(a)))
+function Base.convert(::Type{DataValueArray}, A::AbstractArray{T,N}) where {T,N}
+    convert(DataValueArray{T, N}, A)
 end
 
-function Base.convert(::Type{DataValueArray{T}}, a::AbstractArray{S,N}) where {T,S,N}
-    DataValueArray{T,N}(convert(Array{S},a), fill(false, size(a)))
+function Base.convert(::Type{DataValueArray{T}}, A::AbstractArray{S,N}) where {T,S,N}
+    convert(DataValueArray{T, N}, A)
+end
+
+function Base.convert(::Type{DataValueArray{T, N}}, A::AbstractArray{S, N}) where {S,T,N}
+    DataValueArray{T, N}(convert(Array{T, N}, A), fill(false, size(A)))
 end
 
 Base.isnull(X::DataValueArray, I::Int...) = X.isnull[I...]
