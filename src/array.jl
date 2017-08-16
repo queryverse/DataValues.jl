@@ -152,7 +152,7 @@ equal to that of `X`.
 """
 function Base.similar{T}(X::DataValueArray, ::Type{T}, dims::Dims)
     T<:DataValue ? DataValueArray{eltype(T)}(dims) : DataValueArray{T}(dims)
-    end
+end
 
 """
 dropna(X::AbstractVector)
@@ -284,3 +284,16 @@ function Base.convert{T, N}(::Type{Array},
     return convert(Array{T, N}, X, replacement)
 end
 
+"""
+deleteat!(X::DataValueVector, inds)
+
+Delete the entry at `inds` from `X` and then return `X`. Note that `inds` may
+be either a single scalar index or a collection of sorted, pairwise unique
+indices. Subsequent items after deleted entries are shifted down to fill the
+resulting gaps.
+"""
+function Base.deleteat!(X::DataValueVector, inds)
+    deleteat!(X.values, inds)
+    deleteat!(X.isnull, inds)
+    return X
+end
