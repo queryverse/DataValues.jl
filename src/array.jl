@@ -205,3 +205,82 @@ unwrapped `DataValue` entries.
 # https://github.com/JuliaLang/julia/pull/20465 is merged and part of
 # current release (either v0.6 or v1.0)
 dropna!(X::DataValueVector) = deleteat!(X, find(X.isnull)).values # -> Vector
+
+
+"""
+convert(T, X::DataValueArray)
+
+Convert `X` to an `AbstractArray` of type `T`. Note that if `X` contains any
+null entries then calling `convert` without supplying a replacement value for
+null entries will result in an error.
+
+Currently supported return type arguments include: `Array`, `Array{T}`,
+`Vector`, `Matrix`.
+
+convert(T, X::DataValueArray, replacement)
+
+Convert `X` to an `AbstractArray` of type `T` and replace all null entries of
+`X` with `replacement` in the result.
+"""
+function Base.convert{S, T, N}(::Type{Array{S, N}},
+                           X::DataValueArray{T, N}) # -> Array{S, N}
+    if any(isnull, X)
+        throw(NullException())
+    else
+        return convert(Array{S, N}, X.values)
+    end
+end
+
+function Base.convert{S, T, N}(::Type{Array{S}},
+                           X::DataValueArray{T, N}) # -> Array{S, N}
+    return convert(Array{S, N}, X)
+end
+
+function Base.convert{T}(::Type{Vector}, X::DataValueVector{T}) # -> Vector{T}
+    return convert(Array{T, 1}, X)
+end
+
+function Base.convert{T}(::Type{Matrix}, X::DataValueMatrix{T}) # -> Matrix{T}
+    return convert(Array{T, 2}, X)
+end
+
+function Base.convert{T, N}(::Type{Array},
+                        X::DataValueArray{T, N}) # -> Array{T, N}
+    return convert(Array{T, N}, X)
+end
+
+# Conversions with replacements for handling null values
+
+function Base.convert{S, T, N}(::Type{Array{S, N}},
+                           X::DataValueArray{T, N},
+                           replacement::Any) # -> Array{S, N}
+    replacementS = convert(S, replacement)
+    res = Array{S}(size(X))
+    for i in 1:length(X)
+        if X.isnull[i]
+            res[i] = replacementS
+        else
+            res[i] = X.values[i]
+        end
+    end
+    return res
+end
+
+function Base.convert{T}(::Type{Vector},
+                     X::DataValueVector{T},
+                     replacement::Any) # -> Vector{T}
+    return convert(Array{T, 1}, X, replacement)
+end
+
+function Base.convert{T}(::Type{Matrix},
+                     X::DataValueMatrix{T},
+                     replacement::Any) # -> Matrix{T}
+    return convert(Array{T, 2}, X, replacement)
+end
+
+function Base.convert{T, N}(::Type{Array},
+                        X::DataValueArray{T, N},
+                        replacement::Any) # -> Array{T, N}
+    return convert(Array{T, N}, X, replacement)
+end
+
