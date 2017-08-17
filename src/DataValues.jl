@@ -55,7 +55,7 @@ promote_op{S,T}(op::Any, ::Type{DataValue{S}}, ::Type{DataValue{T}}) = DataValue
 function show{T}(io::IO, x::DataValue{T})
     if get(io, :compact, false)
         if isnull(x)
-            print(io, "#NULL")
+            print(io, "#NA")
         else
             show(io, x.value)
         end
