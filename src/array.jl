@@ -231,6 +231,13 @@ function Base.convert{S, T, N}(::Type{Array{S, N}},
     end
 end
 
+Base.convert{T, N}(::Type{DataValueArray}, X::DataValueArray{T,N}) = X
+
+function Base.convert{S, T, N}(::Type{DataValueArray{T, N}}, A::DataValueArray{S, N})
+    DataValueArray(convert(Array{T, N}, A.values), A.isnull)
+end
+
+
 function Base.convert{S, T, N}(::Type{Array{S}},
                            X::DataValueArray{T, N}) # -> Array{S, N}
     return convert(Array{S, N}, X)
