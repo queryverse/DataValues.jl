@@ -38,32 +38,3 @@ below).
 ``get(x)`` function, or use the ``x[]`` syntax.
 
 Any help with this package would be greatly appreciated!
-
-## Configurable whitelist lifting
-
-There is currently a debate whether the call site lifting via the ``.``
-mechanism is a good solution to the lifting problem, or whether it is
-too cumbersome. To gain some data on this question, the package here
-implements both the ``.`` mechanism and a more traditional whitelist
-approach to lifting. The ``.`` call-site lifting approach is always enabled,
-but users can manually enable or disable the whitelist approach by calling
-the ``enable_whitelist_lifting()`` and ``disable_whitelist_lifting()``
-functions. A call to either of these functions will enable or disable whitelist
-lifting as a configuration in the julia package itself, i.e. that choice
-is remembered across julia instances. Whitelist lifting is enabled by
-default in the package.
-
-When whitelist lifting is enabled, the package aims to add methods with
-``DataValue`` arguments to many functions from julia base. If you come
-across a function that is missing whitelist lifted methods, please open
-a PR or an issue so that we can add those methods.
-
-My expectation is that eventually one of these approaches (``.`` lifting
-and whitelist lifting) will be picked as the only supported one, or maybe
-someone will find a third, even better option.
-
-Feedback on these two options would be most welcome. In particular, I would
-very much appreciate any feedback on whether the ``.`` lifting approach
-is indeed too cumbersome or not. Please report back what you think of both
-approaches here or over in the [data domain](https://discourse.julialang.org/c/domain/data)
-on the julia forums!
