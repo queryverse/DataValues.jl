@@ -1,3 +1,7 @@
+# DataValues.jl v0.3.0 Release Notes
+* Remove configurable whitelist lifting
+* Remove ? function
+
 # DataValues.jl v0.2.0 Release Notes
 * Add [] as an alternative to get
 
