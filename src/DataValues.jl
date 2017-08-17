@@ -275,5 +275,6 @@ include("lifting-config.jl")
 include("broadcast.jl")
 include("../deps/ops.jl")
 include("array.jl")
+include("array/utils.jl")
 
 end
