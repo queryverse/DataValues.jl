@@ -3,8 +3,8 @@ using Base.Test
 
 @testset "DataValues" begin
 
-time_a = ?("14:00:00")
-date_a = ?("01/01/2012")
+time_a = DataValue("14:00:00")
+date_a = DataValue("01/01/2012")
 
 @test DateTime(time_a,"HH:MM:SS") == DataValue(DateTime("14:00:00", "HH:MM:SS"))
 @test DateTime(DataValue{String}(), "HH:MM:SS") == DataValue{DateTime}()

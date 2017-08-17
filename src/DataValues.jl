@@ -1,7 +1,7 @@
 __precompile__()
 module DataValues
 
-export DataValue, DataValueException, ?, NA
+export DataValue, DataValueException, NA
 
 import Base.get
 import Base.convert
@@ -24,11 +24,6 @@ struct DataValueException <: Exception
 end
 
 const NA = DataValue{Union{}}()
-
-?{T}(::Type{T}) = DataValue{T}
-?(v) = DataValue(v)
-import Base.*
-*(::typeof(?), x) = ?(x)
 
 DataValue{T}(value::T, hasvalue::Bool=true) = DataValue{T}(value, hasvalue)
 DataValue{T}(value::Nullable{T}) = isnull(value) ? DataValue{T}() : DataValue{T}(get(value))

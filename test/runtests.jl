@@ -156,8 +156,8 @@ end
 
 @test isequal(Nullable(DataValue("TEST")), Nullable("TEST"))
 
-@test ?Int == DataValue{Int}
-@test ?(43) == DataValue(43)
+@test DataValue{Int} == DataValue{Int}
+@test DataValue(43) == DataValue(43)
 
 end
 
