@@ -2,6 +2,83 @@ using DataValues
 using Base.Test
 
 @testset "Core" begin
+
+@testset "Nullable" begin
+
+@test DataValue(Nullable(3)) == DataValue(3)
+@test DataValue(Nullable{Int}()) == DataValue{Int}()
+
+end
+
+@testset "Show" begin
+
+io = IOBuffer()
+showcompact(io, DataValue(3))
+@test String(take!(io)) == "3"
+
+io = IOBuffer()
+showcompact(io, DataValue{Int}())
+@test String(take!(io)) == "#NA"
+
+end
+
+@testset "Unpack" begin
+
+@test get(DataValue("test"), "default") == "test"
+@test get(DataValue{String}(), "default") == "default"
+
+@test unsafe_get(DataValue(3)) == 3
+
+end
+
+@testset "Hasvalue" begin
+
+@test Base.hasvalue(DataValue(3)) == true
+@test Base.hasvalue(DataValue{Int}()) == false
+
+end
+
+@testset "zero" begin
+
+@test zero(DataValue{Int}) == DataValue(0)
+@test zero(DataValue(3)) == DataValue(0)
+
+@test zero(DataValue{Float64}) == DataValue(0.)
+@test zero(DataValue(3.)) == DataValue(0.)
+
+end
+
+@testset "Comparisons" begin
+
+@test (DataValue(3) == NA) == false
+@test (DataValue{Int}() == NA) == true
+
+@test (NA == DataValue(3)) == false
+@test (NA == DataValue{Int}()) == true
+
+@test (DataValue(3) != NA) == true
+@test (DataValue{Int}() != NA) == false
+
+@test (NA != DataValue(3)) == true
+@test (NA != DataValue{Int}()) == false
+
+@test isless(DataValue{Int}(), DataValue{Int}()) == false
+@test isless(DataValue{Int}(), DataValue{Int}(3)) == false
+@test isless(DataValue{Int}(3), DataValue{Int}()) == true
+@test isless(DataValue{Int}(3), DataValue{Int}(5)) == true
+
+@test isless(3, DataValue{Int}()) == true
+@test isless(3, DataValue{Int}(2)) == false
+
+@test isless(DataValue{Int}(), 3) == false
+@test isless(DataValue{Int}(2), 3) == true
+
+@test isless(NA, NA) == false
+@test isless(3, NA) == true
+@test isless(NA, 3) == false
+
+end
+
 # 3VL
 
 @test DataValue(true) & DataValue(true) == DataValue(true)
