@@ -30,10 +30,7 @@ for ``DataValue`` arguments.
 semantics for ``DataValue``s.
 - Comparison operators like ``==``, ``<`` etc. on ``DataValue``s return
 ``Bool`` values, i.e. they are normal [predicates](https://en.wikipedia.org/wiki/Predicate_(mathematical_logic)).
-- Common arithmetic inplace operators like ``+`` have methods that lift
-``DataValue`` arguments without the use of the dot broadcast syntax.
-- The package provides a configurable whitelist approach to lifting (see
-below).
+- The package provides many lifted methods.
 - One can access or unpack the value within a ``DataValue`` either via the
 ``get(x)`` function, or use the ``x[]`` syntax.
 
