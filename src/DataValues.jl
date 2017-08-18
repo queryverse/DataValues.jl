@@ -93,7 +93,7 @@ get(x::DataValue{Union{}}, y) = y
 
 Base.unsafe_get(x::DataValue) = x.value
 
-isnull(x::DataValue) = !x.hasvalue
+Base.isnull(x::DataValue) = !x.hasvalue
 
 Base.hasvalue(x::DataValue) = x.hasvalue
 
@@ -267,6 +267,8 @@ isless(x::DataValue{Union{}}, y) = false
 
 
 include("broadcast.jl")
+include("array.jl")
+include("utils.jl")
 include("operations.jl")
 
 end
