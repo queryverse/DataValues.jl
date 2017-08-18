@@ -12,5 +12,6 @@ end
 include("test_core.jl")
 include("test_operations.jl")
 include("test_basederived.jl")
+include("test_broadcast.jl")
 
 end

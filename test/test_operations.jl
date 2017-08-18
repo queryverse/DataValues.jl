@@ -18,15 +18,15 @@ date_a = DataValue("01/01/2012")
 @test log(DataValue(3.)) == DataValue(log(3.))
 @test log(DataValue{Float64}()) == DataValue{Float64}()
 
-@test DataValue(3) + DataValue(2) == DataValue(5)
-@test DataValue(3) + DataValue{Int}() == DataValue{Int}()
-@test DataValue{Int}() + DataValue(3) == DataValue{Int}()
-@test DataValue{Int}() + DataValue{Int}() == DataValue{Int}()
+@test min(DataValue(3), DataValue(2)) == DataValue(2)
+@test min(DataValue(3), DataValue{Int}()) == DataValue{Int}()
+@test min(DataValue{Int}(), DataValue(3)) == DataValue{Int}()
+@test min(DataValue{Int}(), DataValue{Int}()) == DataValue{Int}()
 
-@test 3 + DataValue(2) == DataValue(5)
-@test 3 + DataValue{Int}() == DataValue{Int}()
-@test DataValue{Int}() + 3 == DataValue{Int}()
-@test DataValue{Int}() + DataValue{Int}() == DataValue{Int}()
+@test min(3, DataValue(2)) == DataValue(2)
+@test min(3, DataValue{Int}()) == DataValue{Int}()
+@test min(DataValue{Int}(), 3) == DataValue{Int}()
+@test min(DataValue{Int}(), DataValue{Int}()) == DataValue{Int}()
 
 
 end
