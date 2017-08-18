@@ -268,7 +268,7 @@ isless(x::DataValue{Union{}}, y) = false
 
 include("broadcast.jl")
 include("array.jl")
-include("array/utils.jl")
+include("utils.jl")
 include("operations.jl")
 
 end
