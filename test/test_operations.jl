@@ -26,6 +26,7 @@ date_a = DataValue("01/01/2012")
 @test min(3, DataValue(2)) == DataValue(2)
 @test min(3, DataValue{Int}()) == DataValue{Int}()
 @test min(DataValue{Int}(), 3) == DataValue{Int}()
+@test min(DataValue{Int}(2), 3) == DataValue{Int}(2)
 @test min(DataValue{Int}(), DataValue{Int}()) == DataValue{Int}()
 
 

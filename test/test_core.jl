@@ -79,6 +79,13 @@ end
 
 end
 
+@testset "Promotion" begin
+
+@test promote(DataValue(3), 5) == (DataValue(3), DataValue(5))
+@test promote(DataValue(3), 5.) == (DataValue(3.), DataValue(5.))
+
+end
+
 # 3VL
 
 @test DataValue(true) & DataValue(true) == DataValue(true)
