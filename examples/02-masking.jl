@@ -1,5 +1,5 @@
 using DataValues
 
-a = [?(3.), ?(2.), ?(5.)]
+a = [DataValue(3.), DataValue(2.), DataValue(5.)]
 
 a[a .> 2.]

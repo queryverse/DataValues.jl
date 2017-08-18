@@ -1,7 +1,7 @@
 __precompile__()
 module DataValues
 
-export DataValue, DataValueException, ?, NA, enable_whitelist_lifting, disable_whitelist_lifting
+export DataValue, DataValueException, NA
 
 import Base.get
 import Base.convert
@@ -24,11 +24,6 @@ struct DataValueException <: Exception
 end
 
 const NA = DataValue{Union{}}()
-
-?{T}(::Type{T}) = DataValue{T}
-?(v) = DataValue(v)
-import Base.*
-*(::typeof(?), x) = ?(x)
 
 DataValue{T}(value::T, hasvalue::Bool=true) = DataValue{T}(value, hasvalue)
 DataValue{T}(value::Nullable{T}) = isnull(value) ? DataValue{T}() : DataValue{T}(get(value))
@@ -60,7 +55,7 @@ promote_op{S,T}(op::Any, ::Type{DataValue{S}}, ::Type{DataValue{T}}) = DataValue
 function show{T}(io::IO, x::DataValue{T})
     if get(io, :compact, false)
         if isnull(x)
-            print(io, "#NULL")
+            print(io, "#NA")
         else
             show(io, x.value)
         end
@@ -271,10 +266,9 @@ isless(x, y::DataValue{Union{}}) = true
 isless(x::DataValue{Union{}}, y) = false
 
 
-include("lifting-config.jl")
 include("broadcast.jl")
-include("../deps/ops.jl")
 include("array.jl")
 include("array/utils.jl")
+include("operations.jl")
 
 end

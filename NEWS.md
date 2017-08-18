@@ -1,5 +1,12 @@
 # DataValues.jl v0.2.0 Release Notes
 * Add [] as an alternative to get
+* Remove configurable whitelist lifting
+* Remove ? function
+* Add NA constant
+* Add zero method
+* Add more isless methods
+* Fix DateTime and Date constructors
+* Increase test coverage
 
 # DataValues.jl v0.1.0 Release Notes
 * Add configurable whitelist lifting
