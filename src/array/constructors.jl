@@ -4,93 +4,39 @@
 # The following provides an outer constructor whose argument signature matches
 # that of the inner constructor provided in typedefs.jl: constructs a DataValueArray
 # from an AbstractArray of values and an AbstractArray{Bool} mask.
-function DataValueArray{T, N}(A::AbstractArray{T, N},
-                             m::AbstractArray{Bool, N}) # -> DataValueArray{T, N}
-    return DataValueArray{T, N}(A, m)
+function DataValueArray{T,N}(d::AbstractArray{T,N}, m::AbstractArray{Bool,N})
+    return DataValueArray{T,N}(d, m)
 end
 
-# TODO: Uncomment this doc entry when Base Julia can parse it correctly.
-# """
-# Allow users to construct a quasi-uninitialized `DataValueArray` object by
-# specifing:
-#
-# * `T`: The type of its elements.
-# * `dims`: The size of the resulting `DataValueArray`.
-#
-# NOTE: The `values` field will be truly uninitialized, but the `isnull` field
-# will be initialized to `true` everywhere, making every entry of a new
-# `DataValueArray` a null value by default.
-# """
-function DataValueArray{T}(::Type{T}, dims::Dims) # -> DataValueArray{T, N}
-    return DataValueArray(Array{T}(dims), fill(true, dims))
+function DataValueArray{T}(d::NTuple{N,Int}) where {T,N}
+    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
 end
 
-# Constructs an empty DataValueArray of type parameter T and number of dimensions
-# equal to the number of arguments given in 'dims...', where the latter are
-# dimension lengths.
-function DataValueArray(T::Type, dims::Int...) # -> DataValueArray
-    return DataValueArray(T, dims)
+function DataValueArray{T}(d::Vararg{Int,N}) where {T,N}
+    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
 end
 
+# DA Do I need to keep these?
 (::Type{DataValueArray{T}}){T}(dims::Dims) = DataValueArray(T, dims)
 (::Type{DataValueArray{T}}){T}(dims::Int...) = DataValueArray(T, dims)
 (::Type{DataValueArray{T,N}}){T,N}(dims::Vararg{Int,N}) = DataValueArray(T, dims)
 
-# The following method constructs a DataValueArray from an Array{Any} argument
-# 'A' that contains some placeholder of type 'T' for null values.
-#
-# e.g.: julia> DataValueArray([1, nothing, 2], Int, Void)
-#       3-element DataValueArrays.DataValueArray{Int64,1}:
-#       DataValue(1)
-#       DataValue{Int64}()
-#       DataValue(2)
-#
-#       julia> DataValueArray([1, "notdefined", 2], Int, ASCIIString)
-#       3-element DataValueArrays.DataValueArray{Int64,1}:
-#       DataValue(1)
-#       DataValue{Int64}()
-#       DataValue(2)
-#
-# TODO: think about dispatching on T = Any in method above to call
-# the following method passing 'T=Void' for pseudo-literal
-# DataValueArray construction
-function DataValueArray{T, U}(A::AbstractArray,
-                             ::Type{T}, ::Type{U}) # -> DataValueArray{T, N}
-    res = DataValueArray(T, size(A))
-    for i in 1:length(A)
-        if !isa(A[i], U)
-            @inbounds setindex!(res, A[i], i)
-        end
+# NEW
+function DataValueArray(data::Array{T,N}) where {T<:DataValue,N}
+    S = eltype(eltype(data))
+    new_array = DataValueArray{S,N}(size(data))
+    for i in eachindex(data)
+        new_array[i] = data[i]
     end
-    return res
+    return new_array
 end
 
-# The following method constructs a DataValueArray from an Array{Any} argument
-# `A` that contains some placeholder value `na` for null values.
-#
-# e.g.: julia> DataValueArray(Any[1, "na", 2], Int, "na")
-#       3-element DataValueArrays.DataValueArray{Int64,1}:
-#       DataValue(1)
-#       DataValue{Int64}()
-#       DataValue(2)
-#
-function DataValueArray{T}(A::AbstractArray,
-                             ::Type{T},
-                             na::Any;
-                             conversion::Base.Callable=Base.convert) # -> DataValueArray{T, N}
-    res = DataValueArray(T, size(A))
-    for i in 1:length(A)
-        if !isequal(A[i], na)
-            @inbounds setindex!(res, A[i], i)
-        end
-    end
-    return res
-end
-
+# DA Do I need to keep these?
 # The following method allows for the construction of zero-element
 # DataValueArrays by calling the parametrized type on zero arguments.
 (::Type{DataValueArray{T, N}}){T, N}() = DataValueArray(T, ntuple(i->0, N))
 
+# DA Continue to check the following
 
 # ----- Conversion to DataValueArrays ---------------------------------------- #
 # Also provides constructors from arrays via the fallback mechanism.

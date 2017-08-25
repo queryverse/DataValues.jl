@@ -9,8 +9,9 @@ export dropna, dropna!#, nullify!, padnull!, padnull
 
 include("scalar/core.jl")
 include("scalar/broadcast.jl")
-include("array.jl")
 include("utils.jl")
 include("scalar/operations.jl")
+
+include("array/typedefs.jl")
 
 end

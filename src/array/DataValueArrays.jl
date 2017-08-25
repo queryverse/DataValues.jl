@@ -1,23 +1,6 @@
-__precompile__(true)
-
-module DataValueArrays
-
-using Reexport
 @reexport using Base.Cartesian
-@reexport using DataValues
 
-export DataValueArray,
-       DataValueVector,
-       DataValueMatrix,
 
-       # Macros
-
-       # Methods
-       dropnull,
-       dropnull!,
-       nullify!,
-       padnull!,
-       padnull
 
 include("typedefs.jl")
 include("constructors.jl")

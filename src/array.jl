@@ -1,51 +1,12 @@
 export DataValueArray, DataValueVector, DataValueMatrix, dropna, dropna!
 
-immutable DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
-    values::Array{T,N}
-    isnull::Array{Bool,N}
 
-    function DataValueArray{T,N}(d::NTuple{N,Int}) where {T,N}
-        new{T,N}(Array{T,N}(d), fill(true, d))
-    end
-
-    function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
-        new{T,N}(Array{T,N}(d), fill(true, d))
-    end    
-
-    function DataValueArray{T,N}(d::AbstractArray{T, N}, m::AbstractArray{Bool, N}) where {T,N}
-        if size(d) != size(m)
-            msg = "values and missingness arrays must be the same size"
-            throw(ArgumentError(msg))
-        end
-        new(d, m)
-    end
-end
-
-function DataValueArray{T,N}(d::AbstractArray{T,N}, m::AbstractArray{Bool,N})
-    return DataValueArray{T,N}(d, m)
-end
-
-DataValueArray{T}(d::NTuple{N,Int}) where {T,N} = DataValueArray{T,N}(d)
-
-DataValueArray{T}(d::Vararg{Int,N}) where {T,N} = DataValueArray{T,N}(d)
-
-function DataValueArray{T}(m::Int) where {T}
-    res = DataValueArray{T,1}(m)
-    fill!(res.isnull, true)
-    return res
-end
-
-function DataValueArray(data::Array{T,N}) where {T<:DataValue,N}
-    S = eltype(eltype(data))
-    new_array = DataValueArray{S,N}(size(data))
-    for i in eachindex(data)
-        new_array[i] = data[i]
-    end
-    return new_array
-end
-
-const DataValueVector{T} = DataValueArray{T, 1}
-const DataValueMatrix{T} = DataValueArray{T, 2}
+# DA I don't think we need this
+# function DataValueArray{T}(m::Int) where {T}
+#     res = DataValueArray{T,1}(m)
+#     fill!(res.isnull, true)
+#     return res
+# end
 
 function Base.convert(::Type{DataValueArray}, A::AbstractArray{T,N}) where {T,N}
     convert(DataValueArray{T, N}, A)
