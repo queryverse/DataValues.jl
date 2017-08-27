@@ -8,57 +8,11 @@ export DataValueArray, DataValueVector, DataValueMatrix, dropna, dropna!
 #     return res
 # end
 
-function Base.convert(::Type{DataValueArray}, A::AbstractArray{T,N}) where {T,N}
-    convert(DataValueArray{T, N}, A)
-end
-
-function Base.convert(::Type{DataValueArray{T}}, A::AbstractArray{S,N}) where {T,S,N}
-    convert(DataValueArray{T, N}, A)
-end
-
-function Base.convert(::Type{DataValueArray{T, N}}, A::AbstractArray{S, N}) where {S,T,N}
-    DataValueArray{T, N}(convert(Array{T, N}, A), fill(false, size(A)))
-end
 
 Base.isnull(X::DataValueArray, I::Int...) = X.isnull[I...]
 Base.values(X::DataValueArray, I::Int...) = X.values[I...]
 
 Base.size(X::DataValueArray) = size(X.values)
-
-Base.IndexStyle(::Type{<:DataValueArray}) = Base.IndexLinear()
-
-@inline function Base.getindex{T,N}(X::DataValueArray{T,N}, i::Int)
-    if isbits(T)
-        ifelse(X.isnull[i], DataValue{T}(), DataValue{T}(X.values[i]))
-    else
-        if X.isnull[i]
-            DataValue{T}()
-        else
-            DataValue{T}(X.values[i])
-        end
-    end
-end
-
-@inline function Base.setindex!(X::DataValueArray, v::DataValue, i::Int)
-    if isnull(v)
-        X.isnull[i] = true
-    else
-        X.isnull[i] = false
-        X.values[i] = get(v)
-    end
-    return v
-end
-
-@inline function Base.setindex!(X::DataValueArray, v::Any, i::Int)
-    X.values[i] = v
-    X.isnull[i] = false
-    return v
-end
-
-@inline function Base.setindex!(X::DataValueArray, v::DataValue{Union{}}, i::Int)
-    X.isnull[i] = true
-    return v
-end
 
 function Base.push!{T, V}(X::DataValueVector{T}, v::V)
     push!(X.values, v)
