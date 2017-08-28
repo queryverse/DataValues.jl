@@ -15,6 +15,7 @@ include("array/typedefs.jl")
 include("array/constructors.jl")
 include("array/indexing.jl")
 include("array/datavaluevector.jl")
+include("array/primitives.jl")
 include("array.jl")
 
 include("utils.jl")
