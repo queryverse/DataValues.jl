@@ -14,6 +14,7 @@ include("scalar/operations.jl")
 include("array/typedefs.jl")
 include("array/constructors.jl")
 include("array/indexing.jl")
+include("array/datavaluevector.jl")
 include("array.jl")
 
 include("utils.jl")

@@ -14,33 +14,7 @@ Base.values(X::DataValueArray, I::Int...) = X.values[I...]
 
 Base.size(X::DataValueArray) = size(X.values)
 
-function Base.push!{T, V}(X::DataValueVector{T}, v::V)
-    push!(X.values, v)
-    push!(X.isnull, false)
-    return X
-end
 
-function Base.push!{T, V}(X::DataValueVector{T}, v::DataValue{V})
-    if isnull(v)
-        resize!(X.values, length(X.values) + 1)
-        push!(X.isnull, true)
-    else
-        push!(X.values, v.value)
-        push!(X.isnull, false)
-    end
-    return X
-end
-
-function Base.push!{T}(X::DataValueVector{T}, v::DataValue{Union{}})
-    resize!(X.values, length(X.values) + 1)
-    push!(X.isnull, true)
-    return X
-end
-
-function Base.pop!{T}(X::DataValueVector{T})
-    val, isnull = pop!(X.values), pop!(X.isnull)
-    isnull ? DataValue{T}() : DataValue(val)
-end
 
 function Base.copy!{T}(dest::DataValueArray{T},
                     src::DataValueArray{T})
@@ -204,20 +178,6 @@ function Base.convert{T, N}(::Type{Array},
                         X::DataValueArray{T, N},
                         replacement::Any) # -> Array{T, N}
     return convert(Array{T, N}, X, replacement)
-end
-
-"""
-deleteat!(X::DataValueVector, inds)
-
-Delete the entry at `inds` from `X` and then return `X`. Note that `inds` may
-be either a single scalar index or a collection of sorted, pairwise unique
-indices. Subsequent items after deleted entries are shifted down to fill the
-resulting gaps.
-"""
-function Base.deleteat!(X::DataValueVector, inds)
-    deleteat!(X.values, inds)
-    deleteat!(X.isnull, inds)
-    return X
 end
 
 Base.promote_rule(::Type{DataValueArray{T,N}}, ::Type{Array{T,N}}) where {T,N} = DataValueArray{T,N}
