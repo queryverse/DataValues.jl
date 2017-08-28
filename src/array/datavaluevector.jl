@@ -222,25 +222,25 @@ function Base.sizehint!(X::DataValueVector, newsz::Integer)
 end
 
 """
-    padNA!(X::DataValueVector, front::Integer, back::Integer)
+    padna!(X::DataValueVector, front::Integer, back::Integer)
 
 Insert `front` null entries at the beginning of `X` and add `back` null entries
 at the end of `X`. Returns `X`.
 """
-function padNA!(X::DataValueVector{T}, front::Integer, back::Integer) where {T}
+function padna!(X::DataValueVector{T}, front::Integer, back::Integer) where {T}
     prepend!(X, fill(DataValue{T}(), front))
     append!(X, fill(DataValue{T}(), back))
     return X
 end
 
 """
-    padNA(X::DataValueVector, front::Integer, back::Integer)
+    padna(X::DataValueVector, front::Integer, back::Integer)
 
 return a copy of `X` with `front` null entries inserted at the beginning of
 the copy and `back` null entries inserted at the end.
 """
-function padNA(X::DataValueVector, front::Integer, back::Integer)
-    return padNA!(copy(X), front, back)
+function padna(X::DataValueVector, front::Integer, back::Integer)
+    return padna!(copy(X), front, back)
 end
 
 """

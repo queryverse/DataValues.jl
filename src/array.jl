@@ -1,6 +1,3 @@
-export DataValueArray, DataValueVector, DataValueMatrix, dropna, dropna!
-
-
 # DA I don't think we need this
 # function DataValueArray{T}(m::Int) where {T}
 #     res = DataValueArray{T,1}(m)
