@@ -8,30 +8,27 @@ Base.Broadcast._containertype(::Type{<:DataValueArray}) = DataValueArray
 
 Base.Broadcast.broadcast_indices(::Type{DataValueArray}, A) = indices(A)
 
-@inline function broadcast_t(f, ::Type{T}, shape, A, Bs...) where {T}
-    dest = Base.Broadcast.containertype(A, Bs...){eltype(T)}(Base.index_lengths(shape...))
-    return broadcast!(f, dest, A, Bs...)
+@inline function Base.Broadcast.broadcast_t(f, ::Type{DataValue{T}}, shape, iter, A, Bs::Vararg{Any,N}) where {N,T}
+    C = similar(DataValueArray{T}, shape)
+    keeps, Idefaults = Base.Broadcast.map_newindexer(shape, A, Bs)
+    Base.Broadcast._broadcast!(f, C, keeps, Idefaults, A, Bs, Val{N}, iter)
+    return C
 end
 
-# This is mainly to handle isna.(x) since isna is probably the only
-# function that can guarantee that NAs will never propagate
-@inline function broadcast_t(f, ::Type{Bool}, shape, A, Bs...)
-    dest = similar(BitArray, shape)
-    return broadcast!(f, dest, A, Bs...)
-end
-
-# This one is almost identical to the version in Base and can hopefully be
-# removed at some point. The main issue in Base is that it tests for
-# isleaftype(T) which is false for Union{T,NAtype}. If the test in Base
-# can be modified to cover simple unions of leaftypes then this method
-# can probably be deleted and the two _t methods adjusted to match the Base
-# invokation from Base.Broadcast.broadcast_c
-@inline function Base.Broadcast.broadcast_c{S<:DataValueArray}(f, ::Type{S}, A, Bs...)
-    T     = Base.Broadcast._broadcast_eltype(f, A, Bs...)
+# broadcast methods that dispatch on the type of the final container
+@inline function Base.Broadcast.broadcast_c(f, ::Type{DataValueArray}, A, Bs...)
+    T = Base.Broadcast._broadcast_eltype(f, A, Bs...)
     shape = Base.Broadcast.broadcast_indices(A, Bs...)
-    return broadcast_t(f, T, shape, A, Bs...)
+    iter = CartesianRange(shape)
+    if isleaftype(T)
+        return Base.Broadcast.broadcast_t(f, T, shape, iter, A, Bs...)
+    end
+    if isempty(iter)
+        return similar(Array{T}, shape)
+    end
+    return Base.Broadcast.broadcast_t(f, Any, shape, iter, A, Bs...)
 end
 
-# # This one is much faster than normal broadcasting but the method won't get called
-# # in fusing operations like (!).(isna.(x))
-# Base.broadcast(::typeof(isna), da::DataArray) = copy(da.na)
+# This one is much faster than normal broadcasting but the method won't get called
+# in fusing operations like (!).(isnull.(x))
+Base.broadcast(::typeof(isnull), data::DataValueArray) = copy(data.isnull)
