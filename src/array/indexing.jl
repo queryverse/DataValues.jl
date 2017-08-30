@@ -83,28 +83,28 @@ end
     return v
 end
 
-# DA disabled
+# DA TODO disabled
 # function unsafe_getindex_notnull(X::DataValueArray, I::Int...)
 #     return DataValue(getindex(X.values, I...))
 # end
 
-# DA disabled
+# DA TODO disabled
 # function unsafe_getvalue_notnull(X::DataValueArray, I::Int...)
 #     return getindex(X.values, I...)
 # end
 
-# DA disabled
+# DA TODO disabled
 # function Base.checkindex(::Type{Bool}, inds::AbstractUnitRange, i::DataValue)
 #     isnull(i) ? throw(NullException()) : checkindex(Bool, inds, get(i))
 # end
 
-# DA disabled
+# DA TODO disabled
 # function Base.checkindex{N}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{Bool, N})
 #     any(isnull, I) && throw(NullException())
 #     checkindex(Bool, inds, I.values)
 # end
 
-# DA disabled
+# DA TODO disabled
 # function Base.checkindex{T<:Real}(::Type{Bool}, inds::AbstractUnitRange, I::DataValueArray{T})
 #     any(isnull, I) && throw(NullException())
 #     b = true
@@ -115,7 +115,7 @@ end
 #     return b
 # end
 
-# DA disabled
+# DA TODO disabled
 # function Base.to_index(X::DataValueArray)
 #     any(isnull, X) && throw(NullException())
 #     Base.to_index(X.values)

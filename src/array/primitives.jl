@@ -30,21 +30,21 @@ function Base.copy(X::DataValueArray{T}) where {T}
     return Base.copy!(similar(X, T), X)
 end
 
-# DA This was my version, not clear which one is better
+# DA TODO This was my version, not clear which one is better
 # function Base.copy!{T}(dest::DataValueArray{T},
 #     src::DataValueArray{T})
-# length(dest) >= length(src) || throw(BoundsError())
+#     length(dest) >= length(src) || throw(BoundsError())
 
-# n = length(src)
+#     n = length(src)
 
-# if isbits(T)
-# unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
-# else
-# ccall(:jl_array_ptr_copy, Void, (Any, Ptr{Void}, Any, Ptr{Void}, Int),
-# dest.values, pointer(dest.values, 1), src.values, pointer(src.values, 1), n)
-# end
-# unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
-# return dest
+#     if isbits(T)
+#         unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
+#     else
+#         ccall(:jl_array_ptr_copy, Void, (Any, Ptr{Void}, Any, Ptr{Void}, Int),
+#             dest.values, pointer(dest.values, 1), src.values, pointer(src.values, 1), n)
+#     end
+#     unsafe_copy!(pointer(dest.isnull, 1), pointer(src.isnull, 1), n)
+#     return dest
 # end
 
 """
@@ -151,7 +151,7 @@ Returns the last entry of `X`.
 """
 Base.endof(X::DataValueArray) = endof(X.values)
 
-# DA Unclear whether I want that
+# DA TODO Unclear whether I want that
 # function Base.find(X::DataValueArray{Bool})
 #     ntrue = 0
 #     @inbounds for (i, isnull) in enumerate(X.isnull)
@@ -220,7 +220,7 @@ unwrapped `DataValue` entries.
 # current release (either v0.6 or v1.0)
 dropna!(X::DataValueVector) = deleteat!(X, find(X.isnull)).values # -> Vector
 
-# DA I don't think we want this
+# DA TODO I don't think we want this
 # """
 #     isnan(X::DataValueArray)
 
@@ -233,7 +233,7 @@ dropna!(X::DataValueVector) = deleteat!(X, find(X.isnull)).values # -> Vector
 #     return DataValueArray(isnan.(X.values), copy(X.isnull))
 # end
 
-# DA I don't think we want this
+# DA TODO I don't think we want this
 # """
 #     isfinite(X::DataValueArray)
 
@@ -251,9 +251,6 @@ dropna!(X::DataValueVector) = deleteat!(X, find(X.isnull)).values # -> Vector
 #     end
 #     return DataValueArray(res, copy(X.isnull))
 # end
-
-
-# DA CONTINUE HERE
 
 """
     convert(T, X::DataValueArray)

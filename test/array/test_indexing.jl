@@ -103,11 +103,11 @@ for i = 1:length(rg)
 end
 
 # getindex with DataValueVector with null entries throws error
-# DA Decide whether I want to keep this
+# DA TODO Decide whether I want to keep this
 # @test_throws NullException X[DataValueArray([1, 2, 3, NA])]
 
 # getindex with DataValueVector and non-null entries
-# DA Decide whether I want this or not
+# DA TODO Decide whether I want this or not
 # @test isequal(X[DataValueArray([1, 2, 3])], X[[1, 2, 3]])
 
 # indexing with DataValues
@@ -179,7 +179,7 @@ end
 
 #----- test UNSAFE INDEXING -----#
 
-# DA Disabled for now
+# DA TODO Disabled for now
 # X = DataValueArray([1, 2, 3, 4, 5], [true, false, false, false, false])
 
 # @test isequal(unsafe_getindex_notnull(X, 1), DataValue(1))
@@ -193,18 +193,18 @@ X = DataValueArray([1:10...])
 b = vcat(false, fill(true, 9))
 
 # Base.checkindex(::Type{Bool}, inds::UnitRange, i::DataValue)
-# DA Decide whether I want these
+# DA TODO Decide whether I want these
 # @test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
 # @test checkindex(Bool, 1:10, DataValue(1)) == true
 # @test isequal(X[DataValue(1)], DataValue(1))
 
 # Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataValueArray{Bool, N})
-# DA Decide whether I want these
+# DA TODO Decide whether I want these
 # @test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
 @test isequal(X[b], DataValueArray([2:10...]))
 
 # Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataValueArray{T})
-# DA Decide whether I want these
+# DA TODO Decide whether I want these
 # @test checkindex(Bool, 1:10, DataValueArray([1:10...]))
 # @test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
 # @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
@@ -213,7 +213,7 @@ b = vcat(false, fill(true, 9))
 #---- test Base.to_index -----#
 
 # Base.to_index(X::DataValueArray)
-# DA Decide whether I want these
+# DA TODO Decide whether I want these
 # @test Base.to_index(X) == [1:10...]
 # push!(X, DataValue{Int}())
 # @test_throws NullException Base.to_index(X)
