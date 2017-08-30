@@ -288,7 +288,7 @@ _z = DataValueArray(reshape(collect(1:100), 10, 10),
                     convert(Array{Bool},
                             reshape([mod(j, 2) for i in 1:10, j in 1:10],
                                     (10, 10))))
-_x = DataValueArray([false, true, false, nothing, false, true, nothing])
+_x = DataValueArray([false, true, false, NA, false, true, NA])
 a = [i*j*k for i in 1:2, j in 1:2, k in 1:2]
 b = collect(1:10)
 c = [i for i in 1:10, j in 1:10]
