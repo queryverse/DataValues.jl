@@ -1,7 +1,7 @@
-@testset "Primitives" begin
-
 using Base.Test
-using DataValueArrays
+using DataValues
+
+@testset "DataValueArray: Primitives" begin
 
 n = rand(1:5)
 siz = [ rand(2:5) for i in n ]
@@ -17,7 +17,7 @@ I = [ rand(1:size(X,i)) for i in 1:n ]
 
 # ----- test Base.similar, Base.size  ----------------------------------------#
 
-x = DataValueArray(Int, (5, 2))
+x = DataValueArray{Int}((5, 2))
 @test isa(x, DataValueMatrix{Int})
 @test size(x) === (5, 2)
 
@@ -45,8 +45,8 @@ similar(dt, 2, 2, 2)
 # ----- test Base.copy/Base.copy! --------------------------------------------#
 
 #copy
-x = DataValueArray([1, 2, nothing], Int, Void)
-y = DataValueArray([3, nothing, 5], Int, Void)
+x = DataValueArray([1, 2, NA])
+y = DataValueArray([3, NA, 5])
 @test isequal(copy(x), x)
 @test isequal(copy!(y, x), x)
 

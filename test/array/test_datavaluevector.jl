@@ -1,7 +1,7 @@
-@testset "DataVector" begin
-
-using DataValueArrays
+using DataValues
 using Base.Test
+
+@testset "DataValueArray: DataVector" begin
 
 A = [1:10...]
 B = [1:5...]

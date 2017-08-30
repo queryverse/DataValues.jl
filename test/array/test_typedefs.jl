@@ -1,7 +1,7 @@
-@testset "TypeDefs" begin
-
 using Base.Test
-using DataValueArrays
+using DataValues
+
+@testset "DataValueArray: TypeDefs" begin
 
 x = DataValueArray(
     [1, 2, 3],

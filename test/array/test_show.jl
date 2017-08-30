@@ -1,7 +1,7 @@
-@testset "Show" begin
-
 using Base.Test
-using DataValueArrays
+using DataValues
+
+@testset "DataValueArray: Show" begin
 
 io = IOBuffer()
 disp = TextDisplay(IOBuffer())

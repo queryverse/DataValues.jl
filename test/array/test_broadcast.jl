@@ -1,7 +1,7 @@
-using DataValueArrays
+using DataValues
 using Base.Test
 
-@testset "Broadcast" begin
+@testset "DataValueArray: Broadcast" begin
 
 A1 = rand(Int, 10)
 M1 = rand(Bool, 10)

@@ -1,4 +1,4 @@
-@testset "Map" begin
+@testset "DataValueArray: Map" begin
 
 using Base.Test
 using DataValueArrays

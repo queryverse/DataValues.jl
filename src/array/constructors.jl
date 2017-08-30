@@ -12,12 +12,36 @@ function DataValueArray{T}(d::NTuple{N,Int}) where {T,N}
     return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
 end
 
+function DataValueArray{T,N}(d::NTuple{N,Int}) where {T,N}
+    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+end
+
 function DataValueArray{T}(d::Vararg{Int,N}) where {T,N}
+    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+end
+
+function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
     return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
 end
 
 function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
     S = eltype(eltype(data))
+    new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
+    for i in eachindex(data)
+        new_array[i] = data[i]
+    end
+    return new_array
+end
+
+function DataValueArray{S}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
+    new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
+    for i in eachindex(data)
+        new_array[i] = data[i]
+    end
+    return new_array
+end
+
+function DataValueArray{S,N}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
     new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
     for i in eachindex(data)
         new_array[i] = data[i]

@@ -1,7 +1,7 @@
-@testset "Reduce" begin
-
-using DataValueArrays
+using DataValues
 using Base.Test
+
+@testset "DataValueArray: Reduce" begin
 
 srand(1)
 f(x) = 5 * x

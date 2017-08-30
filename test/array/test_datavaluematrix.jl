@@ -1,7 +1,8 @@
-@testset "DataMatrix" begin
-
-using DataValueArrays
+using DataValues
 using Base.Test
+
+@testset "DataValueArray: DataMatrix" begin
+
 
 #----- test Base.diag -----#
 A = reshape([1:25...], 5, 5)

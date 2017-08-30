@@ -1,7 +1,7 @@
-@testset "SubArrays" begin
-
 using Base.Test
-using DataValueArrays
+using DataValues
+
+@testset "DataValueArray: SubArrays" begin
 
 nd = rand(3:5)
 sz = [ rand(3:10) for i in 1:nd ]

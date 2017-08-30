@@ -239,7 +239,7 @@ end
 
 io = IOBuffer()
 
-show(io, DataValue(a))
-Base.Test.@test String(take!(io)) == "DataValue{TestEnum}(a)"
+show(io, DataValue(enum_val_a))
+Base.Test.@test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
 
 end

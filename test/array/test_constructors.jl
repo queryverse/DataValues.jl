@@ -1,7 +1,7 @@
-@testset "Constructor" begin
-
 using Base.Test
-using DataValueArrays
+using DataValues
+
+@testset "DataValueArray: Constructor" begin
 
 # test Inner Constructor
 @test_throws ArgumentError DataValueArray([1, 2, 3, 4], [true, false, true])
@@ -35,17 +35,17 @@ z = DataValueArray(1.:6.)
 @test isa(z, DataValueVector{Float64})
 
 # test (::Type{T}, dims::Dims) constructor
-u1 = DataValueArray(Int, (5, ))
-u2 = DataValueArray(Int, (2, 2))
-u3 = DataValueArray(Int, (2, 2, 2))
+u1 = DataValueArray{Int}((5, ))
+u2 = DataValueArray{Int}((2, 2))
+u3 = DataValueArray{Int}((2, 2, 2))
 @test isa(u1, DataValueVector{Int})
 @test isa(u2, DataValueMatrix{Int})
 @test isa(u3, DataValueArray{Int, 3})
 
 # test (::Type{T}, dims::Int...) constructor
-x1 = DataValueArray(Int, 2)
-x2 = DataValueArray(Int, 2, 2)
-x3 = DataValueArray(Int, 2, 2, 2)
+x1 = DataValueArray{Int}(2)
+x2 = DataValueArray{Int}(2, 2)
+x3 = DataValueArray{Int}(2, 2, 2)
 @test isa(x1, DataValueVector{Int})
 @test isa(x2, DataValueMatrix{Int})
 @test isa(x3, DataValueArray{Int, 3})
@@ -89,19 +89,11 @@ for i in 1:5
     @test isequal(X3, DataValueArray(Array{Int}(dims...), fill(true, dims...)))
 end
 
-# test (A::AbstractArray, ::Type{T}, ::Type{U}) constructor
-z = DataValueArray([1, nothing, 2, nothing, 3], Int, Void)
+# test (A::AbstractArray{DataValue}) constructor
+z = DataValueArray([1, NA, 2, NA, 3])
 @test isa(z, DataValueVector{Int})
 @test z.isnull[2]
 @test z.isnull[4]
-
-# test (A::AbstractArray, ::Type{T}, na::Any) constructor
-Z = DataValueArray([1, "na", 2, 3, 4, 5, "na"], Int, "na")
-@test isa(Z, DataValueVector{Int})
-@test Z.isnull == [false, true, false, false, false, false, true]
-
-Y = DataValueArray([1, nothing, 2, 3, 4, 5, nothing], Int, Void)
-@test isequal(Y, Z)
 
 # test DataValueArray{T}()
 X = DataValueArray{Int}()

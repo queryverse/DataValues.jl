@@ -1,9 +1,8 @@
-@testset "Indexing" begin
-
 using Base.Test
-using DataValueArrays
-import DataValueArrays: unsafe_getindex_notnull,
-                        unsafe_getvalue_notnull
+using DataValues
+# import DataValues: unsafe_getindex_notnull, unsafe_getvalue_notnull
+
+@testset "DataValueArray: Indexing" begin
 
 x = DataValueArray(Int, (5, 2))
 
@@ -179,12 +178,13 @@ end
 
 #----- test UNSAFE INDEXING -----#
 
-X = DataValueArray([1, 2, 3, 4, 5], [true, false, false, false, false])
+# DA Disabled for now
+# X = DataValueArray([1, 2, 3, 4, 5], [true, false, false, false, false])
 
-@test isequal(unsafe_getindex_notnull(X, 1), DataValue(1))
-@test isequal(unsafe_getindex_notnull(X, 2), DataValue(2))
-@test isequal(unsafe_getvalue_notnull(X, 1), 1)
-@test isequal(unsafe_getvalue_notnull(X, 2), 2)
+# @test isequal(unsafe_getindex_notnull(X, 1), DataValue(1))
+# @test isequal(unsafe_getindex_notnull(X, 2), DataValue(2))
+# @test isequal(unsafe_getvalue_notnull(X, 1), 1)
+# @test isequal(unsafe_getvalue_notnull(X, 2), 2)
 
 #----- test Base.checkbounds -----#
 
