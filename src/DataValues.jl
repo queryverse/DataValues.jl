@@ -5,7 +5,7 @@ export DataValue, DataValueException, NA
 
 export DataValueArray, DataValueVector, DataValueMatrix
 
-export dropna, dropna!, padna!, padna # nullify!
+export dropna, dropna!, padna!, padna
 
 include("scalar/core.jl")
 include("scalar/broadcast.jl")
