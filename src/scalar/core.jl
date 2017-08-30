@@ -250,3 +250,13 @@ isless(x::DataValue{Union{}}, y::DataValue{Union{}}) = false
 isless(x, y::DataValue{Union{}}) = true
 
 isless(x::DataValue{Union{}}, y) = false
+
+# TODO Is that the definition we want?
+function Base.isnan(x::DataValue{T}) where {T<:AbstractFloat}
+    return !isnull(x) && isnan(x[])
+end
+
+# TODO Is that the definition we want?
+function Base.isfinite(x::DataValue{T}) where {T<:AbstractFloat}
+    return !isnull(x) && isfinite(x[])
+end

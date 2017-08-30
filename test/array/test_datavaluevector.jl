@@ -176,29 +176,29 @@ X = DataValueArray(3:12)
 # Base.sizehint!(X::DataValueVector, newsz::Integer)
 sizehint!(X, 20)
 
-#--- test padnull!
+#--- test padna!
 
-# padnull!{T}(X::DataValueVector{T}, front::Integer, back::Integer)
+# padna!{T}(X::DataValueVector{T}, front::Integer, back::Integer)
 X = DataValueArray(1:5)
-padnull!(X, 2, 3)
+padna!(X, 2, 3)
 @test length(X.values) == 10
 @test X.isnull == vcat(true, true, fill(false, 5), true, true, true)
 
-# padnull(X::DataValueVector, front::Integer, back::Integer)
+# padna(X::DataValueVector, front::Integer, back::Integer)
 X = DataValueArray(1:5)
-Y = padnull(X, 2, 3)
+Y = padna(X, 2, 3)
 @test length(Y.values) == 10
 @test Y.isnull == vcat(true, true, fill(false, 5), true, true, true)
 
 #--- test Base.reverse!/Base.reverse
 
-y = DataValueArray([nothing, 2, 3, 4, nothing, 6], Int, Void)
+y = DataValueArray([NA, 2, 3, 4, NA, 6])
 @assert isequal(reverse(y),
-                DataValueArray([6, nothing, 4, 3, 2, nothing], Int, Void))
+                DataValueArray([6, NA, 4, 3, 2, NA]))
 
 # check case where only nothing occurs in final position
-@assert isequal(unique(DataValueArray([1, 2, 1, nothing], Int, Void)),
-                DataValueArray([1, 2, nothing], Int, Void))
+@assert isequal(unique(DataValueArray([1, 2, 1, NA])),
+                DataValueArray([1, 2, NA]))
 
 # Base.reverse!(X::DataValueVector, s=1, n=length(X))
 # check for case where isbits(eltype(X)) = false
@@ -209,7 +209,7 @@ Z = DataValueArray(Array{Int, 1}[[1, 2], [3, 4], [5, 6]])
 # Base.reverse!(X::DataValueVector, s=1, n=length(X))
 # check for case where isbits(eltype(X)) = false & any(isnull, X) = true
 A = fill([1,2], 20)
-Z = DataValueArray(Array{Int, 1}, 20)
+Z = DataValueArray{Array{Int, 1}}(20)
 i = rand(2:7)
 for i in [i-1, i, i+1, 20 - (i + 2), 20 - (i - 1)]
     Z[i] = [1, 2]

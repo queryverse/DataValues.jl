@@ -41,14 +41,6 @@ function DataValueArray{S}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
     return new_array
 end
 
-function DataValueArray{S,N}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
-    new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
-    for i in eachindex(data)
-        new_array[i] = data[i]
-    end
-    return new_array
-end
-
 # The following method allows for the construction of zero-element
 # DataValueArrays by calling the parametrized type on zero arguments.
 function DataValueArray{T,N}() where {T,N}
@@ -69,6 +61,15 @@ end
 
 function Base.convert(::Type{DataValueArray}, A::AbstractArray{T,N}) where {T,N}
     return convert(DataValueArray{T,N}, A)
+end
+
+#----- Conversion from arrays of DataValues -----------------------------------#
+function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S<:DataValue,T,N}
+    new_array = DataValueArray{T,N}(Array{T}(size(A)), Array{Bool}(size(A)))
+    for i in eachindex(A)
+        new_array[i] = A[i]
+    end
+    return new_array
 end
 
 #----- Conversion from DataValueArrays of a different type --------------------#

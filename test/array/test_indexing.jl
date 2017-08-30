@@ -4,7 +4,7 @@ using DataValues
 
 @testset "DataValueArray: Indexing" begin
 
-x = DataValueArray(Int, (5, 2))
+x = DataValueArray{Int}((5, 2))
 
 for i in eachindex(x)
     x[i] = i
@@ -29,9 +29,6 @@ end
 _values = rand(10, 10)
 _isnull = rand(Bool, 10, 10)
 X = DataValueArray(_values, _isnull)
-
-# Base.getindex{T, N}(X::DataValueArray{T, N})
-@test isequal(getindex(X), X[1])
 
 # Base.getindex{T, N}(X::DataValueArray{T, N}, I::DataValue{Int}...)
 @test_throws NullException getindex(X, DataValue{Int}(), DataValue{Int}())
@@ -106,10 +103,12 @@ for i = 1:length(rg)
 end
 
 # getindex with DataValueVector with null entries throws error
-@test_throws NullException X[DataValueArray([1, 2, 3, nothing], Int, Void)]
+# DA Decide whether I want to keep this
+# @test_throws NullException X[DataValueArray([1, 2, 3, NA])]
 
 # getindex with DataValueVector and non-null entries
-@test isequal(X[DataValueArray([1, 2, 3])], X[[1, 2, 3]])
+# DA Decide whether I want this or not
+# @test isequal(X[DataValueArray([1, 2, 3])], X[[1, 2, 3]])
 
 # indexing with DataValues
 
@@ -149,7 +148,9 @@ end
 # ----- test nullify! -----#
 _isnull = bitrand(10, 10)
 for i = 1:100
-    _isnull[i] && (nullify!(X, i))
+    if _isnull[i]
+        X[i] = NA
+    end
 end
 
 # setindex! with scalar and vector indices
@@ -163,7 +164,7 @@ end
 # setindex! with NA and vector indices
 rg = 5:13
 _isnull[rg] = true
-nullify!(X, rg)
+X[rg] = NA
 for i = 1:length(rg)
     @test isnull(X[rg[i]])
 end
@@ -192,25 +193,29 @@ X = DataValueArray([1:10...])
 b = vcat(false, fill(true, 9))
 
 # Base.checkindex(::Type{Bool}, inds::UnitRange, i::DataValue)
-@test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
-@test checkindex(Bool, 1:10, DataValue(1)) == true
-@test isequal(X[DataValue(1)], DataValue(1))
+# DA Decide whether I want these
+# @test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
+# @test checkindex(Bool, 1:10, DataValue(1)) == true
+# @test isequal(X[DataValue(1)], DataValue(1))
 
 # Base.checkindex{N}(::Type{Bool}, inds::UnitRange, I::DataValueArray{Bool, N})
-@test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
+# DA Decide whether I want these
+# @test checkindex(Bool, 1:5, DataValueArray([true, false, true, false, true]))
 @test isequal(X[b], DataValueArray([2:10...]))
 
 # Base.checkindex{T<:Real}(::Type{Bool}, inds::UnitRange, I::DataValueArray{T})
-@test checkindex(Bool, 1:10, DataValueArray([1:10...]))
-@test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
-@test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
+# DA Decide whether I want these
+# @test checkindex(Bool, 1:10, DataValueArray([1:10...]))
+# @test checkindex(Bool, 1:10, DataValueArray([10, 11])) == false
+# @test_throws BoundsError checkbounds(X, DataValueArray([10, 11]))
 
 
 #---- test Base.to_index -----#
 
 # Base.to_index(X::DataValueArray)
-@test Base.to_index(X) == [1:10...]
-push!(X, DataValue{Int}())
-@test_throws NullException Base.to_index(X)
+# DA Decide whether I want these
+# @test Base.to_index(X) == [1:10...]
+# push!(X, DataValue{Int}())
+# @test_throws NullException Base.to_index(X)
 
 end

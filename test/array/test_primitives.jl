@@ -30,9 +30,9 @@ z = similar(x, DataValue{Int}, (2,))
 @test size(z) === (2, )
 
 # test common use-patterns for 'similar'
-dv = DataValueArray(Int, 2)
-dm = DataValueArray(Int, 2, 2)
-dt = DataValueArray(Int, 2, 2, 2)
+dv = DataValueArray{Int}(2)
+dm = DataValueArray{Int}(2, 2)
+dt = DataValueArray{Int}(2, 2, 2)
 
 similar(dv)
 similar(dm)
@@ -61,12 +61,12 @@ function nonbits(dv)
     end
     ret
 end
-set1 = Any[DataValueArray([1, nothing, 3], Int, Void),
-            DataValueArray([nothing, 5], Int, Void),
-            DataValueArray([1, 2, 3, 4, 5], Int, Void),
+set1 = Any[DataValueArray([1, NA, 3]),
+            DataValueArray([NA, 5]),
+            DataValueArray([1, 2, 3, 4, 5]),
             DataValueArray(Int[]),
-            DataValueArray([nothing, 5, 3], Int, Void),
-            DataValueArray([1, 5, 3], Int, Void)]
+            DataValueArray([NA, 5, 3]),
+            DataValueArray([1, 5, 3])]
 set2 = map(nonbits, set1)
 
 for (dest, src, bigsrc, emptysrc, res1, res2) in Any[set1, set2]
@@ -101,9 +101,9 @@ end
 
 # ----- test Base.fill! ------------------------------------------------------#
 
-X = DataValueArray(Int, 10, 2)
+X = DataValueArray{Int}(10, 2)
 fill!(X, DataValue(10))
-Y = DataValueArray(Float64, 10)
+Y = DataValueArray{Float64}(10)
 fill!(Y, rand(Float64))
 
 @test X.values == fill(10, 10, 2)
@@ -146,14 +146,14 @@ Y2.isnull[2] = true
 # ----- test Base.ndims ------------------------------------------------------#
 
 for n in 1:4
-    @test ndims(DataValueArray(Int, collect(1:n)...)) == n
+    @test ndims(DataValueArray{Int}(collect(1:n)...)) == n
 end
 
 # ----- test Base.length -----------------------------------------------------#
 
-@test length(DataValueArray(Int, 10)) == 10
-@test length(DataValueArray(Int, 5, 5)) == 25
-@test length(DataValueArray(Int, (3, 3, 3))) == 27
+@test length(DataValueArray{Int}(10)) == 10
+@test length(DataValueArray{Int}(5, 5)) == 25
+@test length(DataValueArray{Int}((3, 3, 3))) == 27
 
 # ----- test Base.endof ------------------------------------------------------#
 
@@ -168,58 +168,58 @@ z = DataValueArray(rand(Bool, 10))
 z = DataValueArray([false, true, false, true, false, true])
 @test isequal(find(z), [2, 4, 6])
 
-# ----- test dropnull --------------------------------------------------------#
+# ----- test dropna --------------------------------------------------------#
 
-# dropnull(X::DataValueVector)
-z = DataValueArray([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
-@test dropnull(z) == [1, 2, 3, 5, 7]
+# dropna(X::DataValueVector)
+z = DataValueArray([1, 2, 3, NA, 5, NA, 7, NA])
+@test dropna(z) == [1, 2, 3, 5, 7]
 
-# dropnull(X::AbstractVector)
+# dropna(X::AbstractVector)
 A = Any[1, 2, 3, DataValue(), 5, DataValue(), 7, DataValue()]
-@test dropnull(A) == [1, 2, 3, 5, 7]
+@test dropna(A) == [1, 2, 3, 5, 7]
 
-# dropnull(X::AbstractVector{<:DataValue})
+# dropna(X::AbstractVector{<:DataValue})
 B = [1, 2, 3, DataValue(), 5, DataValue(), 7, DataValue()]
-@test dropnull(B) == [1, 2, 3, 5, 7]
-# assert dropnull returns copy for !(DataValue <: eltype(X))
+@test dropna(B) == [1, 2, 3, 5, 7]
+# assert dropna returns copy for !(DataValue <: eltype(X))
 nullfree = [1, 2, 3, 4]
-returned_copy = dropnull(nullfree)
+returned_copy = dropna(nullfree)
 @test nullfree == returned_copy && !(nullfree === returned_copy)
 
-# ----- test dropnull! -------------------------------------------------------#
+# ----- test dropna! -------------------------------------------------------#
 
 # for each, assert returned values are unwrapped and inplace change
-# dropnull!(X::DataValueVector)
-@test dropnull!(z) == [1, 2, 3, 5, 7]
+# dropna!(X::DataValueVector)
+@test dropna!(z) == [1, 2, 3, 5, 7]
 @test isequal(z, DataValueArray([1, 2, 3, 5, 7]))
 
-# dropnull!(X::AbstractVector)
-@test dropnull!(A) == [1, 2, 3, 5, 7]
+# dropna!(X::AbstractVector)
+@test dropna!(A) == [1, 2, 3, 5, 7]
 @test isequal(A, Any[1, 2, 3, 5, 7])
 
-# dropnull!(X::AbstractVector{<:DataValue})
-@test dropnull!(B) == [1, 2, 3, 5, 7]
+# dropna!(X::AbstractVector{<:DataValue})
+@test dropna!(B) == [1, 2, 3, 5, 7]
 @test isequal(B, DataValue[1, 2, 3, 5, 7])
 
-# when no nulls present, dropnull! returns input vector
-returned_view = dropnull!(nullfree)
+# when no nulls present, dropna! returns input vector
+returned_view = dropna!(nullfree)
 @test nullfree == returned_view && nullfree === returned_view
 
-# test that dropnull! returns unwrapped values when DataValues are present
+# test that dropna! returns unwrapped values when DataValues are present
 X = [false, 1, :c, "string", DataValue("I am not null"), DataValue()]
-@test !any(x -> isa(x, DataValue), dropnull!(X))
+@test !any(x -> isa(x, DataValue), dropna!(X))
 @test any(x -> isa(x, DataValue), X)
 Y = Any[false, 1, :c, "string", DataValue("I am not null"), DataValue()]
-@test !any(x -> isa(x, DataValue), dropnull!(Y))
+@test !any(x -> isa(x, DataValue), dropna!(Y))
 @test any(x -> isa(x, DataValue), Y)
 
 # ----- test any(isnull, X) --------------------------------------------------#
 
 # any(isnull, X::DataValueArray)
-z = DataValueArray([1, 2, 3, 'a', 5, 'b', 7, 'c'], Int, Char)
+z = DataValueArray([1, 2, 3, NA, 5, NA, 7, NA])
 @test any(isnull, z) == true
-@test any(isnull, dropnull(z)) == false
-z = DataValueArray(Int, 10)
+@test any(isnull, dropna(z)) == false
+z = DataValueArray{Int}(10)
 @test any(isnull, z) == true
 
 # any(isnull, A::AbstractArray)
@@ -248,7 +248,7 @@ S = view(X, :, i, j)
 # ----- test all(isnull, X) --------------------------------------------------#
 
 # all(isnull, X::DataValueArray)
-z = DataValueArray(Int, 10)
+z = DataValueArray{Int}(10)
 @test all(isnull, z) == true
 z[1] = 10
 @test all(isnull, z) == false
@@ -264,25 +264,23 @@ z[1] = 10
 
 # ----- test Base.isnan ------------------------------------------------------#
 
-x = DataValueArray([1, 2, NaN, 4, 5, NaN, Inf, nothing], Float64, Void)
-_x = isnan(x)
-@test isequal(_x, DataValueArray([false, false, true, false,
-                                false, true, false, nothing], Bool, Void))
-@test _x.isnull[8] == true
+x = DataValueArray([1, 2, NaN, 4, 5, NaN, Inf, NA])
+_x = isnan.(x)
+@test isequal(_x, [false, false, true, false,
+                                false, true, false, false])
 
 # ----- test Base.isfinite ---------------------------------------------------#
 
-_x = isfinite(x)
-@test isequal(_x, DataValueArray([true, true, false, true,
-                                true, false, false, nothing], Bool, Void))
-@test _x.isnull[8] == true
+_x = isfinite.(x)
+@test isequal(_x, [true, true, false, true,
+                                true, false, false, false])
 
 # ----- test conversion methods ----------------------------------------------#
 
 u = DataValueArray(collect(1:10))
-v = DataValueArray(Int, 4, 4)
+v = DataValueArray{Int}(4, 4)
 fill!(v, 4)
-w = DataValueArray(['a', 'b', 'c', 'd', 'e', 'f', nothing], Char, Void)
+w = DataValueArray(['a', 'b', 'c', 'd', 'e', 'f', NA])
 x = DataValueArray([(i, j, k) for i in 1:10, j in 1:10, k in 1:10])
 y = DataValueArray([2, 4, 6, 8, 10])
 z = DataValueArray([i*j for i in 1:10, j in 1:10])
@@ -290,8 +288,7 @@ _z = DataValueArray(reshape(collect(1:100), 10, 10),
                     convert(Array{Bool},
                             reshape([mod(j, 2) for i in 1:10, j in 1:10],
                                     (10, 10))))
-_x = DataValueArray([false, true, false, nothing, false, true, nothing],
-                    Bool, Void)
+_x = DataValueArray([false, true, false, nothing, false, true, nothing])
 a = [i*j*k for i in 1:2, j in 1:2, k in 1:2]
 b = collect(1:10)
 c = [i for i in 1:10, j in 1:10]
@@ -303,7 +300,7 @@ h = convert(DataValueArray{Float64}, g)
 
 @test_throws NullException convert(Array{Char, 1}, w)
 @test convert(Array{Char, 1},
-                DataValueArray(dropnull(w))) == ['a', 'b', 'c', 'd', 'e', 'f']
+                DataValueArray(dropna(w))) == ['a', 'b', 'c', 'd', 'e', 'f']
 @test_throws NullException convert(Array{Char}, w)
 @test convert(Array{Float64}, u) == Float64[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 @test convert(Vector{Float64}, y) == Float64[2, 4, 6, 8, 10]
@@ -332,7 +329,7 @@ push!(X, DataValue())
 # Base.convert{T}(::Type{Matrix}, X::DataValueMatrix{T})
 Y = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 10])
 @test convert(Matrix, Y) == [1 2; 3 4; 5 6; 7 8; 9 10]
-Z = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 nothing], Int, Void)
+Z = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 NA])
 @test_throws NullException convert(Matrix, Z)
 
 # float(X::DataValueArray)
@@ -350,10 +347,10 @@ X = DataValueArray(A, M)
 
 # ----- test unique (julia/base/set.jl:107) ----------------------------------#
 
-x = DataValueArray([1, nothing, -2, 1, nothing, 4], Int, Void)
-@assert isequal(unique(x), DataValueArray([1, nothing, -2, 4], Int, Void))
+x = DataValueArray([1, NA, -2, 1, NA, 4])
+@assert isequal(unique(x), DataValueArray([1, NA, -2, 4]))
 @assert isequal(unique(reverse(x)),
-                DataValueArray([4, nothing, 1, -2], Int, Void))
+                DataValueArray([4, NA, 1, -2]))
 
 
 

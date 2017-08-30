@@ -168,9 +168,6 @@ Base.endof(X::DataValueArray) = endof(X.values)
 #     return res
 # end
 
-_isnull(x::Any) = false
-_isnull(x::DataValue) = isnull(x)
-
 """
     dropna(X::AbstractVector)
 
