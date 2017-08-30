@@ -22,6 +22,10 @@ push!(Z, DataValue())
 push!(Z, DataValue(5))
 @test isequal(Z, DataValueArray([5, 1, 5], [false, true, false]))
 
+Z2 = copy(Z)
+push!(Z2, DataValue{Int}())
+@test isequal(Z2, DataValueArray([5, NA, 5, NA]))
+
 ZZ = DataValueVector{Int}()
 push!(ZZ, 5, DataValue(), DataValue(5))
 @test isequal(ZZ, Z)
@@ -170,6 +174,10 @@ X = DataValueArray(3:12)
                 DataValueArray(-1:12))
 @test isequal(prepend!(X, [DataValue{Int}(), DataValue(-2)]),
                 DataValueArray(DataValue{Int}[DataValue(), -2:12...]))
+
+X2 = DataValueArray([1,NA,4])
+prepend!(X2, X2)
+@test isequal(X2, DataValueArray([1,NA,4,1,NA,4]))
 
 #--- test Base.sizehint!
 
