@@ -330,18 +330,5 @@ function Base.convert(::Type{Array},
     return convert(Array{T, N}, X, replacement)
 end
 
-# DA Not sure whether I want to keep this
-# """
-#     float(X::DataValueArray)
-
-# Return a copy of `X` in which each non-null entry is converted to a floating
-# point type. Note that this method will throw an error for arguments `X` whose
-# element type is not "isbits".
-# """
-# function Base.float(X::DataValueArray) # -> DataValueArray{T, N}
-#     isbits(eltype(X)) || error()
-#     return DataValueArray(float(X.values), copy(X.isnull))
-# end
-
 Base.any(::typeof(isnull), X::DataValueArray) = Base.any(X.isnull)
 Base.all(::typeof(isnull), X::DataValueArray) = Base.all(X.isnull)

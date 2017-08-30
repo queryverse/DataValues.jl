@@ -260,3 +260,7 @@ end
 function Base.isfinite(x::DataValue{T}) where {T<:AbstractFloat}
     return !isnull(x) && isfinite(x[])
 end
+
+function Base.float(x::DataValue{T}) where T
+    return isnull(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)))
+end

@@ -336,7 +336,7 @@ Z = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 NA])
 A = rand(Int, 20)
 M = rand(Bool, 20)
 X = DataValueArray(A, M)
-@test isequal(float(X), DataValueArray(float(A), M))
+@test isequal(float.(X), DataValueArray(float(A), M))
 
 # ----- test Base.hash (julia/base/hashing.jl:5) -----------------------------#
 
