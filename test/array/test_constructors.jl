@@ -63,6 +63,19 @@ for i in 1:5
     @test isequal(X3, DataValueArray(Array{Int}(dims), fill(true, dims)))
 end
 
+# test DataValueArray{T,N}(dims::Dims)
+d1, d2 = rand(1:100), rand(1:100)
+X1 = DataValueArray{Int,1}((d1,))
+X2 = DataValueArray{Int,2}((d1, d2))
+@test isequal(X1, DataValueArray(Array{Int}((d1,)), fill(true, (d1,))))
+@test isequal(X2, DataValueArray(Array{Int}((d1, d2)), fill(true, (d1, d2))))
+for i in 1:5
+    m = rand(3:5)
+    dims = tuple([ rand(1:5) for i in 1:m ]...)
+    X3 = DataValueArray{Int,m}(dims)
+    @test isequal(X3, DataValueArray(Array{Int}(dims), fill(true, dims)))
+end
+
 # test DataValueArray{T}(dims::Int...)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int}(d1)
