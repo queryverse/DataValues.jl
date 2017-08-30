@@ -3,7 +3,7 @@ Base.IndexStyle(::Type{<:DataValueArray}) = Base.IndexLinear()
 
 # resolve ambiguity created by the two definitions that follow.
 function Base.getindex{T,N}(X::DataValueArray{T,N})
-    throw(ErrorException())
+    return X[1]
 end
 
 """
