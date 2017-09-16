@@ -14,10 +14,10 @@ end
 
 @testset "DataValues" begin
 
-include("test_core.jl")
-include("test_operations.jl")
-include("test_basederived.jl")
-include("test_broadcast.jl")
+include("scalar/test_core.jl")
+include("scalar/test_operations.jl")
+include("scalar/test_basederived.jl")
+include("scalar/test_broadcast.jl")
 
 # include("array/test_broadcast.jl")
 # include("array/test_broadcast2.jl")
