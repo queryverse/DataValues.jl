@@ -5,6 +5,11 @@ type TestNType{T}
     v::DataValue{T}
 end
 
+immutable SurvEvent
+    time::Float64
+    censored::Bool
+end
+
 @enum TestEnum enum_val_a enum_val_b
 
 @testset "DataValues" begin
