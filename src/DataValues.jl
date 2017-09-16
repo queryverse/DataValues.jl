@@ -17,8 +17,9 @@ include("array/indexing.jl")
 include("array/datavaluevector.jl")
 include("array/primitives.jl")
 include("array/broadcast.jl")
-include("array.jl")
+include("array/reduce.jl")
+include("array/promotion.jl")
 
-include("utils.jl")
+# include("utils.jl")
 
 end
