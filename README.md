@@ -14,10 +14,9 @@ It differs from ``Nullable`` by providing a small number of  additional
 features that make common operations on data easier.
 
 Currently the main use of this type is in the
-[Query.jl](https://github.com/davidanthoff/Query.jl),
-[IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl) and
-[DataValueArrays.jl](https://github.com/davidanthoff/DataValueArrays.jl)
-package.
+[Query.jl](https://github.com/davidanthoff/Query.jl) and
+[IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl)
+packages.
 
 This repo is based on the following principles/ideas:
 
