@@ -1,7 +1,7 @@
 @testset "DataValueArray: Map" begin
 
 using Base.Test
-using DataValueArrays
+using DataValues
 
 # create m random arrays each with N dimensions and length dims[i] along
 # dimension i for i=1:N
@@ -22,7 +22,7 @@ for i in 1:m
 end
 
 C = Array{Float64}(dims...)
-Z = DataValueArray(Float64, dims...)
+Z = DataValueArray{Float64}(dims...)
 
 R = map(|, Ms...)
 
@@ -104,13 +104,13 @@ n = rand(10:100)
 Ys = [ DataValueArray(rand(Int, n), fill(true, n)) for i in 1:rand(3:5) ]
 
 Z2 = map(h2, Ys[1])
-@test isequal(Z2, DataValueArray(Int, n))
+@test isequal(Z2, DataValueArray{Int}(n))
 @test isa(Z2, DataValueArray{Int})
 Z2 = map(h2, Ys[1], Ys[2])
-@test isequal(Z2, DataValueArray(Int, n))
+@test isequal(Z2, DataValueArray{Int}(n))
 @test isa(Z2, DataValueArray{Int})
 Z2 = map(h2, Ys...)
-@test isequal(Z2, DataValueArray(Int, n))
+@test isequal(Z2, DataValueArray{Int}(n))
 @test isa(Z2, DataValueArray{Int})
 
 end
