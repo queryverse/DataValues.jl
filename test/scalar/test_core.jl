@@ -10,6 +10,15 @@ using Base.Test
 
 end
 
+@testset "isna" begin
+
+@test isna(NA) == true
+@test isna(DataValue()) == true
+@test isna(DataValue{Int}()) == true
+@test isna(DataValue(3)) == false
+
+end
+
 @testset "Show" begin
 
 io = IOBuffer()
@@ -239,7 +248,7 @@ end
 
 io = IOBuffer()
 
-show(io, DataValue(a))
-Base.Test.@test String(take!(io)) == "DataValue{TestEnum}(a)"
+show(io, DataValue(enum_val_a))
+Base.Test.@test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
 
 end
