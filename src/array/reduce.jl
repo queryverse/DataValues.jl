@@ -137,7 +137,7 @@ for (fn, op) in ((:(Base.sum), +),
     @eval begin
         # supertype(typeof(@functorize(abs))) returns Func{1} on Julia 0.4,
         # and Function on 0.5
-        function $fn(f,X::T; skipna::Bool=false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
+        function $fn(f::Union{Function,Type},X::T; skipna::Bool=false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
             return mapreduce(f, $op, X; skipna = skipna)
         end
 
