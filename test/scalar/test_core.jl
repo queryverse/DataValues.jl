@@ -12,10 +12,10 @@ end
 
 @testset "isna" begin
 
-@test isna(NA) == true
-@test isna(DataValue()) == true
-@test isna(DataValue{Int}()) == true
-@test isna(DataValue(3)) == false
+@test DataValues.isna(NA) == true
+@test DataValues.isna(DataValue()) == true
+@test DataValues.isna(DataValue{Int}()) == true
+@test DataValues.isna(DataValue(3)) == false
 
 end
 

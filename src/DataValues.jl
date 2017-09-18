@@ -1,7 +1,7 @@
 __precompile__()
 module DataValues
 
-export DataValue, DataValueException, NA, isna
+export DataValue, DataValueException, NA
 
 export DataValueArray, DataValueVector, DataValueMatrix
 
