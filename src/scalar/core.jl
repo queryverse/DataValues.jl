@@ -81,6 +81,8 @@ Base.unsafe_get(x::DataValue) = x.value
 
 Base.isnull(x::DataValue) = !x.hasvalue
 
+isna(x::DataValue) = !x.hasvalue
+
 Base.hasvalue(x::DataValue) = x.hasvalue
 
 const DataValuehash_seed = UInt === UInt64 ? 0x932e0143e51d0171 : 0xe51d0171

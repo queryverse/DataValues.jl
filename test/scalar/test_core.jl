@@ -10,6 +10,15 @@ using Base.Test
 
 end
 
+@testset "isna" begin
+
+@test isna(NA) == true
+@test isna(DataValue()) == true
+@test isna(DataValue{Int}()) == true
+@test isna(DataValue(3)) == false
+
+end
+
 @testset "Show" begin
 
 io = IOBuffer()
