@@ -5,11 +5,6 @@ type TestNType{T}
     v::DataValue{T}
 end
 
-immutable SurvEvent
-    time::Float64
-    censored::Bool
-end
-
 @enum TestEnum enum_val_a enum_val_b
 
 @testset "DataValues" begin
@@ -19,8 +14,7 @@ include("scalar/test_operations.jl")
 include("scalar/test_basederived.jl")
 include("scalar/test_broadcast.jl")
 
-# include("array/test_broadcast.jl")
-# include("array/test_broadcast2.jl")
+include("array/test_broadcast.jl")
 include("array/test_constructors.jl")
 include("array/test_indexing.jl")
 # include("array/test_map.jl")
