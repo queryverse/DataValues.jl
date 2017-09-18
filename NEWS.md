@@ -1,3 +1,7 @@
+# DataValues.jl v0.3.0 Release Notes
+* Add DataValueArray
+* Add isna function
+
 # DataValues.jl v0.2.0 Release Notes
 * Add [] as an alternative to get
 * Remove configurable whitelist lifting
