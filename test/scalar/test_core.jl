@@ -55,6 +55,10 @@ end
 @test zero(DataValue{Float64}) == DataValue(0.)
 @test zero(DataValue(3.)) == DataValue(0.)
 
+for T in (subtypes(Dates.DatePeriod)..., subtypes(Dates.TimePeriod)...)
+    @test zero(DataValue{T}()) == T(0)
+end
+
 end
 
 @testset "Comparisons" begin

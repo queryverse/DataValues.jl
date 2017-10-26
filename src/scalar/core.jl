@@ -105,6 +105,8 @@ import Base.!=
 
 Base.zero{T<:Number}(::Type{DataValues.DataValue{T}}) = DataValue{T}(zero(T))
 Base.zero{T<:Number}(x::DataValues.DataValue{T}) = DataValue{T}(zero(T))
+Base.zero(::Type{DataValue{T}}) where {T<:Base.Dates.Period} = DataValue{T}(zero(T))
+Base.zero(x::DataValues.DataValue{T}) where {T<:Base.Dates.Period}= DataValue{T}(zero(T))
 
 # C# spec section 7.10.9
 
