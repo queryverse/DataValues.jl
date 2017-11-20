@@ -53,7 +53,7 @@ y = DataValueArray([3, NA, 5])
 
 # copy!
 function nonbits(dv)
-    ret = similar(dv, Integer)
+    ret = similar(dv, DataValue{Integer})
     for i = 1:length(dv)
         if !dv.isnull[i]
             ret[i] = dv[i]

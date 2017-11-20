@@ -9,15 +9,12 @@ specific, the length of `X` along dimension `d`.
 """
 Base.size(X::DataValueArray) = size(X.values)
 
-"""
-    similar(X::DataValueArray, [T], [dims])
+function Base.similar(x::AbstractArray, ::Type{DataValue{T}}, dims::Dims) where {T}
+    return DataValueArray{T}(dims)
+end
 
-Allocate an uninitialized `DataValueArray` of element type `T` and with
-size `dims`. If unspecified, `T` and `dims` default to the element type and size
-equal to that of `X`.
-"""
-function Base.similar(X::DataValueArray, ::Type{T}, dims::Dims) where {T}
-    return T<:DataValue ? DataValueArray{eltype(T)}(dims) : DataValueArray{T}(dims)
+function Base.similar(x::Array, ::Type{DataValue{T}}, dims::Dims) where {T}
+    return DataValueArray{T}(dims)
 end
 
 """
@@ -27,7 +24,7 @@ Return a shallow copy of `X`; the outer structure of `X` will be copied, but
 all elements will be identical to those of `X`.
 """
 function Base.copy(X::DataValueArray{T}) where {T}
-    return Base.copy!(similar(X, T), X)
+    return Base.copy!(similar(X, DataValue{T}), X)
 end
 
 # DA TODO This was my version, not clear which one is better
