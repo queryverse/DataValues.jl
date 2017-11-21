@@ -1,3 +1,6 @@
+# DataValues.jl v0.3.1 Release Notes
+* Fix similar implementation
+
 # DataValues.jl v0.3.0 Release Notes
 * Add DataValueArray
 * Add isna function (not exported for now)
