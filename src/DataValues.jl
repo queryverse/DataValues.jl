@@ -10,6 +10,7 @@ export dropna, dropna!, padna!, padna
 include("scalar/core.jl")
 include("scalar/broadcast.jl")
 include("scalar/operations.jl")
+include("scalar/strings.jl")
 
 include("array/typedefs.jl")
 include("array/constructors.jl")
