@@ -1,3 +1,6 @@
+# DataValues.jl v0.3.2 Release Notes
+* Fix method ambiguity bug
+
 # DataValues.jl v0.3.1 Release Notes
 * Fix similar implementation
 
