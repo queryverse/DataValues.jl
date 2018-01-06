@@ -17,6 +17,10 @@ function Base.similar(x::Array, ::Type{DataValue{T}}, dims::Dims) where {T}
     return DataValueArray{T}(dims)
 end
 
+function Base.similar(x::SubArray, ::Type{DataValue{T}}, dims::Dims) where {T}
+    return DataValueArray{T}(dims)
+end
+
 """
     copy(X::DataValueArray)
 
