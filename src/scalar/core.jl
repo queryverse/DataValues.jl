@@ -35,6 +35,7 @@ Base.convert(::Type{DataValue}, ::Void) = DataValue{Union{}}()
 Nullable{T}(value::DataValue{T}) = isnull(value) ? Nullable{T}() : Nullable{T}(get(value))
 
 Base.promote_rule{S,T}(::Type{DataValue{S}}, ::Type{T}) = DataValue{promote_type(S, T)}
+Base.promote_rule(::Type{DataValue{T}}, ::Type{Any}) where {T} = DataValue{Any}
 Base.promote_rule{S,T}(::Type{DataValue{S}}, ::Type{DataValue{T}}) = DataValue{promote_type(S, T)}
 Base.promote_op{S,T}(op::Any, ::Type{DataValue{S}}, ::Type{DataValue{T}}) = DataValue{Base.promote_op(op, S, T)}
 
