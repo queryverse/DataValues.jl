@@ -1,3 +1,6 @@
+# DataValues.jl v0.3.3 Release Notes
+* Fix a method ambiguity bug that occurs when Missings is loaded
+
 # DataValues.jl v0.3.2 Release Notes
 * Fix method ambiguity bug
 
