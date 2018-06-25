@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 using DataValues
 
 @testset "DataValueArray: Primitives" begin
@@ -10,10 +10,10 @@ M = rand(Bool, siz...)
 X = DataValueArray(A, M)
 i = rand(1:length(X))
 @test values(X, i) == X.values[i]
-@test isnull(X, i) == X.isnull[i]
+@test isna(X, i) == X.isna[i]
 I = [ rand(1:size(X,i)) for i in 1:n ]
 @test values(X, I...) == X.values[I...]
-@test isnull(X, I...) == X.isnull[I...]
+@test isna(X, I...) == X.isna[I...]
 
 # ----- test Base.similar, Base.size  ----------------------------------------#
 
@@ -55,7 +55,7 @@ y = DataValueArray([3, NA, 5])
 function nonbits(dv)
     ret = similar(dv, DataValue{Integer})
     for i = 1:length(dv)
-        if !dv.isnull[i]
+        if !dv.isna[i]
             ret[i] = dv[i]
         end
     end
@@ -107,11 +107,11 @@ Y = DataValueArray{Float64}(10)
 fill!(Y, rand(Float64))
 
 @test X.values == fill(10, 10, 2)
-@test isequal(X.isnull, fill(false, 10, 2))
-@test isequal(Y.isnull, fill(false, 10))
+@test isequal(X.isna, fill(false, 10, 2))
+@test isequal(Y.isna, fill(false, 10))
 
 fill!(X, DataValue())
-@test isequal(X.isnull, fill(true, 10, 2))
+@test isequal(X.isna, fill(true, 10, 2))
 
 # ----- test Base.deepcopy ---------------------------------------------------#
 
@@ -123,12 +123,12 @@ Y1 = deepcopy(Y)
 
 resize!(Y1, 20)
 @test Y1.values[1:10] == Y.values[1:10]
-@test Y1.isnull[1:10] == Y.isnull[1:10]
-@test Y1.isnull[11:20] == fill(true, 10)
+@test Y1.isna[1:10] == Y.isna[1:10]
+@test Y1.isna[11:20] == fill(true, 10)
 
 resize!(Y1, 5)
 @test Y1.values[1:5] == Y.values[1:5]
-@test Y1.isnull[1:5] == Y.isnull[1:5]
+@test Y1.isna[1:5] == Y.isna[1:5]
 
 # ----- test Base.reshape ----------------------------------------------------#
 
@@ -140,7 +140,7 @@ Y2 = reshape(Y1, 1, length(Y1))
 @test all(i->isequal(Y1[i], Y2[i]), 1:length(Y2))
 # Test that arrays share the same data
 Y2.values[1] += 1
-Y2.isnull[2] = true
+Y2.isna[2] = true
 @test all(i->isequal(Y1[i], Y2[i]), 1:length(Y2))
 
 # ----- test Base.ndims ------------------------------------------------------#
@@ -213,54 +213,54 @@ Y = Any[false, 1, :c, "string", DataValue("I am not null"), DataValue()]
 @test !any(x -> isa(x, DataValue), dropna!(Y))
 @test any(x -> isa(x, DataValue), Y)
 
-# ----- test any(isnull, X) --------------------------------------------------#
+# ----- test any(isna, X) --------------------------------------------------#
 
-# any(isnull, X::DataValueArray)
+# any(isna, X::DataValueArray)
 z = DataValueArray([1, 2, 3, NA, 5, NA, 7, NA])
-@test any(isnull, z) == true
-@test any(isnull, dropna(z)) == false
+@test any(isna, z) == true
+@test any(isna, dropna(z)) == false
 z = DataValueArray{Int}(10)
-@test any(isnull, z) == true
+@test any(isna, z) == true
 
-# any(isnull, A::AbstractArray)
+# any(isna, A::AbstractArray)
 A2 = [DataValue(1), DataValue(2), DataValue(3)]
-@test any(isnull, A2) == false
+@test any(isna, A2) == false
 push!(A2, DataValue{Int}())
-@test any(isnull, A2) == true
+@test any(isna, A2) == true
 
-# any(isnull, xs::NTuple)
-@test any(isnull, (DataValue(1), DataValue(2))) == false
-@test any(isnull, (DataValue{Int}(), DataValue(1), 3, 6)) == true
+# any(isna, xs::NTuple)
+@test any(isna, (DataValue(1), DataValue(2))) == false
+@test any(isna, (DataValue{Int}(), DataValue(1), 3, 6)) == true
 
-# any(isnull, S::SubArray{T, N, U<:DataValueArray})
+# any(isna, S::SubArray{T, N, U<:DataValueArray})
 A = rand(10, 3, 3)
 M = rand(Bool, 10, 3, 3)
 X = DataValueArray(A, M)
 i, j = rand(1:3), rand(1:3)
 S = view(X, :, i, j)
 
-@test any(isnull, S) == any(isnull, X[:, i, j])
+@test any(isna, S) == any(isna, X[:, i, j])
 X = DataValueArray(A)
 S = view(X, :, i, j)
-@test any(isnull, S) == false
+@test any(isna, S) == false
 
 
-# ----- test all(isnull, X) --------------------------------------------------#
+# ----- test all(isna, X) --------------------------------------------------#
 
-# all(isnull, X::DataValueArray)
+# all(isna, X::DataValueArray)
 z = DataValueArray{Int}(10)
-@test all(isnull, z) == true
+@test all(isna, z) == true
 z[1] = 10
-@test all(isnull, z) == false
+@test all(isna, z) == false
 
-# all(isnull, X::AbstractArray{<:DataValue})
-@test all(isnull, DataValue{Int}[DataValue(), DataValue()]) == true
-@test all(isnull, DataValue{Int}[DataValue(1), DataValue()]) == false
+# all(isna, X::AbstractArray{<:DataValue})
+@test all(isna, DataValue{Int}[DataValue(), DataValue()]) == true
+@test all(isna, DataValue{Int}[DataValue(1), DataValue()]) == false
 
-# all(isnull, X::Any)
-@test all(isnull, Any[DataValue(), DataValue()]) == true
-@test all(isnull, [1, 2]) == false
-@test all(isnull, 1:3) == false
+# all(isna, X::Any)
+@test all(isna, Any[DataValue(), DataValue()]) == true
+@test all(isna, [1, 2]) == false
+@test all(isna, 1:3) == false
 
 # ----- test Base.isnan ------------------------------------------------------#
 
@@ -298,14 +298,14 @@ f = convert(DataValueArray{Float64}, b)
 g = convert(DataValueArray, c)
 h = convert(DataValueArray{Float64}, g)
 
-@test_throws NullException convert(Array{Char, 1}, w)
+@test_throws DataValueException convert(Array{Char, 1}, w)
 @test convert(Array{Char, 1},
                 DataValueArray(dropna(w))) == ['a', 'b', 'c', 'd', 'e', 'f']
-@test_throws NullException convert(Array{Char}, w)
+@test_throws DataValueException convert(Array{Char}, w)
 @test convert(Array{Float64}, u) == Float64[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 @test convert(Vector{Float64}, y) == Float64[2, 4, 6, 8, 10]
 @test convert(Matrix{Float64}, z) == Float64[i*j for i in 1:10, j in 1:10]
-@test_throws NullException convert(Array, w)
+@test_throws DataValueException convert(Array, w)
 @test convert(Array, v) == [4 4 4 4; 4 4 4 4; 4 4 4 4; 4 4 4 4]
 @test convert(Array, z) == [i*j for i in 1:10, j in 1:10]
 @test convert(Array, u) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -324,13 +324,13 @@ h = convert(DataValueArray{Float64}, g)
 X = DataValueArray([1, 2, 3, 4, 5])
 @test convert(Vector, X) == [1, 2, 3, 4, 5]
 push!(X, DataValue())
-@test_throws NullException convert(Vector, X)
+@test_throws DataValueException convert(Vector, X)
 
 # Base.convert{T}(::Type{Matrix}, X::DataValueMatrix{T})
 Y = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 10])
 @test convert(Matrix, Y) == [1 2; 3 4; 5 6; 7 8; 9 10]
 Z = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 NA])
-@test_throws NullException convert(Matrix, Z)
+@test_throws DataValueException convert(Matrix, Z)
 
 # float(X::DataValueArray)
 A = rand(Int, 20)

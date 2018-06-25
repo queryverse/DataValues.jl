@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 using DataValues
 
 @testset "DataValueArray: SubArrays" begin
@@ -17,8 +17,8 @@ for i in 1:nd
     _H = H[find(x->x!=i, collect(1:nd))]
 
     @test values(S, _H...) == X.values[H...]
-    @test isnull(S, _H...) == X.isnull[H...]
-    @test any(isnull, S) == any(isnull, X[J...])
+    @test isna(S, _H...) == X.isna[H...]
+    @test any(isna, S) == any(isna, X[J...])
 end
 
 end

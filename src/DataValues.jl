@@ -1,14 +1,16 @@
 __precompile__()
 module DataValues
 
+import Dates
+
 export DataValue, DataValueException, NA
 
 export DataValueArray, DataValueVector, DataValueMatrix
 
-export dropna, dropna!, padna!, padna
+export isna, hasvalue, dropna, dropna!, padna!, padna
 
 include("scalar/core.jl")
-include("scalar/broadcast.jl")
+# include("scalar/broadcast.jl")
 include("scalar/operations.jl")
 
 include("array/typedefs.jl")

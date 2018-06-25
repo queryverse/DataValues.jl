@@ -1,5 +1,5 @@
 using DataValues
-using Base.Test
+using Test
 
 @testset "DataValueArray: DataMatrix" begin
 

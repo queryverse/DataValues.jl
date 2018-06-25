@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 using DataValues
 
 @testset "DataValueArray: Constructor" begin
@@ -22,7 +22,7 @@ dv = DataValueArray(v, [false, false, false, false])
 y2 = DataValueArray([1, 2, 3, 4, 5, 6],
                     [true, false, false, false, false ,false])
 @test isa(y2, DataValueVector{Int})
-@test y2.isnull[1]
+@test y2.isna[1]
 
 # test (::AbstractArray) constructor
 dv = DataValueArray(v)
@@ -105,8 +105,8 @@ end
 # test (A::AbstractArray{DataValue}) constructor
 z = DataValueArray([1, NA, 2, NA, 3])
 @test isa(z, DataValueVector{Int})
-@test z.isnull[2]
-@test z.isnull[4]
+@test z.isna[2]
+@test z.isna[4]
 
 # test DataValueArray{T}()
 X = DataValueArray{Int}()

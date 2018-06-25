@@ -1,7 +1,7 @@
 using DataValues
-using Base.Test
+using Test
 
-type TestNType{T}
+mutable struct TestNType{T}
     v::DataValue{T}
 end
 

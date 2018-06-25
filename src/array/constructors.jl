@@ -90,5 +90,5 @@ function Base.convert(::Type{DataValueArray}, A::AbstractArray{DataValue, N}) wh
 end
 
 function Base.convert(::Type{DataValueArray{T,N}}, A::DataValueArray{S,N}) where {S,T,N}
-    return DataValueArray(convert(Array{T,N}, A.values), A.isnull)
+    return DataValueArray(convert(Array{T,N}, A.values), A.isna)
 end

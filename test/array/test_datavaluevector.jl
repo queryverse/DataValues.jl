@@ -1,5 +1,5 @@
 using DataValues
-using Base.Test
+using Test
 
 @testset "DataValueArray: DataVector" begin
 
@@ -190,13 +190,13 @@ sizehint!(X, 20)
 X = DataValueArray(1:5)
 padna!(X, 2, 3)
 @test length(X.values) == 10
-@test X.isnull == vcat(true, true, fill(false, 5), true, true, true)
+@test X.isna == vcat(true, true, fill(false, 5), true, true, true)
 
 # padna(X::DataValueVector, front::Integer, back::Integer)
 X = DataValueArray(1:5)
 Y = padna(X, 2, 3)
 @test length(Y.values) == 10
-@test Y.isnull == vcat(true, true, fill(false, 5), true, true, true)
+@test Y.isna == vcat(true, true, fill(false, 5), true, true, true)
 
 #--- test Base.reverse!/Base.reverse
 
@@ -215,7 +215,7 @@ Z = DataValueArray(Array{Int, 1}[[1, 2], [3, 4], [5, 6]])
                 DataValueArray(Array{Int, 1}[[5, 6], [3, 4], [1, 2]]))
 
 # Base.reverse!(X::DataValueVector, s=1, n=length(X))
-# check for case where isbits(eltype(X)) = false & any(isnull, X) = true
+# check for case where isbits(eltype(X)) = false & any(isna, X) = true
 A = fill([1,2], 20)
 Z = DataValueArray{Array{Int, 1}}(20)
 i = rand(2:7)
@@ -223,8 +223,8 @@ for i in [i-1, i, i+1, 20 - (i + 2), 20 - (i - 1)]
     Z[i] = [1, 2]
 end
 vals = Z.values
-nulls = Z.isnull
-@test isequal(reverse!(Z), DataValueArray(A, reverse!(Z.isnull)))
+nulls = Z.isna
+@test isequal(reverse!(Z), DataValueArray(A, reverse!(Z.isna)))
 
 ## empty!(X::DataValueVector)
 n = rand(1:1_000)

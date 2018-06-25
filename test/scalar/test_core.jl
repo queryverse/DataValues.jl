@@ -1,12 +1,15 @@
 using DataValues
-using Base.Test
+using Test
+using Dates
+using InteractiveUtils
 
 @testset "Core" begin
 
 @testset "Nullable" begin
 
-@test DataValue(Nullable(3)) == DataValue(3)
-@test DataValue(Nullable{Int}()) == DataValue{Int}()
+# TODO 0.7 reenable
+# @test DataValue(Nullable(3)) == DataValue(3)
+# @test DataValue(Nullable{Int}()) == DataValue{Int}()
 
 end
 
@@ -22,11 +25,11 @@ end
 @testset "Show" begin
 
 io = IOBuffer()
-showcompact(io, DataValue(3))
+show(IOContext(io, :compact => true), DataValue(3))
 @test String(take!(io)) == "3"
 
 io = IOBuffer()
-showcompact(io, DataValue{Int}())
+show(IOContext(io, :compact => true), DataValue{Int}())
 @test String(take!(io)) == "#NA"
 
 end
@@ -42,8 +45,8 @@ end
 
 @testset "Hasvalue" begin
 
-@test Base.hasvalue(DataValue(3)) == true
-@test Base.hasvalue(DataValue{Int}()) == false
+@test hasvalue(DataValue(3)) == true
+@test hasvalue(DataValue{Int}()) == false
 
 end
 
@@ -245,14 +248,12 @@ end
 @test length(DataValue("TEST"))==DataValue(4)
 @test length(DataValue{String}())==DataValue{Int}()
 
-@test isequal(Nullable(DataValue("TEST")), Nullable("TEST"))
-
 @test DataValue{Int} == DataValue{Int}
 @test DataValue(43) == DataValue(43)
 
 io = IOBuffer()
 
 show(io, DataValue(enum_val_a))
-Base.Test.@test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
+@test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
 
 end

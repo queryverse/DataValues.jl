@@ -17,7 +17,7 @@ Base.Broadcast._broadcast_getindex_eltype(::Type{DataValue}, A) = typeof(A)
 Base.@propagate_inbounds Base.Broadcast._broadcast_getindex(::Type{DataValue}, A, I) = A
 
 @inline function Base.Broadcast.broadcast_c(f, ::Type{DataValue}, a...)
-    nonnull = all(Base.hasvalue, a)
+    nonnull = all(hasvalue, a)
     S = Base.Broadcast._nullable_eltype(f, a...)
     if isleaftype(S) && Base.null_safe_op(f, Base.Broadcast.maptoTuple(Base.Broadcast._unsafe_get_eltype,a...).types...)
         DataValue{S}(f(map(unsafe_get, a)...), nonnull)
