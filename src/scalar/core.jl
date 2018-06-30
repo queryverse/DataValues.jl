@@ -46,10 +46,10 @@ function Base.show(io::IO, x::DataValue{T}) where {T}
         end
     else
         print(io, "DataValue{")
-        showcompact(io, eltype(x))
+        show(IOContext(io, :compact => true), eltype(x))
         print(io, "}(")
         if !isna(x)
-            showcompact(io, x.value)
+            show(IOContext(io, :compact => true), x.value)
         end
         print(io, ')')
     end
@@ -137,13 +137,12 @@ function Base.getindex(s::DataValue{T},i) where {T <: AbstractString}
     end
 end
 
-import Base.endof
-function endof(s::DataValue{T}) where {T <: AbstractString}
+function Base.lastindex(s::DataValue{T}) where {T <: AbstractString}
     if isna(s)
         # TODO Decide whether this makes sense?
         return 0
     else
-        return endof(get(s))
+        return lastindex(get(s))
     end
 end
 

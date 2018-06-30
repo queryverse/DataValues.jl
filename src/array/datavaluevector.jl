@@ -107,7 +107,7 @@ function Base.splice!(X::DataValueVector, i::Integer, ins=_default_splice)
     else
         Base._growat!(X.values, i, m-1)
         Base._growat!(X.isna, i, m-1)
-        for k = 1:endof(ins)
+        for k = 1:lastindex(ins)
             X[i + k - 1] = ins[k]
         end
     end
@@ -151,7 +151,7 @@ function Base.splice!(X::DataValueVector, rng::UnitRange{T}, ins=_default_splice
         Base._growat!(X.isna, i, delta)
     end
 
-    for k = 1:endof(ins)
+    for k = 1:lastindex(ins)
         X[f + k - 1] = ins[k]
     end
     return vs

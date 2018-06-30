@@ -146,11 +146,11 @@ Returns the maximum index `i` for which `getindex(X, i)` is valid.
 Base.length(X::DataValueArray) = length(X.values)
 
 """
-    endof(X::DataValueArray)
+    lastindex(X::DataValueArray)
 
 Returns the last entry of `X`.
 """
-Base.endof(X::DataValueArray) = endof(X.values)
+Base.lastindex(X::DataValueArray) = lastindex(X.values)
 
 # DA TODO Unclear whether I want that
 # function Base.find(X::DataValueArray{Bool})
@@ -210,15 +210,15 @@ function dropna!(X::AbstractVector{T}) where {T}                 # -> AbstractVe
     end
 end
 
+# TODO: replace `find(X.isna)` with `X.isna` when
+# https://github.com/JuliaLang/julia/pull/20465 is merged and part of
+# current release (either v0.6 or v1.0)
 """
     dropna!(X::DataValueVector)
 
 Remove missing entries of `X` in-place and return a `Vector` view of the
 unwrapped `DataValue` entries.
 """
-# TODO: replace `find(X.isna)` with `X.isna` when
-# https://github.com/JuliaLang/julia/pull/20465 is merged and part of
-# current release (either v0.6 or v1.0)
 dropna!(X::DataValueVector) = deleteat!(X, find(X.isna)).values # -> Vector
 
 # DA TODO I don't think we want this

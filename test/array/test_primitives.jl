@@ -155,10 +155,10 @@ end
 @test length(DataValueArray{Int}(5, 5)) == 25
 @test length(DataValueArray{Int}((3, 3, 3))) == 27
 
-# ----- test Base.endof ------------------------------------------------------#
+# ----- test Base.lastindex ------------------------------------------------------#
 
-@test endof(DataValueArray(collect(1:10))) == 10
-@test endof(DataValueArray([1, 2, nothing, 4, nothing])) == 5
+@test lastindex(DataValueArray(collect(1:10))) == 10
+@test lastindex(DataValueArray([1, 2, nothing, 4, nothing])) == 5
 
 # ----- test Base.find -------------------------------------------------------#
 

@@ -1,7 +1,9 @@
 __precompile__()
 module DataValues
 
-import Dates
+using Dates
+
+import Nullables
 
 export DataValue, DataValueException, NA
 

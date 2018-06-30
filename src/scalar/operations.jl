@@ -42,27 +42,27 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
         import Base.$(op)
         function $op(a::DataValue{T1},b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(a) && hasvalue(b)
-            S = Base.Broadcast._nullable_eltype($op,a,b)
+            S = Nullables._nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(get(a), get(b)))
             else
                 return DataValue{Base.nullable_returntype(S)}()
-            end            
+            end
         end
-        
+
         function $op(a::DataValue{T1},b::T2) where {T1,T2}
             nonnull = hasvalue(a)
-            S = Base.Broadcast._nullable_eltype($op,a,b)
+            S = Nullables._nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(get(a), b))
             else
                 return DataValue{Base.nullable_returntype(S)}()
             end
         end
-        
+
         function $op(a::T1,b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(b)
-            S = Base.Broadcast._nullable_eltype($op,a,b)
+            S = Nullables._nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(a, get(b)))
             else
