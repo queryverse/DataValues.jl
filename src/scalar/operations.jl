@@ -46,7 +46,7 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
             if nonnull
                 return DataValue($op(get(a), get(b)))
             else
-                return DataValue{Base.nullable_returntype(S)}()
+                return DataValue{Nullables.nullable_returntype(S)}()
             end
         end
 
@@ -56,7 +56,7 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
             if nonnull
                 return DataValue($op(get(a), b))
             else
-                return DataValue{Base.nullable_returntype(S)}()
+                return DataValue{Nullables.nullable_returntype(S)}()
             end
         end
 
@@ -66,7 +66,7 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
             if nonnull
                 return DataValue($op(a, get(b)))
             else
-                return DataValue{Base.nullable_returntype(S)}()
+                return DataValue{Nullables.nullable_returntype(S)}()
             end
         end
     end

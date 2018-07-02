@@ -29,7 +29,7 @@ maptoTuple(f, a, b...) = Tuple{f(a), maptoTuple(f, b...).types...}
         if nonnull
             DataValue(f(map(unsafe_get, a)...))
         else
-            DataValue{Base.nullable_returntype(S)}()
+            DataValue{Nullables.nullable_returntype(S)}()
         end
     end
 end
