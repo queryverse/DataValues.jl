@@ -48,15 +48,15 @@ similar(dt, 2, 2, 2)
 x = DataValueArray([1, 2, NA])
 y = DataValueArray([3, NA, 5])
 @test isequal(copy(x), x)
-@test isequal(copy!(y, x), x)
+@test isequal(copyto!(y, x), x)
 
 
 # copy!
 function nonbits(dv)
     ret = similar(dv, DataValue{Integer})
-    for i = 1:length(dv)
-        if !dv.isna[i]
-            ret[i] = dv[i]
+    for ii = 1:length(dv)
+        if !dv.isna[ii]
+            ret[ii] = dv[ii]
         end
     end
     ret
@@ -70,33 +70,33 @@ set1 = Any[DataValueArray([1, NA, 3]),
 set2 = map(nonbits, set1)
 
 for (dest, src, bigsrc, emptysrc, res1, res2) in Any[set1, set2]
-    @test isequal(copy!(copy(dest), src), res1)
-    @test isequal(copy!(copy(dest), 1, src), res1)
+    @test isequal(copyto!(copy(dest), src), res1)
+    @test isequal(copyto!(copy(dest), 1, src), res1)
 
-    @test isequal(copy!(copy(dest), 2, src, 2), res2)
-    @test isequal(copy!(copy(dest), 2, src, 2, 1), res2)
+    @test isequal(copyto!(copy(dest), 2, src, 2), res2)
+    @test isequal(copyto!(copy(dest), 2, src, 2, 1), res2)
 
-    @test isequal(copy!(copy(dest), 99, src, 99, 0), dest)
+    @test isequal(copyto!(copy(dest), 99, src, 99, 0), dest)
 
-    @test isequal(copy!(copy(dest), 1, emptysrc), dest)
-    @test_throws BoundsError copy!(dest, 1, emptysrc, 1)
+    @test isequal(copyto!(copy(dest), 1, emptysrc), dest)
+    @test_throws BoundsError copyto!(dest, 1, emptysrc, 1)
 
     for idx in [0, 4]
-        @test_throws BoundsError copy!(dest, idx, src)
-        @test_throws BoundsError copy!(dest, idx, src, 1)
-        @test_throws BoundsError copy!(dest, idx, src, 1, 1)
-        @test_throws BoundsError copy!(dest, 1, src, idx)
-        @test_throws BoundsError copy!(dest, 1, src, idx, 1)
+        @test_throws BoundsError copyto!(dest, idx, src)
+        @test_throws BoundsError copyto!(dest, idx, src, 1)
+        @test_throws BoundsError copyto!(dest, idx, src, 1, 1)
+        @test_throws BoundsError copyto!(dest, 1, src, idx)
+        @test_throws BoundsError copyto!(dest, 1, src, idx, 1)
     end
 
-    @test_throws ArgumentError copy!(dest, 1, src, 1, -1)
+    @test_throws ArgumentError copyto!(dest, 1, src, 1, -1)
 
-    @test_throws BoundsError copy!(dest, bigsrc)
+    @test_throws BoundsError copyto!(dest, bigsrc)
 
-    @test_throws BoundsError copy!(dest, 3, src)
-    @test_throws BoundsError copy!(dest, 3, src, 1)
-    @test_throws BoundsError copy!(dest, 3, src, 1, 2)
-    @test_throws BoundsError copy!(dest, 1, src, 2, 2)
+    @test_throws BoundsError copyto!(dest, 3, src)
+    @test_throws BoundsError copyto!(dest, 3, src, 1)
+    @test_throws BoundsError copyto!(dest, 3, src, 1, 2)
+    @test_throws BoundsError copyto!(dest, 1, src, 2, 2)
 end
 
 # ----- test Base.fill! ------------------------------------------------------#
@@ -163,10 +163,10 @@ end
 # ----- test Base.find -------------------------------------------------------#
 
 z = DataValueArray(rand(Bool, 10))
-@test find(z) == find(z.values)
+@test (LinearIndices(z))[findall(z)] == (LinearIndices(z.values))[findall(z.values)]
 
 z = DataValueArray([false, true, false, true, false, true])
-@test isequal(find(z), [2, 4, 6])
+@test isequal((LinearIndices(z))[findall(z)], [2, 4, 6])
 
 # ----- test dropna --------------------------------------------------------#
 

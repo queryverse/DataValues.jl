@@ -1,4 +1,5 @@
 using Test
+using Random
 using DataValues
 # import DataValues: unsafe_getindex_notnull, unsafe_getvalue_notnull
 
@@ -92,7 +93,7 @@ Z = DataValueArray(Z_values)
 
 # getindex with AbstractVector{Bool}
 b = bitrand(10, 10)
-rg = find(b)
+rg = (LinearIndices(b))[findall(b)]
 v = X[b]
 for i = 1:length(rg)
     if _isna[rg[i]]
@@ -144,7 +145,6 @@ for i = 1:10, j = 1:10
 end
 @test isequal(X, DataValueArray(_values))
 
-
 # ----- test nullify! -----#
 _isna = bitrand(10, 10)
 for i = 1:100
@@ -155,15 +155,17 @@ end
 
 # setindex! with scalar and vector indices
 rg = 2:9
-_values[rg] = 1.0
-X[rg] = 1.0
+_values[rg] .= 1.0
+X[rg] .= 1.0
 for i = 1:length(rg)
     @test isequal(X[rg[i]], DataValue(1.0))
 end
 
+
 # setindex! with NA and vector indices
 rg = 5:13
-_isna[rg] = true
+_isna[rg] .= true
+# TODO This should be changed to .=, but currently crashes on 0.7
 X[rg] = NA
 for i = 1:length(rg)
     @test isna(X[rg[i]])
@@ -171,8 +173,8 @@ end
 
 # setindex! with vector and vector indices
 rg = 12:67
-_values[rg] = rand(length(rg))
-X[rg] = _values[rg]
+_values[rg] .= rand(length(rg))
+X[rg] .= _values[rg]
 for i = 1:length(rg)
     @test isequal(X[rg[i]], DataValue(_values[rg[i]]))
 end

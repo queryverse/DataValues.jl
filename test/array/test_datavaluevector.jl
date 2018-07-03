@@ -37,38 +37,38 @@ push!(ZZ, 5, DataValue(), DataValue(5))
 @test isequal(pop!(Z), DataValue{Int}())
 @test isequal(pop!(Z), DataValue(5))
 
-#--- Base.unshift!
+#--- Base.pushfirst!
 
-# Base.unshift!(X::DataValueVector, v)
-@test isequal(unshift!(X, 3), DataValueArray(vcat(3, [1:10...])))
+# Base.pushfirst!(X::DataValueVector, v)
+@test isequal(pushfirst!(X, 3), DataValueArray(vcat(3, [1:10...])))
 
-# Base.unshift!(X::DataValueVector, v::DataValue)
-@test isequal(unshift!(X, DataValue(2)),
+# Base.pushfirst!(X::DataValueVector, v::DataValue)
+@test isequal(pushfirst!(X, DataValue(2)),
                 DataValueArray(vcat([2, 3], [1:10...])))
-@test isequal(unshift!(X, DataValue{Int}()),
+@test isequal(pushfirst!(X, DataValue{Int}()),
                 DataValueArray(vcat([1, 2, 3], [1:10...]),
                             vcat(true, fill(false, 12))
                 )
         )
 
-@test isequal(unshift!(Y, 1, DataValue(), DataValue(3)),
+@test isequal(pushfirst!(Y, 1, DataValue(), DataValue(3)),
                 DataValueArray([1, 2, 3, 1, 2, 3, 4, 5],
                             [false, true, false, false,
                             false, false, false, false]
                 )
         )
 
-#--- Base.shift!
+#--- Base.popfirst!
 
-# Base.shift!{T}(X::DataValueVector{T})
+# Base.popfirst!{T}(X::DataValueVector{T})
 Z = DataValueArray([1:10...])
 
-@test isequal(shift!(Z), DataValue(1))
+@test isequal(popfirst!(Z), DataValue(1))
 @test isequal(Z, DataValueArray([2:10...]))
 
-unshift!(Z, DataValue{Int}())
+pushfirst!(Z, DataValue{Int}())
 
-@test isequal(shift!(Z), DataValue{Int}())
+@test isequal(popfirst!(Z), DataValue{Int}())
 
 #--- test Base.splice!
 

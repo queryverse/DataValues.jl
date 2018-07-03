@@ -28,7 +28,7 @@ Return a shallow copy of `X`; the outer structure of `X` will be copied, but
 all elements will be identical to those of `X`.
 """
 function Base.copy(X::DataValueArray{T}) where {T}
-    return Base.copy!(similar(X, DataValue{T}), X)
+    return Base.copyto!(similar(X, DataValue{T}), X)
 end
 
 # DA TODO This was my version, not clear which one is better
@@ -49,15 +49,15 @@ end
 # end
 
 """
-    copy!(dest::DataValueArray, src::DataValueArray)
+    copyto!(dest::DataValueArray, src::DataValueArray)
 
 Copy the initialized values of a source DataValueArray into the respective
 indices of the destination DataValueArray. If an entry in `src` is null, then
 this method nullifies the respective entry in `dest`.
 """
-function Base.copy!(dest::DataValueArray, src::DataValueArray)
+function Base.copyto!(dest::DataValueArray, src::DataValueArray)
     if isbits(eltype(dest)) && isbits(eltype(src))
-        copy!(dest.values, src.values)
+        copyto!(dest.values, src.values)
     else
         dest_values = dest.values
         src_values = src.values
@@ -67,7 +67,7 @@ function Base.copy!(dest::DataValueArray, src::DataValueArray)
             @inbounds !(src.isna[i]) && (dest.values[i] = src.values[i])
         end
     end
-    copy!(dest.isna, src.isna)
+    copyto!(dest.isna, src.isna)
     return dest
 end
 
@@ -123,7 +123,7 @@ function Base.resize!(X::DataValueArray{T,1}, n::Int) where {T}
     resize!(X.values, n)
     oldn = length(X.isna)
     resize!(X.isna, n)
-    X.isna[oldn+1:n] = true
+    X.isna[oldn+1:n] .= true
     return X
 end
 
@@ -201,7 +201,7 @@ function dropna!(X::AbstractVector{T}) where {T}                 # -> AbstractVe
     if !(DataValue <: T) && !(T <: DataValue)
         return X
     else
-        deleteat!(X, find(isna, X))
+        deleteat!(X, findall(isna, X))
         res = similar(X, eltype(T))
         for i in eachindex(X, res)
             @inbounds res[i] = isa(X[i], DataValue) ? X[i].value : X[i]
@@ -219,7 +219,7 @@ end
 Remove missing entries of `X` in-place and return a `Vector` view of the
 unwrapped `DataValue` entries.
 """
-dropna!(X::DataValueVector) = deleteat!(X, find(X.isna)).values # -> Vector
+dropna!(X::DataValueVector) = deleteat!(X, (LinearIndices(X.isna))[findall(X.isna)]).values # -> Vector
 
 # DA TODO I don't think we want this
 # """

@@ -45,41 +45,41 @@ function Base.pop!(X::DataValueVector{T}) where {T}
 end
 
 """
-    unshift!(X::DataValueVector, v::DataValue)
+    pushfirst!(X::DataValueVector, v::DataValue)
 
 Insert a value at the beginning of `X` from a `DataValue` value `v`. If `v` is
 null then this method inserts a null entry at the beginning of `X`. Returns `X`.
 """
-function Base.unshift!(X::DataValueVector, v::DataValue)
+function Base.pushfirst!(X::DataValueVector, v::DataValue)
     if isna(v)
         ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.values, 1)
-        unshift!(X.isna, true)
+        pushfirst!(X.isna, true)
     else
-        unshift!(X.values, v.value)
-        unshift!(X.isna, false)
+        pushfirst!(X.values, v.value)
+        pushfirst!(X.isna, false)
     end
     return X
 end
 
 """
-    unshift!(X::DataValueVector, v)
+    pushfirst!(X::DataValueVector, v)
 
 Insert a value `v` at the beginning of `X` and return `X`.
 """
-function Base.unshift!(X::DataValueVector, v)
-    unshift!(X.values, v)
-    unshift!(X.isna, false)
+function Base.pushfirst!(X::DataValueVector, v)
+    pushfirst!(X.values, v)
+    pushfirst!(X.isna, false)
     return X
 end
 
 """
-    shift!{T}(X::DataValueVector{T})
+    popfirst!{T}(X::DataValueVector{T})
 
 Remove the first entry from `X` and return it as a `DataValue` object.
 """
-function Base.shift!(X::DataValueVector{T}) where {T}
-    val = shift!(X.values)
-    isna = shift!(X.isna)
+function Base.popfirst!(X::DataValueVector{T}) where {T}
+    val = popfirst!(X.values)
+    isna = popfirst!(X.isna)
     if isna
         return DataValue{T}()
     else
@@ -184,7 +184,7 @@ function Base.append!(X::DataValueVector, items::AbstractVector)
     old_length = length(X)
     nitems = length(items)
     resize!(X, old_length + nitems)
-    copy!(X, length(X)-nitems+1, items, 1, nitems)
+    copyto!(X, length(X)-nitems+1, items, 1, nitems)
     return X
 end
 
@@ -193,8 +193,8 @@ end
 
 Add the elements of `items` to the beginning of `X`.
 
-Note that `prepend!(X, [1, 2, 3])` is equivalent to `unshift!(X, 1, 2, 3)`,
-where the items to be added to `X` are passed individually to `unshift!` and as a
+Note that `prepend!(X, [1, 2, 3])` is equivalent to `pushfirst!(X, 1, 2, 3)`,
+where the items to be added to `X` are passed individually to `pushfirst!` and as a
 collection to `prepend!`.
 """
 function Base.prepend!(X::DataValueVector, items::AbstractVector)
@@ -203,9 +203,9 @@ function Base.prepend!(X::DataValueVector, items::AbstractVector)
     ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.values, nitems)
     ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.isna, nitems)
     if X === items
-        copy!(X, 1, items, nitems+1, nitems)
+        copyto!(X, 1, items, nitems+1, nitems)
     else
-        copy!(X, 1, items, 1, nitems)
+        copyto!(X, 1, items, 1, nitems)
     end
     return X
 end

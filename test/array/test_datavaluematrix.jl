@@ -1,4 +1,5 @@
 using DataValues
+using LinearAlgebra
 using Test
 
 @testset "DataValueArray: DataMatrix" begin

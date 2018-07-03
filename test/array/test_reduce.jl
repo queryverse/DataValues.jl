@@ -1,4 +1,5 @@
 using DataValues
+using Random
 using Test
 
 @testset "DataValueArray: Reduce" begin
@@ -20,7 +21,7 @@ for N in (10, 2050)
     M[j] = false
     X = DataValueArray(A)
     Y = DataValueArray(A, M)
-    B = A[find(x->!x, M)]
+    B = A[findall(x->!x, M)]
 
     @test isequal(mapreduce(f, +, X), DataValue(mapreduce(f, +, X.values)))
     @test isequal(mapreduce(f, +, Y), DataValue{Float64}())
@@ -62,7 +63,7 @@ for N in (10, 2050)
     @test !isna(v1[2])
 
     H = rand(Bool, N)
-    G = H[find(x->!x, M)]
+    G = H[findall(x->!x, M)]
     U = DataValueArray(H)
     V = DataValueArray(H, M)
 
