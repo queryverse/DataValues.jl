@@ -130,11 +130,10 @@ end
 
 # standard reductions
 
-# TODO Figure out what is going on with scalarmin
 for (fn, op) in ((:(Base.sum), +),
-                 (:(Base.prod), *))
-                #  (:(Base.minimum), Base.scalarmin),
-                #  (:(Base.maximum), Base.scalarmax))
+                 (:(Base.prod), *),
+                 (:(Base.minimum), min),
+                 (:(Base.maximum), max))
     @eval begin
         # supertype(typeof(@functorize(abs))) returns Func{1} on Julia 0.4,
         # and Function on 0.5
