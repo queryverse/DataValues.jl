@@ -299,7 +299,7 @@ function Base.convert(::Type{Array{S, N}},
                                X::DataValueArray{T, N},
                                replacement::Any) where {S,T,N} # -> Array{S, N}
     replacementS = convert(S, replacement)
-    res = Array{S}(size(X))
+    res = Array{S}(undef, size(X))
     for i in 1:length(X)
         if X.isna[i]
             res[i] = replacementS
