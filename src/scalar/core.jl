@@ -110,6 +110,7 @@ Base.zero(x::DataValues.DataValue{T}) where {T<:Dates.Period}= DataValue{T}(zero
 
 ==(a::DataValue{T},b::DataValue{Union{}}) where {T} = isna(a)
 ==(a::DataValue{Union{}},b::DataValue{T}) where {T} = isna(b)
+==(a::DataValue{Union{}}, b::DataValue{Union{}}) = true
 !=(a::DataValue{T},b::DataValue{Union{}}) where {T} = !isna(a)
 !=(a::DataValue{Union{}},b::DataValue{T}) where {T} = !isna(b)
 
