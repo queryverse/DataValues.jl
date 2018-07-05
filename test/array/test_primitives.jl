@@ -265,13 +265,13 @@ z[1] = 10
 # ----- test Base.isnan ------------------------------------------------------#
 
 x = DataValueArray([1, 2, NaN, 4, 5, NaN, Inf, NA])
-_x = isnan.(x)
+_x = map(isnan, x)
 @test isequal(_x, [false, false, true, false,
                                 false, true, false, false])
 
 # ----- test Base.isfinite ---------------------------------------------------#
 
-_x = isfinite.(x)
+_x = map(isfinite, x)
 @test isequal(_x, [true, true, false, true,
                                 true, false, false, false])
 
@@ -336,7 +336,7 @@ Z = DataValueArray([1 2; 3 4; 5 6; 7 8; 9 NA])
 A = rand(Int, 20)
 M = rand(Bool, 20)
 X = DataValueArray(A, M)
-@test isequal(float.(X), DataValueArray(float(A), M))
+@test isequal(map(float, X), DataValueArray(float(A), M))
 
 # ----- test Base.hash (julia/base/hashing.jl:5) -----------------------------#
 
