@@ -13,6 +13,7 @@ const NA = DataValue{Union{}}()
 
 DataValue(value::T, hasvalue::Bool=true) where {T} = DataValue{T}(value, hasvalue)
 DataValue(value::Missing) = DataValue{Union{}}()
+DataValue{T}(::Missing) where T = DataValue{T}()
 DataValue() = DataValue{Union{}}()
 
 Base.eltype(::Type{DataValue{T}}) where {T} = T
