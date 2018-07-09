@@ -167,7 +167,7 @@ for op in (:+, :-, :!, :~)
 end
 
 
-for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>)
+for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :min, :max)
     @eval begin
         import Base.$(op)
         $op(a::DataValue{T1},b::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(a) || isna(b) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(get(a), get(b)))
