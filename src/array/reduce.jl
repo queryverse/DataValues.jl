@@ -147,27 +147,15 @@ for (fn, op) in ((:(Base.sum), +),
     end
 end
 
-# TODO 0.7 what is going on here
-# for (fn, f, op) in ((:(Base.sumabs), abs, +),
-#                     (:(Base.sumabs2), abs2, +))
-#     @eval begin
-#         function $fn(X::T; skipna::Bool=false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
-#             return mapreduce($f, $op, X; skipna=skipna)
-#         end
-#     end
-# end
-
-# TODO Figure out what is going on with this
-# internal methods for Base.minimum and Base.maximum
-# for op in (Base.scalarmin, Base.scalarmax)
-#     @eval begin
-#         function Base._mapreduce(::typeof(identity), ::$(typeof(op)),
-#                                     X::DataValueArray{T}, missingdata) where {T}
-#             missingdata && return DataValue{T}()
-#             DataValue(Base._mapreduce(identity, $op, X.values))
-#         end
-#     end
-# end
+for op in (Base.min, Base.max)
+    @eval begin
+        function Base._mapreduce(::typeof(identity), ::$(typeof(op)),
+                                    X::DataValueArray{T}, missingdata) where {T}
+            missingdata && return DataValue{T}()
+            DataValue(Base._mapreduce(identity, $op, X.values))
+        end
+    end
+end
 
 # function Base.mapreduce_impl{T}(f, op::typeof(Base.scalarmin), X::DataValueArray{T},
 #                                 first::Int, last::Int)
