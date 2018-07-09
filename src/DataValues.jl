@@ -1,14 +1,19 @@
 __precompile__()
 module DataValues
 
+using Dates
+
+import Nullables
+
 export DataValue, DataValueException, NA
 
 export DataValueArray, DataValueVector, DataValueMatrix
 
-export dropna, dropna!, padna!, padna
+export isna, hasvalue, dropna, dropna!, padna!, padna
 
 include("scalar/core.jl")
-include("scalar/broadcast.jl")
+# TODO 0.7 migration, enable again
+# include("scalar/broadcast.jl")
 include("scalar/operations.jl")
 
 include("array/typedefs.jl")
@@ -16,7 +21,8 @@ include("array/constructors.jl")
 include("array/indexing.jl")
 include("array/datavaluevector.jl")
 include("array/primitives.jl")
-include("array/broadcast.jl")
+# TODO 0.7 migration, enable again
+# include("array/broadcast.jl")
 include("array/reduce.jl")
 include("array/promotion.jl")
 

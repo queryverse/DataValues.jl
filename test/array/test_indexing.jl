@@ -1,4 +1,5 @@
-using Base.Test
+using Test
+using Random
 using DataValues
 # import DataValues: unsafe_getindex_notnull, unsafe_getvalue_notnull
 
@@ -23,32 +24,32 @@ end
 for i in eachindex(x)
     y = x[i]
     @test isa(y, DataValue{Int})
-    @test isnull(y)
+    @test isna(y)
 end
 
 _values = rand(10, 10)
-_isnull = rand(Bool, 10, 10)
-X = DataValueArray(_values, _isnull)
+_isna = rand(Bool, 10, 10)
+X = DataValueArray(_values, _isna)
 
 # Base.getindex{T, N}(X::DataValueArray{T, N}, I::DataValue{Int}...)
-@test_throws NullException getindex(X, DataValue{Int}(), DataValue{Int}())
-if _isnull[1]
-    @test isnull(getindex(X, DataValue(1)))
+@test_throws DataValueException getindex(X, DataValue{Int}(), DataValue{Int}())
+if _isna[1]
+    @test isna(getindex(X, DataValue(1)))
 else
     @test isequal(getindex(X, DataValue(1)), DataValue(_values[1]))
 end
 
 # Scalar getindex
 for i = 1:100
-    if _isnull[i]
-        @test isnull(X[i])
+    if _isna[i]
+        @test isna(X[i])
     else
         @test isequal(X[i], DataValue(_values[i]))
     end
 end
 for i = 1:10, j = 1:10
-    if _isnull[i, j]
-        @test isnull(X[i, j])
+    if _isna[i, j]
+        @test isna(X[i, j])
     else
         @test isequal(X[i, j], DataValue(_values[i, j]))
     end
@@ -58,8 +59,8 @@ end
 rg = 2:9
 v = X[rg]
 for i = 1:length(rg)
-    if _isnull[rg[i]]
-        @test isnull(v[i])
+    if _isna[rg[i]]
+        @test isna(v[i])
     else
         @test isequal(v[i], DataValue(_values[rg[i]]))
     end
@@ -67,8 +68,8 @@ end
 
 v = X[rg, 9]
 for i = 1:length(rg)
-    if _isnull[rg[i], 9]
-        @test isnull(v[i])
+    if _isna[rg[i], 9]
+        @test isna(v[i])
     else
         @test isequal(v[i], DataValue(_values[rg[i], 9]))
     end
@@ -77,8 +78,8 @@ end
 rg2 = 5:7
 v = X[rg, rg2]
 for j = 1:length(rg2), i = 1:length(rg)
-    if _isnull[rg[i], rg2[j]]
-        @test isnull(v[i, j])
+    if _isna[rg[i], rg2[j]]
+        @test isna(v[i, j])
     else
         @test isequal(v[i, j], DataValue(_values[rg[i], rg2[j]]))
     end
@@ -92,11 +93,11 @@ Z = DataValueArray(Z_values)
 
 # getindex with AbstractVector{Bool}
 b = bitrand(10, 10)
-rg = find(b)
+rg = (LinearIndices(b))[findall(b)]
 v = X[b]
 for i = 1:length(rg)
-    if _isnull[rg[i]]
-        @test isnull(v[i])
+    if _isna[rg[i]]
+        @test isna(v[i])
     else
         @test isequal(v[i], DataValue(_values[rg[i]]))
     end
@@ -104,7 +105,7 @@ end
 
 # getindex with DataValueVector with null entries throws error
 # DA TODO Decide whether I want to keep this
-# @test_throws NullException X[DataValueArray([1, 2, 3, NA])]
+# @test_throws DataValueException X[DataValueArray([1, 2, 3, NA])]
 
 # getindex with DataValueVector and non-null entries
 # DA TODO Decide whether I want this or not
@@ -144,35 +145,36 @@ for i = 1:10, j = 1:10
 end
 @test isequal(X, DataValueArray(_values))
 
-
 # ----- test nullify! -----#
-_isnull = bitrand(10, 10)
+_isna = bitrand(10, 10)
 for i = 1:100
-    if _isnull[i]
+    if _isna[i]
         X[i] = NA
     end
 end
 
 # setindex! with scalar and vector indices
 rg = 2:9
-_values[rg] = 1.0
-X[rg] = 1.0
+_values[rg] .= 1.0
+X[rg] .= 1.0
 for i = 1:length(rg)
     @test isequal(X[rg[i]], DataValue(1.0))
 end
 
+
 # setindex! with NA and vector indices
 rg = 5:13
-_isnull[rg] = true
+_isna[rg] .= true
+# TODO This should be changed to .=, but currently crashes on 0.7
 X[rg] = NA
 for i = 1:length(rg)
-    @test isnull(X[rg[i]])
+    @test isna(X[rg[i]])
 end
 
 # setindex! with vector and vector indices
 rg = 12:67
-_values[rg] = rand(length(rg))
-X[rg] = _values[rg]
+_values[rg] .= rand(length(rg))
+X[rg] .= _values[rg]
 for i = 1:length(rg)
     @test isequal(X[rg[i]], DataValue(_values[rg[i]]))
 end
@@ -194,7 +196,7 @@ b = vcat(false, fill(true, 9))
 
 # Base.checkindex(::Type{Bool}, inds::UnitRange, i::DataValue)
 # DA TODO Decide whether I want these
-# @test_throws NullException checkindex(Bool, 1:1, DataValue{Int}())
+# @test_throws DataValueException checkindex(Bool, 1:1, DataValue{Int}())
 # @test checkindex(Bool, 1:10, DataValue(1)) == true
 # @test isequal(X[DataValue(1)], DataValue(1))
 
@@ -216,6 +218,6 @@ b = vcat(false, fill(true, 9))
 # DA TODO Decide whether I want these
 # @test Base.to_index(X) == [1:10...]
 # push!(X, DataValue{Int}())
-# @test_throws NullException Base.to_index(X)
+# @test_throws DataValueException Base.to_index(X)
 
 end

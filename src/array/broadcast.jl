@@ -30,5 +30,5 @@ end
 end
 
 # This one is much faster than normal broadcasting but the method won't get called
-# in fusing operations like (!).(isnull.(x))
-Base.broadcast(::typeof(isnull), data::DataValueArray) = copy(data.isnull)
+# in fusing operations like (!).(isna.(x))
+Base.broadcast(::typeof(isna), data::DataValueArray) = copy(data.isna)

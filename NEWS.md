@@ -1,3 +1,7 @@
+# DataValues.jl v0.4.0 Release Notes
+* Drop julia 0.6 support, add julia 0.7 support
+* This is an incomplete release, broadcasting doesn't work right now
+
 # DataValues.jl v0.3.3 Release Notes
 * Fix a method ambiguity bug that occurs when Missings is loaded
 

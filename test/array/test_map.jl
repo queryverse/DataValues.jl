@@ -1,6 +1,6 @@
 @testset "DataValueArray: Map" begin
 
-using Base.Test
+using Test
 using DataValues
 
 # create m random arrays each with N dimensions and length dims[i] along

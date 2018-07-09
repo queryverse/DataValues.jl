@@ -1,9 +1,9 @@
 """
 `DataValueArray{T, N}` is an efficient alternative to `Array{DataValue{T}, N}`.
 """
-immutable DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
+struct DataValueArray{T,N} <: AbstractArray{DataValue{T},N}
     values::Array{T,N}
-    isnull::Array{Bool,N}
+    isna::Array{Bool,N}
 
     function DataValueArray{T,N}(d::AbstractArray{T, N}, m::AbstractArray{Bool, N}) where {T,N}
         if size(d) != size(m)

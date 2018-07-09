@@ -1,5 +1,6 @@
 using DataValues
-using Base.Test
+using Test
+using Dates
 
 @testset "Operations" begin
 

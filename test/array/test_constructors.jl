@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 using DataValues
 
 @testset "DataValueArray: Constructor" begin
@@ -13,8 +13,8 @@ dv = DataValueArray(v, fill(false, size(v)))
 m = [1 2; 3 4]
 dm = DataValueArray(m, fill(false, size(m)))
 
-t = Array{Int}(2, 2, 2)
-t[1:2, 1:2, 1:2] = 1
+t = Array{Int}(undef, 2, 2, 2)
+t[1:2, 1:2, 1:2] .= 1
 
 dt = DataValueArray(t, fill(false, size(t)))
 dv = DataValueArray(v, [false, false, false, false])
@@ -22,7 +22,7 @@ dv = DataValueArray(v, [false, false, false, false])
 y2 = DataValueArray([1, 2, 3, 4, 5, 6],
                     [true, false, false, false, false ,false])
 @test isa(y2, DataValueVector{Int})
-@test y2.isnull[1]
+@test y2.isna[1]
 
 # test (::AbstractArray) constructor
 dv = DataValueArray(v)
@@ -54,59 +54,59 @@ x3 = DataValueArray{Int}(2, 2, 2)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int}((d1,))
 X2 = DataValueArray{Int}((d1, d2))
-@test isequal(X1, DataValueArray(Array{Int}((d1,)), fill(true, (d1,))))
-@test isequal(X2, DataValueArray(Array{Int}((d1, d2)), fill(true, (d1, d2))))
+@test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, (d1,))))
+@test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, (d1, d2))))
 for i in 1:5
     m = rand(3:5)
     dims = tuple([ rand(1:5) for i in 1:m ]...)
     X3 = DataValueArray{Int}(dims)
-    @test isequal(X3, DataValueArray(Array{Int}(dims), fill(true, dims)))
+    @test isequal(X3, DataValueArray(Array{Int}(undef, dims), fill(true, dims)))
 end
 
 # test DataValueArray{T,N}(dims::Dims)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int,1}((d1,))
 X2 = DataValueArray{Int,2}((d1, d2))
-@test isequal(X1, DataValueArray(Array{Int}((d1,)), fill(true, (d1,))))
-@test isequal(X2, DataValueArray(Array{Int}((d1, d2)), fill(true, (d1, d2))))
+@test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, (d1,))))
+@test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, (d1, d2))))
 for i in 1:5
     m = rand(3:5)
     dims = tuple([ rand(1:5) for i in 1:m ]...)
     X3 = DataValueArray{Int,m}(dims)
-    @test isequal(X3, DataValueArray(Array{Int}(dims), fill(true, dims)))
+    @test isequal(X3, DataValueArray(Array{Int}(undef, dims), fill(true, dims)))
 end
 
 # test DataValueArray{T}(dims::Int...)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int}(d1)
 X2 = DataValueArray{Int}(d1, d2)
-@test isequal(X1, DataValueArray(Array{Int}(d1), fill(true, d1)))
-@test isequal(X2, DataValueArray(Array{Int}(d1, d2), fill(true, d1, d2)))
+@test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, d1)))
+@test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, d1, d2)))
 for i in 1:5
     m = rand(3:5)
     dims = [ rand(1:5) for i in 1:m ]
     X3 = DataValueArray{Int}(dims...)
-    @test isequal(X3, DataValueArray(Array{Int}(dims...), fill(true, dims...)))
+    @test isequal(X3, DataValueArray(Array{Int}(undef, dims...), fill(true, dims...)))
 end
 
 # test DataValueArray{T}(dims::Int...)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int,1}(d1)
 X2 = DataValueArray{Int,2}(d1, d2)
-@test isequal(X1, DataValueArray(Array{Int,1}(d1), fill(true, d1)))
-@test isequal(X2, DataValueArray(Array{Int,2}(d1, d2), fill(true, d1, d2)))
+@test isequal(X1, DataValueArray(Array{Int,1}(undef, d1), fill(true, d1)))
+@test isequal(X2, DataValueArray(Array{Int,2}(undef, d1, d2), fill(true, d1, d2)))
 for i in 1:5
     m = rand(3:5)
     dims = [ rand(1:5) for i in 1:m ]
     X3 = DataValueArray{Int,length(dims)}(dims...)
-    @test isequal(X3, DataValueArray(Array{Int}(dims...), fill(true, dims...)))
+    @test isequal(X3, DataValueArray(Array{Int}(undef, dims...), fill(true, dims...)))
 end
 
 # test (A::AbstractArray{DataValue}) constructor
 z = DataValueArray([1, NA, 2, NA, 3])
 @test isa(z, DataValueVector{Int})
-@test z.isnull[2]
-@test z.isnull[4]
+@test z.isna[2]
+@test z.isna[4]
 
 # test DataValueArray{T}()
 X = DataValueArray{Int}()

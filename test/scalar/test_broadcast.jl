@@ -1,5 +1,5 @@
 using DataValues
-using Base.Test
+using Test
 
 @testset "Broadcast" begin
 
@@ -13,8 +13,9 @@ dv3 = DataValue{Int}()
 @test dv1 .+ 2 == DataValue(5)
 @test 2 .+ dv1 == DataValue(5)
 
-@test dv1 .+ Nullable(2) == DataValue(5)
-@test Nullable(2) .+ dv1 == DataValue(5)
+# TODO 0.7 reenable
+# @test dv1 .+ Nullable(2) == DataValue(5)
+# @test Nullable(2) .+ dv1 == DataValue(5)
 
 @test dv1 .+ (1,3) == (DataValue(4), DataValue(6))
 @test (1,3) .+ dv1 == (DataValue(4), DataValue(6))

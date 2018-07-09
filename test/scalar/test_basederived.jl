@@ -1,5 +1,5 @@
 using DataValues
-using Base.Test
+using Test
 
 @testset "Base derived tests" begin
 
@@ -189,26 +189,26 @@ end
 # @test_throws UndefRefError unsafe_get(DataValue{Array}())
 
 for T in types
-    # isnull(x::DataValue)
+    # isna(x::DataValue)
     x1 = DataValue{T}()
     x2 = DataValue(zero(T))
     x3 = DataValue(one(T))
 
-    @test isnull(x1) === true
-    @test isnull(x2) === false
-    @test isnull(x3) === false
+    @test isna(x1) === true
+    @test isna(x2) === false
+    @test isna(x3) === false
 
-    # isnull(x)
+    # isna(x)
     x1 = zero(T)
     x2 = one(T)
     x3 = rand(T)
 
-    @test isnull(x1) === false
-    @test isnull(x2) === false
-    @test isnull(x3) === false
+    @test isna(x1) === false
+    @test isna(x2) === false
+    @test isna(x3) === false
 end
 
-@test isnull(DataValue())
+@test isna(DataValue())
 
 # function =={S, T}(x::DataValue{S}, y::DataValue{T})
 # TODO Anthoff thinks that we don't want these semantics.
@@ -272,9 +272,9 @@ end
 
 for T in types
     x1 = TestNType{T}(DataValue{T}())
-    @test isnull(x1.v)
+    @test isna(x1.v)
     x1.v = one(T)
-    @test !isnull(x1.v)
+    @test !isna(x1.v)
     @test get(x1.v, one(T)) === one(T)
 end
 
@@ -362,8 +362,8 @@ for T in types
     end
 end
 
-@test isnull(convert(DataValue, nothing))
-@test isnull(convert(DataValue{Int}, nothing))
+@test isna(convert(DataValue, nothing))
+@test isna(convert(DataValue{Int}, nothing))
 @test isa(convert(DataValue{Int}, nothing), DataValue{Int})
 
 @test convert(DataValue, 1) === DataValue(1)
@@ -381,7 +381,7 @@ end
 @test Base.promote_op(-, DataValue{Int}, DataValue{Int}) == DataValue{Int}
 @test Base.promote_op(+, DataValue{Float64}, DataValue{Int}) == DataValue{Float64}
 @test Base.promote_op(-, DataValue{Float64}, DataValue{Int}) == DataValue{Float64}
-@test Base.promote_op(-, DataValue{DateTime}, DataValue{DateTime}) == DataValue{Base.Dates.Millisecond}
+@test Base.promote_op(-, DataValue{DateTime}, DataValue{DateTime}) == DataValue{Dates.Millisecond}
 
 # issue #11675
 # @test repr(DataValue()) == "NULL"

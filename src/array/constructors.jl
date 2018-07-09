@@ -9,24 +9,24 @@ function DataValueArray(d::AbstractArray{T,N}, m::AbstractArray{Bool,N}) where {
 end
 
 function DataValueArray{T}(d::NTuple{N,Int}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
 end
 
 function DataValueArray{T,N}(d::NTuple{N,Int}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
 end
 
 function DataValueArray{T}(d::Vararg{Int,N}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
 end
 
 function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
 end
 
 function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
     S = eltype(eltype(data))
-    new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
+    new_array = DataValueArray{S,N}(Array{S}(undef, size(data)), Array{Bool}(undef, size(data)))
     for i in eachindex(data)
         new_array[i] = data[i]
     end
@@ -34,7 +34,7 @@ function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
 end
 
 function DataValueArray{S}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
-    new_array = DataValueArray{S,N}(Array{S}(size(data)), Array{Bool}(size(data)))
+    new_array = DataValueArray{S,N}(Array{S}(undef, size(data)), Array{Bool}(undef, size(data)))
     for i in eachindex(data)
         new_array[i] = data[i]
     end
@@ -45,6 +45,18 @@ end
 # DataValueArrays by calling the parametrized type on zero arguments.
 function DataValueArray{T,N}() where {T,N}
     return DataValueArray{T}(ntuple(i->0, N))
+end
+
+function DataValueArray{T,N}(data::AbstractArray{S,N}) where {S,T,N}
+    convert(DataValueArray{T,N}, data)
+end
+
+function DataValueArray{T}(data::AbstractArray{S,N}) where {S,T,N}
+    convert(DataValueArray{T,N}, data)
+end
+
+function DataValueArray(data::AbstractArray{T,N}) where {T,N}
+    return convert(DataValueArray{T,N}, data)
 end
 
 # ----- Conversion to DataValueArrays ---------------------------------------- #
@@ -65,7 +77,7 @@ end
 
 #----- Conversion from arrays of DataValues -----------------------------------#
 function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S<:DataValue,T,N}
-    new_array = DataValueArray{T,N}(Array{T}(size(A)), Array{Bool}(size(A)))
+    new_array = DataValueArray{T,N}(Array{T}(undef, size(A)), Array{Bool}(undef, size(A)))
     for i in eachindex(A)
         new_array[i] = A[i]
     end
@@ -90,5 +102,5 @@ function Base.convert(::Type{DataValueArray}, A::AbstractArray{DataValue, N}) wh
 end
 
 function Base.convert(::Type{DataValueArray{T,N}}, A::DataValueArray{S,N}) where {S,T,N}
-    return DataValueArray(convert(Array{T,N}, A.values), A.isnull)
+    return DataValueArray(convert(Array{T,N}, A.values), A.isna)
 end

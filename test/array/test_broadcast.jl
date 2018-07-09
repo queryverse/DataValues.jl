@@ -1,5 +1,5 @@
 using DataValues
-using Base.Test
+using Test
 
 @testset "DataValueArray: Broadcast" begin
 
@@ -9,11 +9,11 @@ n = rand(2:5)
 dims = [ rand(2:5) for i in 1:n]
 A2 = rand(10, dims...)
 M2 = rand(Bool, 10, dims...)
-C2 = Array{Float64}(10, dims...)
+C2 = Array{Float64}(undef, 10, dims...)
 i = rand(2:5)
 A3 = rand(10, [dims; i]...)
 M3 = rand(Bool, 10, [dims; i]...)
-C3 = Array{Float64}(10, [dims; i]...)
+C3 = Array{Float64}(undef, 10, [dims; i]...)
 
 m1 = broadcast((x,y)->x, M1, M2)
 m2 = broadcast((x,y)->x, M2, M3)
