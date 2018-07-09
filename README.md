@@ -8,21 +8,15 @@
 
 ## Overview
 
-This package provides the type ``DataValue`` that is used to represent
-missing data.  The type is very similar to ``Nullable`` in julia base.
-It differs from ``Nullable`` by providing a small number of  additional
-features that make common operations on data easier.
+This package provides the type ``DataValue`` that is used to represent missing data.
 
-Currently the main use of this type is in the
-[Query.jl](https://github.com/davidanthoff/Query.jl) and
-[IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl)
-packages.
+Currently the main use of this type is in the [Query.jl](https://github.com/davidanthoff/Query.jl) and [IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl) packages.
 
 This repo is based on the following principles/ideas:
 
 - This type is meant to make life for data scientists as easy as possible.
 That is the main guiding principle.
-- We hook into the dot broadcasting mechanism from julia 0.6 to provide
+- We hook into the dot broadcasting mechanism from julia 0.7 to provide
 lifting functionality for functions that don't have specific methods
 for ``DataValue`` arguments.
 - The ``&`` and ``|`` operators follow the [3VL](https://en.wikipedia.org/wiki/Three-valued_logic)
