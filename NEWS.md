@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.1 Release Notes
+* Improve compat with Missing
+
 # DataValues.jl v0.4.0 Release Notes
 * Drop julia 0.6 support, add julia 0.7 support
 * This is an incomplete release, broadcasting doesn't work right now
