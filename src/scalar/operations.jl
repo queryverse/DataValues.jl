@@ -1,3 +1,16 @@
+nullable_returntype(::Type{T}) where {T} = isconcretetype(T) ? T : Union{}
+# An element type satisfying for all A:
+# unsafe_get(A)::unsafe_get_eltype(A)
+_unsafe_get_eltype(::Type{T}) where T = Type{T}
+_unsafe_get_eltype(x) = typeof(x)
+
+# Copied from julia 0.6
+maptoTuple(f) = Tuple{}
+maptoTuple(f, a, b...) = Tuple{f(a), maptoTuple(f, b...).types...}
+
+_nullable_eltype(f, A, As...) =
+    Base._return_type(f, maptoTuple(_unsafe_get_eltype, A, As...))
+
 function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
     isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(get(dt), format, locale=locale))
 end
@@ -42,31 +55,31 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
         import Base.$(op)
         function $op(a::DataValue{T1},b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(a) && hasvalue(b)
-            S = Nullables._nullable_eltype($op,a,b)
+            S = _nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(get(a), get(b)))
             else
-                return DataValue{Nullables.nullable_returntype(S)}()
+                return DataValue{nullable_returntype(S)}()
             end
         end
 
         function $op(a::DataValue{T1},b::T2) where {T1,T2}
             nonnull = hasvalue(a)
-            S = Nullables._nullable_eltype($op,a,b)
+            S = _nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(get(a), b))
             else
-                return DataValue{Nullables.nullable_returntype(S)}()
+                return DataValue{nullable_returntype(S)}()
             end
         end
 
         function $op(a::T1,b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(b)
-            S = Nullables._nullable_eltype($op,a,b)
+            S = _nullable_eltype($op,a,b)
             if nonnull
                 return DataValue($op(a, get(b)))
             else
-                return DataValue{Nullables.nullable_returntype(S)}()
+                return DataValue{nullable_returntype(S)}()
             end
         end
     end

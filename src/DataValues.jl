@@ -3,8 +3,6 @@ module DataValues
 
 using Dates
 
-import Nullables
-
 export DataValue, DataValueException, NA
 
 export DataValueArray, DataValueVector, DataValueMatrix
