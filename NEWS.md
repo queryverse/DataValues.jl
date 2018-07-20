@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.2 Release Notes
+* Add a missing conversion constructor
+
 # DataValues.jl v0.4.1 Release Notes
 * Improve compat with Missing
 
