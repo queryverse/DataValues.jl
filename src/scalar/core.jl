@@ -15,6 +15,7 @@ DataValue(value::T, hasvalue::Bool=true) where {T} = DataValue{T}(value, hasvalu
 DataValue(value::Missing) = DataValue{Union{}}()
 DataValue{T}(::Missing) where T = DataValue{T}()
 DataValue() = DataValue{Union{}}()
+DataValue{T}(value::Any) where T = DataValue{T}(convert(T, value), true)
 
 Base.eltype(::Type{DataValue{T}}) where {T} = T
 
