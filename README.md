@@ -1,16 +1,16 @@
 # DataValues
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Build Status](https://travis-ci.org/davidanthoff/DataValues.jl.svg?branch=master)](https://travis-ci.org/davidanthoff/DataValues.jl)
-[![Build status](https://ci.appveyor.com/api/projects/status/v56tyamg56dqy79t/branch/master?svg=true)](https://ci.appveyor.com/project/davidanthoff/DataValues-jl/branch/master)
+[![Build Status](https://travis-ci.org/queryverse/DataValues.jl.svg?branch=master)](https://travis-ci.org/queryverse/DataValues.jl)
+[![Build status](https://ci.appveyor.com/api/projects/status/nkd83orhu4xm68yp/branch/master?svg=true)](https://ci.appveyor.com/project/queryverse/datavalues-jl/branch/master)
 [![DataValues](http://pkg.julialang.org/badges/DataValues_0.6.svg)](http://pkg.julialang.org/?pkg=DataValues)
-[![codecov](https://codecov.io/gh/davidanthoff/DataValues.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/davidanthoff/DataValues.jl)
+[![codecov](https://codecov.io/gh/queryverse/DataValues.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/queryverse/DataValues.jl)
 
 ## Overview
 
 This package provides the type ``DataValue`` that is used to represent missing data.
 
-Currently the main use of this type is in the [Query.jl](https://github.com/davidanthoff/Query.jl) and [IterableTables.jl](https://github.com/davidanthoff/IterableTables.jl) packages.
+Currently the main use of this type is in the [Query.jl](https://github.com/queryverse/Query.jl) and [IterableTables.jl](https://github.com/queryverse/IterableTables.jl) packages.
 
 This repo is based on the following principles/ideas:
 
