@@ -36,9 +36,12 @@ Base.convert(::Type{DataValue}, ::Nothing) = DataValue{Union{}}()
 
 Base.convert(::Type{Union{Missing, T}}, value::DataValues.DataValue{T}) where T = isna(value) ? missing : value[]
 Base.convert(::Type{Union{Missing, T}}, ::DataValues.DataValue{Union{}}) where T = missing
+Base.convert(::Type{Any}, ::DataValue{Union{}}) = NA
 
 Base.promote_rule(::Type{DataValue{S}}, ::Type{T}) where {S,T} = DataValue{promote_type(S, T)}
 Base.promote_rule(::Type{DataValue{T}}, ::Type{Any}) where {T} = DataValue{Any}
+Base.promote_rule(::Type{DataValue{Union{}}}, ::Type{Any}) = DataValue{Any}
+Base.promote_rule( ::Type{Any}, ::Type{DataValue{Union{}}}) = DataValue{Any}
 Base.promote_rule(::Type{DataValue{S}}, ::Type{DataValue{T}}) where {S,T} = DataValue{promote_type(S, T)}
 Base.promote_op(op::Any, ::Type{DataValue{S}}, ::Type{DataValue{T}}) where {S,T} = DataValue{Base.promote_op(op, S, T)}
 
