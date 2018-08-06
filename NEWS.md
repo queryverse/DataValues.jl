@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.3 Release Notes
+* Add a missing promotion and conversion rule
+
 # DataValues.jl v0.4.2 Release Notes
 * Add a missing conversion constructor
 
