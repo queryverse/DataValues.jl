@@ -15,7 +15,7 @@ designated by `I` is present, then it will be returned wrapped in a
 `DataValue{T}()`.
 """
 @inline function Base.getindex(X::DataValueArray{T,N}, I::Int...) where {T,N}
-    if isbits(T)
+    if isbitstype(T)
         ifelse(X.isna[I...], DataValue{T}(), DataValue{T}(X.values[I...]))
     else
         if X.isna[I...]
