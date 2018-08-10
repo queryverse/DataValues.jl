@@ -1,6 +1,6 @@
 using NullableArrays
 
-srand(1)
+Random.seed!(1)
 N = 5_000_000
 A = rand(N)
 B = rand(Bool, N)

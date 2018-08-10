@@ -251,7 +251,7 @@ Modify `X` by reversing the first `n` elements starting at index `s`
 respectively.
 """
 function Base.reverse!(X::DataValueVector, s=1, n=length(X))
-    if isbits(eltype(X)) || !any(isna, X)
+    if isbitstype(eltype(X)) || !any(isna, X)
         reverse!(X.values, s, n)
         reverse!(X.isna, s, n)
     else

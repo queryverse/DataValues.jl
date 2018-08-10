@@ -1,7 +1,7 @@
 using DataArrays
 using NullableArrays
 
-srand(1)
+Random.seed!(1)
 M1 = rand(Bool, 5_000_000)
 M2 = rand(Bool, 5_000_000, 2)
 A1 = rand(5_000_000)

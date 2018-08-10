@@ -166,7 +166,7 @@ end
 rg = 5:13
 _isna[rg] .= true
 # TODO This should be changed to .=, but currently crashes on 0.7
-X[rg] = NA
+X[rg] .= Ref(NA)
 for i = 1:length(rg)
     @test isna(X[rg[i]])
 end

@@ -4,7 +4,7 @@ using Test
 
 @testset "DataValueArray: Reduce" begin
 
-srand(1)
+Random.seed!(1)
 f(x) = 5 * x
 f(x::DataValue{T}) where {T <: Number} = ifelse(isna(x), DataValue{typeof(5 * x.value)}(),
                                                     DataValue(5 * x.value))

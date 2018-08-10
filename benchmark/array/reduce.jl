@@ -1,7 +1,7 @@
 using NullableArrays
 using DataArrays
 
-srand(1)
+Random.seed!(1)
 A = rand(5_000_000)
 B = rand(Bool, 5_000_000)
 mu_A = mean(A)

@@ -163,10 +163,10 @@ end
 # ----- test Base.find -------------------------------------------------------#
 
 z = DataValueArray(rand(Bool, 10))
-@test (LinearIndices(z))[findall(z)] == (LinearIndices(z.values))[findall(z.values)]
+@test (LinearIndices(z))[findall(x->x!=0,z)] == (LinearIndices(z.values))[findall(z.values)]
 
 z = DataValueArray([false, true, false, true, false, true])
-@test isequal((LinearIndices(z))[findall(z)], [2, 4, 6])
+@test isequal((LinearIndices(z))[findall(x->x!=0,z)], [2, 4, 6])
 
 # ----- test dropna --------------------------------------------------------#
 

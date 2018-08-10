@@ -64,7 +64,7 @@ function Base.show(io::IO, x::DataValue{T}) where {T}
 end
 
 @inline function Base.get(x::DataValue{S}, y::T) where {S,T}
-    if isbits(S)
+    if isbitstype(S)
         ifelse(isna(x), y, x.value)
     else
         isna(x) ? y : x.value

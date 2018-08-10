@@ -209,13 +209,13 @@ y = DataValueArray([NA, 2, 3, 4, NA, 6])
                 DataValueArray([1, 2, NA]))
 
 # Base.reverse!(X::DataValueVector, s=1, n=length(X))
-# check for case where isbits(eltype(X)) = false
+# check for case where isbitstype(eltype(X)) = false
 Z = DataValueArray(Array{Int, 1}[[1, 2], [3, 4], [5, 6]])
 @test isequal(reverse!(Z),
                 DataValueArray(Array{Int, 1}[[5, 6], [3, 4], [1, 2]]))
 
 # Base.reverse!(X::DataValueVector, s=1, n=length(X))
-# check for case where isbits(eltype(X)) = false & any(isna, X) = true
+# check for case where isbitstype(eltype(X)) = false & any(isna, X) = true
 A = fill([1,2], 20)
 Z = DataValueArray{Array{Int, 1}}(20)
 i = rand(2:7)

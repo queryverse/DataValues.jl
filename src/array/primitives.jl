@@ -38,7 +38,7 @@ end
 
 #     n = length(src)
 
-#     if isbits(T)
+#     if isbitstype(T)
 #         unsafe_copy!(pointer(dest.values, 1), pointer(src.values, 1), n)
 #     else
 #         ccall(:jl_array_ptr_copy, Nothing, (Any, Ptr{Nothing}, Any, Ptr{Nothing}, Int),
@@ -56,7 +56,7 @@ indices of the destination DataValueArray. If an entry in `src` is null, then
 this method nullifies the respective entry in `dest`.
 """
 function Base.copyto!(dest::DataValueArray, src::DataValueArray)
-    if isbits(eltype(dest)) && isbits(eltype(src))
+    if isbitstype(eltype(dest)) && isbitstype(eltype(src))
         copyto!(dest.values, src.values)
     else
         dest_values = dest.values
