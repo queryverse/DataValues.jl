@@ -5,14 +5,6 @@ using InteractiveUtils
 
 @testset "Core" begin
 
-@testset "Nullable" begin
-
-# TODO 0.7 reenable
-# @test DataValue(Nullable(3)) == DataValue(3)
-# @test DataValue(Nullable{Int}()) == DataValue{Int}()
-
-end
-
 @testset "isna" begin
 
 @test DataValues.isna(NA) == true
