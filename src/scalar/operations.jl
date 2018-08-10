@@ -36,8 +36,7 @@ for f in (:(Base.acos), :(Base.acosh), :(Base.asin), :(Base.asinh),
         :(Base.atan), :(Base.atanh), :(Base.sin), :(Base.sinh), :(Base.cos),
         :(Base.cosh), :(Base.tan), :(Base.tanh), :(Base.exp), :(Base.exp2),
         :(Base.expm1), :(Base.log), :(Base.log10), :(Base.log1p),
-        :(Base.log2), :(Base.exponent), :(Base.sqrt), :(Base.gamma),
-        :(Base.lgamma), :(Dates.value))
+        :(Base.log2), :(Base.exponent), :(Base.sqrt), :(Dates.value))
     @eval begin
         function $f(a::DataValue{T}) where {T}
             if isna(a)

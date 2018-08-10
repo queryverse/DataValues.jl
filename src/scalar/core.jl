@@ -84,7 +84,7 @@ Base.getindex(x::DataValue) = isna(x) ? throw(DataValueException()) : x.value
 Base.get(x::DataValue{Union{}}) = throw(DataValueException())
 Base.get(x::DataValue{Union{}}, y) = y
 
-Base.unsafe_get(x::DataValue) = x.value
+unsafe_get(x::DataValue) = x.value
 
 isna(x) = false
 isna(x::DataValue) = !x.hasvalue
@@ -124,10 +124,9 @@ Base.zero(x::DataValues.DataValue{T}) where {T<:Dates.Period}= DataValue{T}(zero
 
 # Strings
 
-for op in (:lowercase,:uppercase,:reverse,:ucfirst,:lcfirst,:chop,:chomp)
+for op in (:lowercase,:uppercase,:reverse,:uppercasefirst,:lowercasefirst,:chop,:chomp)
     @eval begin
-        import Base.$(op)
-        function $op(x::DataValue{T}) where {T <: AbstractString}
+        function Base.$op(x::DataValue{T}) where {T <: AbstractString}
             if isna(x)
                 return DataValue{T}()
             else

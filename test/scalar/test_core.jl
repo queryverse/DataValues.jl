@@ -31,7 +31,7 @@ end
 @test get(DataValue("test"), "default") == "test"
 @test get(DataValue{String}(), "default") == "default"
 
-@test unsafe_get(DataValue(3)) == 3
+@test DataValues.unsafe_get(DataValue(3)) == 3
 
 end
 
