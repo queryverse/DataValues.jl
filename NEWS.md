@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.4 Release Notes
+* Julia 0.7 deprecations fixed
+
 # DataValues.jl v0.4.3 Release Notes
 * Add a missing promotion and conversion rule
 
