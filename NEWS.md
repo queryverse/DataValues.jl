@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.5 Release Notes
+* Add a missing convert method
+
 # DataValues.jl v0.4.4 Release Notes
 * Julia 0.7 deprecations fixed
 
