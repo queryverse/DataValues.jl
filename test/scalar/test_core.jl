@@ -248,4 +248,6 @@ io = IOBuffer()
 show(io, DataValue(enum_val_a))
 @test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
 
+@test convert(DataValue{String}, missing) == DataValue{String}()
+
 end
