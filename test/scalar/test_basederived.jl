@@ -371,6 +371,8 @@ end
 @test isequal(convert(DataValue, "a"), DataValue("a"))
 @test isequal(convert(DataValue, DataValue("a")), DataValue("a"))
 
+@test convert(Any, NA) == NA
+
 @test promote_type(DataValue{Int}, Int) === DataValue{Int}
 @test promote_type(DataValue{Union{}}, Int) === DataValue{Int}
 @test promote_type(DataValue{Float64}, DataValue{Int}) === DataValue{Float64}
