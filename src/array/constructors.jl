@@ -24,6 +24,14 @@ function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
     return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
 end
 
+function DataValueArray{T, N}(::UndefInitializer, args...) where {T, N}
+    return DataValueArray(Array{T, N}(undef, args...), fill(true, args...))
+end
+
+function DataValueArray{T}(::UndefInitializer, args...) where {T}
+    return DataValueArray(Array{T}(undef, args...), fill(true, args...))
+end
+
 function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
     S = eltype(eltype(data))
     new_array = DataValueArray{S,N}(Array{S}(undef, size(data)), Array{Bool}(undef, size(data)))
