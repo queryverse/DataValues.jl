@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.6 Release Notes
+* Add undef constructors for DataValueArray
+
 # DataValues.jl v0.4.5 Release Notes
 * Add a missing convert method
 
