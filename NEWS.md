@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.7 Release Notes
+* Fix a bug in the hash function
+
 # DataValues.jl v0.4.6 Release Notes
 * Add undef constructors for DataValueArray
 
