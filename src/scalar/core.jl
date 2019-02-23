@@ -98,7 +98,7 @@ function Base.hash(x::DataValue, h::UInt)
     if isna(x)
         return h + DataValuehash_seed
     else
-        return hash(x.value, h + DataValuehash_seed)
+        return hash(x.value, h)
     end
 end
 
