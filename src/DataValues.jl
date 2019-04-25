@@ -28,4 +28,12 @@ include("array/promotion.jl")
 
 # include("utils.jl")
 
+import TablesAPI
+TablesAPI.nondatavaluetype(::Type{DataValue{T}}) where {T} = Union{T, Missing}
+TablesAPI.unwrap(x::DataValue) = isna(x) ? missing : DataValues.unsafe_get(x)
+TablesAPI.datavaluetype(::Type{T}) where {T <: DataValue} = T
+TablesAPI.datavaluetype(::Type{Union{T, Missing}}) where {T} = DataValue{T}
+TablesAPI.datavaluetype(::Type{Missing}) = DataValue{Union{}}
+TablesAPI.scalarconvert(::Type{T}, ::Missing) where {T <: DataValue} = T()
+
 end
