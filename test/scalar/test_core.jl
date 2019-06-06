@@ -5,6 +5,25 @@ using InteractiveUtils
 
 @testset "Core" begin
 
+@testset "Missing integration" begin
+
+@test DataValue(missing) == NA
+@test DataValue{Int}(missing) == DataValue{Int}()
+@test convert(Missing, NA) === missing
+
+end
+
+@testset "conversion" begin
+
+@test DataValue{Float64}(2) == DataValue(2.)
+@test convert(Union{Missing,Int}, DataValue(2)) == 2
+@test convert(Union{Missing,Int}, DataValue{Int}()) === missing
+@test convert(Union{Missing,Int}, NA) === missing
+
+@test convert(DataValue{Int}, DataValue(3)) == DataValue(3)
+
+end
+
 @testset "isna" begin
 
 @test DataValues.isna(NA) == true
@@ -54,6 +73,9 @@ for T in (subtypes(Dates.DatePeriod)..., subtypes(Dates.TimePeriod)...)
     @test zero(DataValue{T}()) == T(0)
 end
 
+@test zero(DataValue(Year(3))) == zero(Year)
+@test zero(DataValue{Year}) == zero(Year)
+
 end
 
 @testset "Comparisons" begin
@@ -69,6 +91,8 @@ end
 
 @test (NA != DataValue(3)) == true
 @test (NA != DataValue{Int}()) == false
+
+@test (NA == NA) == true
 
 @test isless(DataValue{Int}(), DataValue{Int}()) == false
 @test isless(DataValue{Int}(), DataValue{Int}(3)) == false
@@ -181,6 +205,15 @@ for op in (:+, :-, :*, :%, :&, :|, :<<, :>>)
         @test $op(3, DataValue{Int}()) == DataValue{Int}()
     end
 end
+
+@test DataValue(Int16(4)) / DataValue(Int32(2)) == DataValue(2.)
+@test DataValue{Int16}() / DataValue(Int32(2)) == DataValue{Float64}()
+@test DataValue(Int16(4)) / DataValue{Int32}() == DataValue{Float64}()
+@test DataValue{Int16}() / DataValue{Int32}() == DataValue{Float64}()
+@test Int16(4) / DataValue(Int32(2)) == DataValue(2.)
+@test Int16(4) / DataValue{Int32}() == DataValue{Float64}()
+@test DataValue{Int16}(4) / Int32(2) == DataValue{Float64}(2.)
+@test DataValue{Int16}() / Int32(2) == DataValue{Float64}()
 
 @test DataValue(3)^2 == DataValue(9)
 @test DataValue{Int}()^2 == DataValue{Int}()
