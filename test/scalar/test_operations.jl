@@ -30,6 +30,21 @@ date_a = DataValue("01/01/2012")
 @test min(DataValue{Int}(2), 3) == DataValue{Int}(2)
 @test min(DataValue{Int}(), DataValue{Int}()) == DataValue{Int}()
 
+@test DataValue(3) + DataValue(2.) == DataValue(5.)
+@test DataValue(3) + DataValue{Float64}() == DataValue{Float64}()
+@test DataValue{Int}() + DataValue(2.) == DataValue{Float64}()
+@test DataValue{Int}() + DataValue{Float64}() == DataValue{Float64}()
+@test DataValue(3) + NA == DataValue{Int}()
+@test NA + DataValue(2.) == DataValue{Float64}()
+@test NA + NA == NA
+
+@test 3 + DataValue(2.) == DataValue(5.)
+@test 3 + DataValue{Float64}() == DataValue{Float64}()
+@test 3 + NA == DataValue{Int}()
+
+@test DataValue(3) + 2. == DataValue(5.)
+@test DataValue{Int}() + 2. == DataValue{Float64}()
+@test NA + 2. == DataValue{Float64}()
 
 end
 
