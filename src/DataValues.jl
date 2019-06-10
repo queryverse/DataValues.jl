@@ -1,4 +1,3 @@
-__precompile__()
 module DataValues
 
 using Dates
@@ -8,6 +7,8 @@ export DataValue, DataValueException, NA
 export DataValueArray, DataValueVector, DataValueMatrix
 
 export isna, hasvalue, dropna, dropna!, padna!, padna
+
+include("scalar/helper.jl")
 
 include("scalar/core.jl")
 # TODO 0.7 migration, enable again
