@@ -137,6 +137,33 @@ for op in (:lowercase,:uppercase,:reverse,:uppercasefirst,:lowercasefirst,:chop,
     end
 end
 
+function Base.rstrip(f, s::DataValue{T}) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(rstrip(f, unsafe_get(s)))
+end
+function Base.rstrip(s::DataValue{T}, chars::Base.Chars) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(rstrip(unsafe_get(s), chars))
+end
+function Base.rstrip(s::DataValue{T}) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(rstrip(unsafe_get(s)))
+end
+
+function Base.lstrip(f, s::DataValue{T}) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(lstrip(f, unsafe_get(s)))
+end
+function Base.lstrip(s::DataValue{T}, chars::Base.Chars) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(lstrip(unsafe_get(s), chars))
+end
+function Base.lstrip(s::DataValue{T}) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(lstrip(unsafe_get(s)))
+end
+
+function Base.strip(s::DataValue{T}, chars::Base.Chars) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(strip(unsafe_get(s), chars))
+end
+function Base.strip(s::DataValue{T}) where {T <: AbstractString}
+    return isna(s) ? DataValue{SubString{T}}() : DataValue(strip(unsafe_get(s)))
+end
+
 import Base.getindex
 function Base.getindex(s::DataValue{T},i) where {T <: AbstractString}
     if isna(s)

@@ -281,4 +281,24 @@ io = IOBuffer()
 show(io, DataValue(enum_val_a))
 @test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
 
+@testset "string" begin
+    @test rstrip("asdf  ") == rstrip(DataValue("asdf"))
+    @test rstrip(DataValue{String}()) == NA
+
+    @test rstrip("asdf  ", ' ') == rstrip(DataValue("asdf"), ' ')
+    @test rstrip(DataValue{String}(), ' ') == NA
+
+    @test rstrip(isspace, "asdf  ") == rstrip(isspace, DataValue("asdf"))
+    @test rstrip(isspace, DataValue{String}()) == NA
+
+    @test lstrip(" asdf") == lstrip(DataValue("asdf"))
+    @test lstrip(DataValue{String}()) == NA
+
+    @test lstrip(" asdf", ' ') == lstrip(DataValue("asdf"), ' ')
+    @test lstrip(DataValue{String}(), ' ') == NA
+
+    @test lstrip(isspace, " asdf") == lstrip(isspace, DataValue("asdf"))
+    @test lstrip(isspace, DataValue{String}()) == NA
+end
+
 end
