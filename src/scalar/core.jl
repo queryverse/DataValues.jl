@@ -31,6 +31,9 @@ end
 Base.convert(::Type{DataValue{T}}, x::T) where {T} = DataValue{T}(x)
 Base.convert(::Type{DataValue}, x::T) where {T} = DataValue{T}(x)
 
+Base.convert(::Type{DataValue{T}}, ::Missing) where {T} = DataValue{T}()
+Base.convert(::Type{DataValue}, ::Missing) = DataValue{Union{}}()
+
 Base.convert(::Type{DataValue{T}}, ::Nothing) where {T} = DataValue{T}()
 Base.convert(::Type{DataValue}, ::Nothing) = DataValue{Union{}}()
 
@@ -301,3 +304,12 @@ end
 function Base.float(x::DataValue{T}) where T
     return isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)))
 end
+
+# AbstractDataValues definitions
+using AbstractDataValues
+AbstractDataValues.nondatavaluetype(::Type{DataValue{T}}) where {T} = Union{T, Missing}
+AbstractDataValues.datavaluetype(::Type{T}) where {T <: DataValue} = T
+AbstractDataValues.datavaluetype(::Type{Union{T, Missing}}) where {T} = DataValue{T}
+AbstractDataValues.datavaluetype(::Type{Missing}) = DataValue{Union{}}
+AbstractDataValues.unwrap(x::DataValue{Union{}}) = missing
+AbstractDataValues.unwrap(x::DataValue{T}) where {T} = isbitstype(T) ? ifelse(isna(x), missing, unsafe_get(x)) : (isna(x) ? missing : unsafe_get(x))
