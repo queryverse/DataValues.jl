@@ -313,13 +313,6 @@ end
     @test DataValueInterfaces.datavaluetype(Missing) == DataValue{Union{}}
     @test DataValueInterfaces.datavaluetype(Union{Int, Missing}) == DataValue{Int}
 
-    @test DataValueInterfaces.unwrap(NA) === missing
-    @test DataValueInterfaces.unwrap(1) === 1
-    @test DataValueInterfaces.unwrap(DataValue(1)) === 1
-    @test DataValueInterfaces.unwrap(DataValue{Int64}()) === missing
-    @test DataValueInterfaces.unwrap(DataValue{String}()) === missing
-    @test DataValueInterfaces.unwrap(DataValue("hey")) == "hey"
-
 end
 
 end

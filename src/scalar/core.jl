@@ -311,5 +311,3 @@ DataValueInterfaces.nondatavaluetype(::Type{DataValue{T}}) where {T} = Union{T, 
 DataValueInterfaces.datavaluetype(::Type{T}) where {T <: DataValue} = T
 DataValueInterfaces.datavaluetype(::Type{Union{T, Missing}}) where {T} = DataValue{T}
 DataValueInterfaces.datavaluetype(::Type{Missing}) = DataValue{Union{}}
-DataValueInterfaces.unwrap(x::DataValue{Union{}}) = missing
-DataValueInterfaces.unwrap(x::DataValue{T}) where {T} = isbitstype(T) ? ifelse(isna(x), missing, unsafe_get(x)) : (isna(x) ? missing : unsafe_get(x))
