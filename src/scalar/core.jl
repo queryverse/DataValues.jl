@@ -305,11 +305,11 @@ function Base.float(x::DataValue{T}) where T
     return isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)))
 end
 
-# AbstractDataValues definitions
-using AbstractDataValues
-AbstractDataValues.nondatavaluetype(::Type{DataValue{T}}) where {T} = Union{T, Missing}
-AbstractDataValues.datavaluetype(::Type{T}) where {T <: DataValue} = T
-AbstractDataValues.datavaluetype(::Type{Union{T, Missing}}) where {T} = DataValue{T}
-AbstractDataValues.datavaluetype(::Type{Missing}) = DataValue{Union{}}
-AbstractDataValues.unwrap(x::DataValue{Union{}}) = missing
-AbstractDataValues.unwrap(x::DataValue{T}) where {T} = isbitstype(T) ? ifelse(isna(x), missing, unsafe_get(x)) : (isna(x) ? missing : unsafe_get(x))
+# DataValueInterfaces definitions
+using DataValueInterfaces
+DataValueInterfaces.nondatavaluetype(::Type{DataValue{T}}) where {T} = Union{T, Missing}
+DataValueInterfaces.datavaluetype(::Type{T}) where {T <: DataValue} = T
+DataValueInterfaces.datavaluetype(::Type{Union{T, Missing}}) where {T} = DataValue{T}
+DataValueInterfaces.datavaluetype(::Type{Missing}) = DataValue{Union{}}
+DataValueInterfaces.unwrap(x::DataValue{Union{}}) = missing
+DataValueInterfaces.unwrap(x::DataValue{T}) where {T} = isbitstype(T) ? ifelse(isna(x), missing, unsafe_get(x)) : (isna(x) ? missing : unsafe_get(x))
