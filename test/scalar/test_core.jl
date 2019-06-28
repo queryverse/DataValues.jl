@@ -301,4 +301,25 @@ show(io, DataValue(enum_val_a))
     @test lstrip(isspace, DataValue{String}()) == NA
 end
 
+@testset "DataValueInterfaces" begin
+
+    @test DataValueInterfaces.nondatavaluetype(DataValue{Union{}}) == Missing
+    @test DataValueInterfaces.nondatavaluetype(DataValue{Int}) == Int
+    @test DataValueInterfaces.nondatavaluetype(Union{}) == Union{}
+    @test DataValueInterfaces.nondatavaluetype(Int) == Int
+
+    @test DataValueInterfaces.datavaluetype(Union{}) == Union{}
+    @test DataValueInterfaces.datavaluetype(Int) == Int
+    @test DataValueInterfaces.datavaluetype(Missing) == DataValue{Union{}}
+    @test DataValueInterfaces.datavaluetype(Union{Int, Missing}) == DataValue{Int}
+
+    @test DataValueInterfaces.unwrap(NA) === missing
+    @test DataValueInterfaces.unwrap(1) === 1
+    @test DataValueInterfaces.unwrap(DataValue(1)) === 1
+    @test DataValueInterfaces.unwrap(DataValue{Int64}()) === missing
+    @test DataValueInterfaces.unwrap(DataValue{String}()) === missing
+    @test DataValueInterfaces.unwrap(DataValue("hey")) == "hey"
+
+end
+
 end
