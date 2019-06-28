@@ -4,7 +4,7 @@ version = "0.4.9-DEV"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-AbstactDataValues = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8b"
+DataValueInterfaces = "e2d170a0-9d28-54be-80f0-106bbe20a464"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
