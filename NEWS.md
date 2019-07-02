@@ -1,3 +1,9 @@
+# DataValues.jl v0.4.9 Release Notes
+* Add DataValueInterfaces dep
+
+# DataValues.jl v0.4.8 Release Notes
+* Add more lifted methods
+
 # DataValues.jl v0.4.7 Release Notes
 * Fix a bug in the hash function
 
