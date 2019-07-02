@@ -301,10 +301,12 @@ show(io, DataValue(enum_val_a))
     @test lstrip(isspace, DataValue{String}()) == NA
 end
 
+using DataValueInterfaces
+
 @testset "DataValueInterfaces" begin
 
     @test DataValueInterfaces.nondatavaluetype(DataValue{Union{}}) == Missing
-    @test DataValueInterfaces.nondatavaluetype(DataValue{Int}) == Int
+    @test DataValueInterfaces.nondatavaluetype(DataValue{Int}) == Union{Int, Missing}
     @test DataValueInterfaces.nondatavaluetype(Union{}) == Union{}
     @test DataValueInterfaces.nondatavaluetype(Int) == Int
 
