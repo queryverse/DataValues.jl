@@ -14,14 +14,16 @@ designated by `I` is present, then it will be returned wrapped in a
 `DataValue{T}` container. If the value is missing, then this method returns
 `DataValue{T}()`.
 """
-@inline function Base.getindex(X::DataValueArray{T,N}, I::Int...) where {T,N}
+@inline function Base.getindex(X::DataValueArray{T,N}, i::Int) where {T,N}
+    @boundscheck checkbounds(X, i)
     if isbitstype(T)
-        ifelse(X.isna[I...], DataValue{T}(), DataValue{T}(X.values[I...]))
+        @inbounds r = DataValue{T}(X.values[i], !X.isna[i])
+        return r
     else
-        if X.isna[I...]
-            DataValue{T}()
+        @inbounds if X.isna[i]
+            return DataValue{T}()
         else
-            DataValue{T}(X.values[I...])
+            return DataValue{T}(X.values[i])
         end
     end
 end
