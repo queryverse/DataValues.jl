@@ -37,7 +37,7 @@ Base.convert(::Type{DataValue}, ::Missing) = DataValue{Union{}}()
 Base.convert(::Type{DataValue{T}}, ::Nothing) where {T} = DataValue{T}()
 Base.convert(::Type{DataValue}, ::Nothing) = DataValue{Union{}}()
 
-Base.convert(::Type{Union{Missing, T}}, value::DataValues.DataValue{T}) where T = isna(value) ? missing : unsafe_get(value)
+Base.convert(::Type{Union{Missing, T}}, value::DataValues.DataValue{T}) where T = get(value, missing)
 Base.convert(::Type{Union{Missing, T}}, ::DataValues.DataValue{Union{}}) where T = missing
 Base.convert(::Type{Any}, ::DataValue{Union{}}) = NA
 Base.convert(::Type{Missing}, ::DataValue{Union{}}) = missing
