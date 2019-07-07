@@ -25,7 +25,7 @@ Base.convert(::Type{DataValue}, x::DataValue) = x
 Base.convert(t::Type{DataValue{T}}, x::Any) where {T} = convert(t, convert(T, x))
 
 function Base.convert(::Type{DataValue{T}}, x::DataValue) where {T}
-    return isna(x) ? DataValue{T}() : DataValue{T}(convert(T, get(x)))
+    return isna(x) ? DataValue{T}() : DataValue{T}(convert(T, unsafe_get(x)))
 end
 
 Base.convert(::Type{DataValue{T}}, x::T) where {T} = DataValue{T}(x)
@@ -37,7 +37,7 @@ Base.convert(::Type{DataValue}, ::Missing) = DataValue{Union{}}()
 Base.convert(::Type{DataValue{T}}, ::Nothing) where {T} = DataValue{T}()
 Base.convert(::Type{DataValue}, ::Nothing) = DataValue{Union{}}()
 
-Base.convert(::Type{Union{Missing, T}}, value::DataValues.DataValue{T}) where T = isna(value) ? missing : value[]
+Base.convert(::Type{Union{Missing, T}}, value::DataValues.DataValue{T}) where T = get(value, missing)
 Base.convert(::Type{Union{Missing, T}}, ::DataValues.DataValue{Union{}}) where T = missing
 Base.convert(::Type{Any}, ::DataValue{Union{}}) = NA
 Base.convert(::Type{Missing}, ::DataValue{Union{}}) = missing
@@ -54,14 +54,14 @@ function Base.show(io::IO, x::DataValue{T}) where {T}
         if isna(x)
             print(io, "#NA")
         else
-            show(io, x.value)
+            show(io, unsafe_get(x))
         end
     else
         print(io, "DataValue{")
         show(IOContext(io, :compact => true), eltype(x))
         print(io, "}(")
         if !isna(x)
-            show(IOContext(io, :compact => true), x.value)
+            show(IOContext(io, :compact => true), unsafe_get(x))
         end
         print(io, ')')
     end
@@ -69,13 +69,13 @@ end
 
 @inline function Base.get(x::DataValue{S}, y::T) where {S,T}
     if isbitstype(S)
-        ifelse(isna(x), y, x.value)
+        ifelse(isna(x), y, unsafe_get(x))
     else
-        isna(x) ? y : x.value
+        isna(x) ? y : unsafe_get(x)
     end
 end
 
-Base.get(x::DataValue) = isna(x) ? throw(DataValueException()) : x.value
+Base.get(x::DataValue) = isna(x) ? throw(DataValueException()) : unsafe_get(x)
 
 """
     getindex(x::DataValue)
@@ -83,7 +83,7 @@ Base.get(x::DataValue) = isna(x) ? throw(DataValueException()) : x.value
 Attempt to access the value of `x`. Throw a `DataValueException` if the
 value is not present. Usually, this is written as `x[]`.
 """
-Base.getindex(x::DataValue) = isna(x) ? throw(DataValueException()) : x.value
+Base.getindex(x::DataValue) = isna(x) ? throw(DataValueException()) : unsafe_get(x)
 
 Base.get(x::DataValue{Union{}}) = throw(DataValueException())
 Base.get(x::DataValue{Union{}}, y) = y
@@ -101,7 +101,7 @@ function Base.hash(x::DataValue, h::UInt)
     if isna(x)
         return h + DataValuehash_seed
     else
-        return hash(x.value, h)
+        return hash(unsafe_get(x), h)
     end
 end
 
@@ -134,7 +134,7 @@ for op in (:lowercase,:uppercase,:reverse,:uppercasefirst,:lowercasefirst,:chop,
             if isna(x)
                 return DataValue{T}()
             else
-                return DataValue($op(get(x)))
+                return DataValue($op(unsafe_get(x)))
             end
         end
     end
@@ -172,7 +172,7 @@ function Base.getindex(s::DataValue{T},i) where {T <: AbstractString}
     if isna(s)
         return DataValue{T}()
     else
-        return DataValue(get(s)[i])
+        return DataValue(unsafe_get(s)[i])
     end
 end
 
@@ -181,7 +181,7 @@ function Base.lastindex(s::DataValue{T}) where {T <: AbstractString}
         # TODO Decide whether this makes sense?
         return 0
     else
-        return lastindex(get(s))
+        return lastindex(unsafe_get(s))
     end
 end
 
@@ -190,7 +190,7 @@ function length(s::DataValue{T}) where {T <: AbstractString}
     if isna(s)
         return DataValue{Int}()
     else
-        return DataValue{Int}(length(get(s)))
+        return DataValue{Int}(length(unsafe_get(s)))
     end
 end
 
@@ -199,7 +199,7 @@ end
 for op in (:+, :-, :!, :~)
     @eval begin
         import Base.$(op)
-        $op(x::DataValue{T}) where {T <: Number} = isna(x) ? DataValue{T}() : DataValue($op(get(x)))
+        $op(x::DataValue{T}) where {T <: Number} = isna(x) ? DataValue{T}() : DataValue($op(unsafe_get(x)))
     end
 end
 
@@ -207,43 +207,43 @@ end
 for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :min, :max)
     @eval begin
         import Base.$(op)
-        $op(a::DataValue{T1},b::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(a) || isna(b) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(get(a), get(b)))
-        $op(x::DataValue{T1},y::T2) where {T1 <: Number,T2 <: Number} = isna(x) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(get(x), y))
-        $op(x::T1,y::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(y) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(x, get(y)))
+        $op(a::DataValue{T1},b::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(a) || isna(b) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(unsafe_get(a), unsafe_get(b)))
+        $op(x::DataValue{T1},y::T2) where {T1 <: Number,T2 <: Number} = isna(x) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(unsafe_get(x), y))
+        $op(x::T1,y::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(y) ? DataValue{promote_type(T1,T2)}() : DataValue{promote_type(T1,T2)}($op(x, unsafe_get(y)))
     end
 end
 
-^(x::DataValue{T},p::Integer) where {T <: Number} = isna(x) ? DataValue{T}() : DataValue(get(x)^p)
-(/)(x::DataValue{T}, y::DataValue{S}) where {T<:Integer,S<:Integer} = (isna(x) | isna(y)) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)) / float(get(y)))
-(/)(x::DataValue{T}, y::S) where {T<:Integer,S<:Integer} = isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)) / float(y))
-(/)(x::T, y::DataValue{S}) where {T<:Integer,S<:Integer} = isna(y) ? DataValue{Float64}() : DataValue{Float64}(float(x) / float(get(y)))
+^(x::DataValue{T},p::Integer) where {T <: Number} = isna(x) ? DataValue{T}() : DataValue(unsafe_get(x)^p)
+(/)(x::DataValue{T}, y::DataValue{S}) where {T<:Integer,S<:Integer} = (isna(x) | isna(y)) ? DataValue{Float64}() : DataValue{Float64}(float(unsafe_get(x)) / float(unsafe_get(y)))
+(/)(x::DataValue{T}, y::S) where {T<:Integer,S<:Integer} = isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(unsafe_get(x)) / float(y))
+(/)(x::T, y::DataValue{S}) where {T<:Integer,S<:Integer} = isna(y) ? DataValue{Float64}() : DataValue{Float64}(float(x) / float(unsafe_get(y)))
 
-==(a::DataValue{T1},b::DataValue{T2}) where {T1,T2} = isna(a) && isna(b) ? true : !isna(a) && !isna(b) ? get(a)==get(b) : false
-==(a::DataValue{T1},b::T2) where {T1,T2} = isna(a) ? false : get(a)==b
-==(a::T1,b::DataValue{T2}) where {T1,T2} = isna(b) ? false : a==get(b)
+==(a::DataValue{T1},b::DataValue{T2}) where {T1,T2} = isna(a) && isna(b) ? true : !isna(a) && !isna(b) ? unsafe_get(a)==unsafe_get(b) : false
+==(a::DataValue{T1},b::T2) where {T1,T2} = isna(a) ? false : unsafe_get(a)==b
+==(a::T1,b::DataValue{T2}) where {T1,T2} = isna(b) ? false : a==unsafe_get(b)
 
-!=(a::DataValue{T1},b::DataValue{T2}) where {T1,T2} = isna(a) && isna(b) ? false : !isna(a) && !isna(b) ? get(a)!=get(b) : true
-!=(a::DataValue{T1},b::T2) where {T1,T2} = isna(a) ? true : get(a)!=b
-!=(a::T1,b::DataValue{T2}) where {T1,T2} = isna(b) ? true : a!=get(b)
+!=(a::DataValue{T1},b::DataValue{T2}) where {T1,T2} = isna(a) && isna(b) ? false : !isna(a) && !isna(b) ? unsafe_get(a)!=unsafe_get(b) : true
+!=(a::DataValue{T1},b::T2) where {T1,T2} = isna(a) ? true : unsafe_get(a)!=b
+!=(a::T1,b::DataValue{T2}) where {T1,T2} = isna(b) ? true : a!=unsafe_get(b)
 
 for op in (:<,:>,:<=,:>=)
     @eval begin
         import Base.$(op)
-        $op(a::DataValue{T},b::DataValue{T}) where {T <: Number} = isna(a) || isna(b) ? false : $op(get(a), get(b))
-        $op(x::DataValue{T1},y::T2) where {T1 <: Number,T2 <: Number} = isna(x) ? false : $op(get(x), y)
-        $op(x::T1,y::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(y) ? false : $op(x, get(y))
+        $op(a::DataValue{T},b::DataValue{T}) where {T <: Number} = isna(a) || isna(b) ? false : $op(unsafe_get(a), unsafe_get(b))
+        $op(x::DataValue{T1},y::T2) where {T1 <: Number,T2 <: Number} = isna(x) ? false : $op(unsafe_get(x), y)
+        $op(x::T1,y::DataValue{T2}) where {T1 <: Number,T2 <: Number} = isna(y) ? false : $op(x, unsafe_get(y))
     end
 end
 
 # C# spec 7.11.4
 function (&)(x::DataValue{Bool},y::DataValue{Bool})
     if isna(x)
-        if isna(y) || get(y)==true
+        if isna(y) || unsafe_get(y)==true
             return DataValue{Bool}()
         else
             return DataValue(false)
         end
-    elseif get(x)==true
+    elseif unsafe_get(x)==true
         return y
     else
         return DataValue(false)
@@ -255,12 +255,12 @@ end
 
 function (|)(x::DataValue{Bool},y::DataValue{Bool})
     if isna(x)
-        if isna(y) || !get(y)
+        if isna(y) || !unsafe_get(y)
             return DataValue{Bool}()
         else
             return DataValue(true)
         end
-    elseif get(x)
+    elseif unsafe_get(x)
         return DataValue(true)
     else
         return y
@@ -277,13 +277,13 @@ function isless(x::DataValue{S}, y::DataValue{T}) where {S,T}
     elseif isna(y)
         return true
     else
-        return isless(x.value, y.value)
+        return isless(unsafe_get(x), unsafe_get(y))
     end
 end
 
-isless(x::S, y::DataValue{T}) where {S,T} = isna(y) ? true : isless(x, get(y))
+isless(x::S, y::DataValue{T}) where {S,T} = isna(y) ? true : isless(x, unsafe_get(y))
 
-isless(x::DataValue{S}, y::T) where {S,T} = isna(x) ? false : isless(get(x), y)
+isless(x::DataValue{S}, y::T) where {S,T} = isna(x) ? false : isless(unsafe_get(x), y)
 
 isless(x::DataValue{Union{}}, y::DataValue{Union{}}) = false
 
@@ -293,16 +293,16 @@ isless(x::DataValue{Union{}}, y) = false
 
 # TODO Is that the definition we want?
 function Base.isnan(x::DataValue{T}) where {T<:AbstractFloat}
-    return !isna(x) && isnan(x[])
+    return !isna(x) && isnan(unsafe_get(x))
 end
 
 # TODO Is that the definition we want?
 function Base.isfinite(x::DataValue{T}) where {T<:AbstractFloat}
-    return !isna(x) && isfinite(x[])
+    return !isna(x) && isfinite(unsafe_get(x))
 end
 
 function Base.float(x::DataValue{T}) where T
-    return isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(get(x)))
+    return isna(x) ? DataValue{Float64}() : DataValue{Float64}(float(unsafe_get(x)))
 end
 
 # DataValueInterfaces definitions

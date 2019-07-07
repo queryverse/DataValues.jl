@@ -12,11 +12,11 @@ _nullable_eltype(f, A, As...) =
     Base._return_type(f, maptoTuple(_unsafe_get_eltype, A, As...))
 
 function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(get(dt), format, locale=locale))
+    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(unsafe_get(dt), format, locale=locale))
 end
 
 function Dates.Date(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(get(dt), format, locale=locale))
+    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(unsafe_get(dt), format, locale=locale))
 end
 
 for f in (:(Base.abs), :(Base.abs2), :(Base.conj),:(Base.sign))
@@ -25,7 +25,7 @@ for f in (:(Base.abs), :(Base.abs2), :(Base.conj),:(Base.sign))
             if isna(a)
                 DataValue{T}()
             else
-                DataValue($f(get(a)))
+                DataValue($f(unsafe_get(a)))
             end
         end
     end
@@ -42,7 +42,7 @@ for f in (:(Base.acos), :(Base.acosh), :(Base.asin), :(Base.asinh),
             if isna(a)
                 DataValue{Float64}()
             else
-                DataValue{Float64}($f(get(a)))
+                DataValue{Float64}($f(unsafe_get(a)))
             end
         end
     end
