@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.10 Release Notes
+* Performance improvements
+
 # DataValues.jl v0.4.9 Release Notes
 * Add DataValueInterfaces dep
 
