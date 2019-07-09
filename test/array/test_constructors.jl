@@ -160,6 +160,11 @@ end
 @test isa(convert(DataValueArray{Int}, DataValue[DataValue(1), DataValue(2), DataValue(3), DataValue()]), DataValueArray{Int})
 @test isa(convert(DataValueArray{Float64}, DataValue[DataValue(1), DataValue(2), DataValue(3), DataValue()]), DataValueArray{Float64})
 
+# test conversion from Any array
+@test convert(DataValueArray{Float64}, Any[1., 2., 3.]) isa DataValueVector{Float64}
+@test convert(DataValueArray{Float64}, Any[1., NA, 3.]) isa DataValueVector{Float64}
+@test convert(DataValueArray{Float64}, Any[DataValue(1.), DataValue{Float64}(), 3.]) isa DataValueVector{Float64}
+
 # converting a DataValueArray to unqualified type DataValueArray should be no-op
 m = rand(10:100)
 A = rand(m)

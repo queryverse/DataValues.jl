@@ -75,6 +75,14 @@ function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where 
     return DataValueArray{T,N}(convert(Array{T,N}, A), fill(false, size(A)))
 end
 
+function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S>:Any,T,N}
+    new_array = DataValueArray{T,N}(Array{T}(undef, size(A)), Array{Bool}(undef, size(A)))
+    for i in eachindex(A)
+        new_array[i] = A[i]
+    end
+    return new_array
+end
+
 function Base.convert(::Type{DataValueArray{T}}, A::AbstractArray{S,N}) where {S,T,N}
     return convert(DataValueArray{T,N}, A)
 end

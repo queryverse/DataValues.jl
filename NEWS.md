@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.11 Release Notes
+* Fix conversion from Any arrays
+
 # DataValues.jl v0.4.10 Release Notes
 * Performance improvements
 
