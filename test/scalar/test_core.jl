@@ -10,6 +10,7 @@ using InteractiveUtils
 @test DataValue(missing) == NA
 @test DataValue{Int}(missing) == DataValue{Int}()
 @test convert(Missing, NA) === missing
+@test false == (DataValue(missing) != NA)
 
 end
 
