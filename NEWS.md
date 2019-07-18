@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.12 Release Notes
+* Fix an ambiguity bug
+
 # DataValues.jl v0.4.11 Release Notes
 * Fix conversion from Any arrays
 
