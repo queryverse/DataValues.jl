@@ -54,8 +54,10 @@ x3 = DataValueArray{Int}(2, 2, 2)
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int}((d1,))
 X2 = DataValueArray{Int}((d1, d2))
+X3 = DataValueArray{Int}(undef, (d1, d2))
 @test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, (d1,))))
 @test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, (d1, d2))))
+@test isequal(X2, X3)
 for i in 1:5
     m = rand(3:5)
     dims = tuple([ rand(1:5) for i in 1:m ]...)
@@ -67,8 +69,10 @@ end
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int,1}((d1,))
 X2 = DataValueArray{Int,2}((d1, d2))
+X3 = DataValueArray{Int, 2}(undef, (d1, d2))
 @test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, (d1,))))
 @test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, (d1, d2))))
+@test isequal(X2, X3)
 for i in 1:5
     m = rand(3:5)
     dims = tuple([ rand(1:5) for i in 1:m ]...)
@@ -80,8 +84,10 @@ end
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int}(d1)
 X2 = DataValueArray{Int}(d1, d2)
+X3 = DataValueArray{Int}(undef, d1, d2)
 @test isequal(X1, DataValueArray(Array{Int}(undef, d1), fill(true, d1)))
 @test isequal(X2, DataValueArray(Array{Int}(undef, d1, d2), fill(true, d1, d2)))
+@test isequal(X2, X3)
 for i in 1:5
     m = rand(3:5)
     dims = [ rand(1:5) for i in 1:m ]
@@ -93,8 +99,10 @@ end
 d1, d2 = rand(1:100), rand(1:100)
 X1 = DataValueArray{Int,1}(d1)
 X2 = DataValueArray{Int,2}(d1, d2)
+X3 = DataValueArray{Int,2}(undef, d1, d2)
 @test isequal(X1, DataValueArray(Array{Int,1}(undef, d1), fill(true, d1)))
 @test isequal(X2, DataValueArray(Array{Int,2}(undef, d1, d2), fill(true, d1, d2)))
+@test isequal(X2, X3)
 for i in 1:5
     m = rand(3:5)
     dims = [ rand(1:5) for i in 1:m ]
@@ -151,6 +159,11 @@ end
 @test isa(convert(DataValueArray, DataValue[DataValue(1), DataValue(2), DataValue(3), DataValue()]), DataValueArray{Any})
 @test isa(convert(DataValueArray{Int}, DataValue[DataValue(1), DataValue(2), DataValue(3), DataValue()]), DataValueArray{Int})
 @test isa(convert(DataValueArray{Float64}, DataValue[DataValue(1), DataValue(2), DataValue(3), DataValue()]), DataValueArray{Float64})
+
+# test conversion from Any array
+@test convert(DataValueArray{Float64}, Any[1., 2., 3.]) isa DataValueVector{Float64}
+@test convert(DataValueArray{Float64}, Any[1., NA, 3.]) isa DataValueVector{Float64}
+@test convert(DataValueArray{Float64}, Any[DataValue(1.), DataValue{Float64}(), 3.]) isa DataValueVector{Float64}
 
 # converting a DataValueArray to unqualified type DataValueArray should be no-op
 m = rand(10:100)

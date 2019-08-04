@@ -268,6 +268,9 @@ for T in types
     @test hash(x2) != hash(x3)
     @test hash(x2) != hash(x4)
     @test hash(x3) != hash(x4)
+
+    @test hash(x3) == hash(zero(T))
+    @test hash(x4) == hash(one(T))
 end
 
 for T in types

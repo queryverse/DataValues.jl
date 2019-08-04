@@ -5,6 +5,26 @@ using InteractiveUtils
 
 @testset "Core" begin
 
+@testset "Missing integration" begin
+
+@test DataValue(missing) == NA
+@test DataValue{Int}(missing) == DataValue{Int}()
+@test convert(Missing, NA) === missing
+@test false == (DataValue(missing) != NA)
+
+end
+
+@testset "conversion" begin
+
+@test DataValue{Float64}(2) == DataValue(2.)
+@test convert(Union{Missing,Int}, DataValue(2)) == 2
+@test convert(Union{Missing,Int}, DataValue{Int}()) === missing
+@test convert(Union{Missing,Int}, NA) === missing
+
+@test convert(DataValue{Int}, DataValue(3)) == DataValue(3)
+
+end
+
 @testset "isna" begin
 
 @test DataValues.isna(NA) == true
@@ -54,6 +74,9 @@ for T in (subtypes(Dates.DatePeriod)..., subtypes(Dates.TimePeriod)...)
     @test zero(DataValue{T}()) == T(0)
 end
 
+@test zero(DataValue(Year(3))) == zero(Year)
+@test zero(DataValue{Year}) == zero(Year)
+
 end
 
 @testset "Comparisons" begin
@@ -69,6 +92,8 @@ end
 
 @test (NA != DataValue(3)) == true
 @test (NA != DataValue{Int}()) == false
+
+@test (NA == NA) == true
 
 @test isless(DataValue{Int}(), DataValue{Int}()) == false
 @test isless(DataValue{Int}(), DataValue{Int}(3)) == false
@@ -182,6 +207,15 @@ for op in (:+, :-, :*, :%, :&, :|, :<<, :>>)
     end
 end
 
+@test DataValue(Int16(4)) / DataValue(Int32(2)) == DataValue(2.)
+@test DataValue{Int16}() / DataValue(Int32(2)) == DataValue{Float64}()
+@test DataValue(Int16(4)) / DataValue{Int32}() == DataValue{Float64}()
+@test DataValue{Int16}() / DataValue{Int32}() == DataValue{Float64}()
+@test Int16(4) / DataValue(Int32(2)) == DataValue(2.)
+@test Int16(4) / DataValue{Int32}() == DataValue{Float64}()
+@test DataValue{Int16}(4) / Int32(2) == DataValue{Float64}(2.)
+@test DataValue{Int16}() / Int32(2) == DataValue{Float64}()
+
 @test DataValue(3)^2 == DataValue(9)
 @test DataValue{Int}()^2 == DataValue{Int}()
 
@@ -247,5 +281,41 @@ io = IOBuffer()
 
 show(io, DataValue(enum_val_a))
 @test String(take!(io)) == "DataValue{TestEnum}(enum_val_a)"
+
+@testset "string" begin
+    @test rstrip("asdf  ") == rstrip(DataValue("asdf"))
+    @test rstrip(DataValue{String}()) == NA
+
+    @test rstrip("asdf  ", ' ') == rstrip(DataValue("asdf"), ' ')
+    @test rstrip(DataValue{String}(), ' ') == NA
+
+    @test rstrip(isspace, "asdf  ") == rstrip(isspace, DataValue("asdf"))
+    @test rstrip(isspace, DataValue{String}()) == NA
+
+    @test lstrip(" asdf") == lstrip(DataValue("asdf"))
+    @test lstrip(DataValue{String}()) == NA
+
+    @test lstrip(" asdf", ' ') == lstrip(DataValue("asdf"), ' ')
+    @test lstrip(DataValue{String}(), ' ') == NA
+
+    @test lstrip(isspace, " asdf") == lstrip(isspace, DataValue("asdf"))
+    @test lstrip(isspace, DataValue{String}()) == NA
+end
+
+using DataValueInterfaces
+
+@testset "DataValueInterfaces" begin
+
+    @test DataValueInterfaces.nondatavaluetype(DataValue{Union{}}) == Missing
+    @test DataValueInterfaces.nondatavaluetype(DataValue{Int}) == Union{Int, Missing}
+    @test DataValueInterfaces.nondatavaluetype(Union{}) == Union{}
+    @test DataValueInterfaces.nondatavaluetype(Int) == Int
+
+    @test DataValueInterfaces.datavaluetype(Union{}) == Union{}
+    @test DataValueInterfaces.datavaluetype(Int) == Int
+    @test DataValueInterfaces.datavaluetype(Missing) == DataValue{Union{}}
+    @test DataValueInterfaces.datavaluetype(Union{Int, Missing}) == DataValue{Int}
+
+end
 
 end

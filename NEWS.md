@@ -1,3 +1,24 @@
+# DataValues.jl v0.4.12 Release Notes
+* Fix an ambiguity bug
+
+# DataValues.jl v0.4.11 Release Notes
+* Fix conversion from Any arrays
+
+# DataValues.jl v0.4.10 Release Notes
+* Performance improvements
+
+# DataValues.jl v0.4.9 Release Notes
+* Add DataValueInterfaces dep
+
+# DataValues.jl v0.4.8 Release Notes
+* Add more lifted methods
+
+# DataValues.jl v0.4.7 Release Notes
+* Fix a bug in the hash function
+
+# DataValues.jl v0.4.6 Release Notes
+* Add undef constructors for DataValueArray
+
 # DataValues.jl v0.4.5 Release Notes
 * Add a missing convert method
 
