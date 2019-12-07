@@ -3,13 +3,10 @@ using DataValues
 
 @testset "DataValueArray: TypeDefs" begin
 
-x = DataValueArray(
-    [1, 2, 3],
-    [false, false, true]
-)
+    x = DataValueArray([1, 2, 3],
+    [false, false, true])
 
-y = DataValueArray(
-    [
+    y = DataValueArray([
         1 2;
         3 4;
     ],
@@ -19,10 +16,10 @@ y = DataValueArray(
     ],
 )
 
-@test isa(x, DataValueArray{Int, 1})
-@test isa(x, DataValueVector{Int})
+    @test isa(x, DataValueArray{Int,1})
+    @test isa(x, DataValueVector{Int})
 
-@test isa(y, DataValueArray{Int, 2})
-@test isa(y, DataValueMatrix{Int})
+    @test isa(y, DataValueArray{Int,2})
+    @test isa(y, DataValueMatrix{Int})
 
 end

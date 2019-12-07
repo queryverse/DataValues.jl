@@ -96,7 +96,7 @@ Remove the item at index `i` and return the removed item. Subsequent items
 are shifted down to fill the resulting gap. If specified, replacement values from
 an ordered collection will be spliced in place of the removed item.
 """
-function Base.splice!(X::DataValueVector, i::Integer, ins=_default_splice)
+function Base.splice!(X::DataValueVector, i::Integer, ins = _default_splice)
     v = X[i]
     m = length(ins)
     if m == 0
@@ -105,8 +105,8 @@ function Base.splice!(X::DataValueVector, i::Integer, ins=_default_splice)
     elseif m == 1
         X[i] = ins
     else
-        Base._growat!(X.values, i, m-1)
-        Base._growat!(X.isna, i, m-1)
+        Base._growat!(X.values, i, m - 1)
+        Base._growat!(X.isna, i, m - 1)
         for k = 1:lastindex(ins)
             X[i + k - 1] = ins[k]
         end
@@ -125,7 +125,7 @@ place of the removed items.
 To insert `ins` before an index `n` without removing any items, use
 `splice!(X, n:n-1, ins)`.
 """
-function Base.splice!(X::DataValueVector, rng::UnitRange{T}, ins=_default_splice) where {T <: Integer}
+function Base.splice!(X::DataValueVector, rng::UnitRange{T}, ins = _default_splice) where {T <: Integer}
     vs = X[rng]
     m = length(ins)
     if m == 0
@@ -184,7 +184,7 @@ function Base.append!(X::DataValueVector, items::AbstractVector)
     old_length = length(X)
     nitems = length(items)
     resize!(X, old_length + nitems)
-    copyto!(X, length(X)-nitems+1, items, 1, nitems)
+    copyto!(X, length(X) - nitems + 1, items, 1, nitems)
     return X
 end
 
@@ -203,7 +203,7 @@ function Base.prepend!(X::DataValueVector, items::AbstractVector)
     ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.values, nitems)
     ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.isna, nitems)
     if X === items
-        copyto!(X, 1, items, nitems+1, nitems)
+        copyto!(X, 1, items, nitems + 1, nitems)
     else
         copyto!(X, 1, items, 1, nitems)
     end
@@ -250,13 +250,13 @@ Modify `X` by reversing the first `n` elements starting at index `s`
 (inclusive). If unspecified, `s` and `n` will default to `1` and `length(X)`,
 respectively.
 """
-function Base.reverse!(X::DataValueVector, s=1, n=length(X))
+function Base.reverse!(X::DataValueVector, s = 1, n = length(X))
     if isbitstype(eltype(X)) || !any(isna, X)
         reverse!(X.values, s, n)
         reverse!(X.isna, s, n)
     else
         r = n
-        for i in s:div(s+n-1, 2)
+        for i in s:div(s + n - 1, 2)
             if !X.isna[i]
                 if !X.isna[r]
                     X.values[i], X.values[r] = X.values[r], X.values[i]
@@ -280,7 +280,7 @@ Return a copy of `X` with the first `n` elements starting at index `s`
 (inclusive) reversed. If unspecified, `s` and `n` will default to `1` and
 `length(X)`, respectively.
 """
-function Base.reverse(X::DataValueVector, s=1, n=length(X))
+function Base.reverse(X::DataValueVector, s = 1, n = length(X))
     return reverse!(copy(X), s, n)
 end
 

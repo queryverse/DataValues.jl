@@ -9,30 +9,30 @@ function DataValueArray(d::AbstractArray{T,N}, m::AbstractArray{Bool,N}) where {
 end
 
 function DataValueArray{T}(d::NTuple{N,Int}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))
 end
 
 function DataValueArray{T,N}(d::NTuple{N,Int}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))
 end
 
 function DataValueArray{T}(d::Vararg{Int,N}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))
 end
 
 function DataValueArray{T,N}(d::Vararg{Int,N}) where {T,N}
-    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))    
+    return DataValueArray{T,N}(Array{T,N}(undef, d), fill(true, d))
 end
 
-function DataValueArray{T, N}(::UndefInitializer, args...) where {T, N}
-    return DataValueArray(Array{T, N}(undef, args...), fill(true, args...))
+function DataValueArray{T,N}(::UndefInitializer, args...) where {T,N}
+    return DataValueArray(Array{T,N}(undef, args...), fill(true, args...))
 end
 
 function DataValueArray{T}(::UndefInitializer, args...) where {T}
     return DataValueArray(Array{T}(undef, args...), fill(true, args...))
 end
 
-function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
+function DataValueArray(data::AbstractArray{T,N}) where {T <: DataValue,N}
     S = eltype(eltype(data))
     new_array = DataValueArray{S,N}(Array{S}(undef, size(data)), Array{Bool}(undef, size(data)))
     for i in eachindex(data)
@@ -41,7 +41,7 @@ function DataValueArray(data::AbstractArray{T,N}) where {T<:DataValue,N}
     return new_array
 end
 
-function DataValueArray{S}(data::AbstractArray{T,N}) where {S,T<:DataValue,N}
+function DataValueArray{S}(data::AbstractArray{T,N}) where {S,T <: DataValue,N}
     new_array = DataValueArray{S,N}(Array{S}(undef, size(data)), Array{Bool}(undef, size(data)))
     for i in eachindex(data)
         new_array[i] = data[i]
@@ -70,12 +70,12 @@ end
 # ----- Conversion to DataValueArrays ---------------------------------------- #
 # Also provides constructors from arrays via the fallback mechanism.
 
-#----- Conversion from arrays (of non-DataValues) -----------------------------#
+# ----- Conversion from arrays (of non-DataValues) -----------------------------#
 function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S,T,N}
     return DataValueArray{T,N}(convert(Array{T,N}, A), fill(false, size(A)))
 end
 
-function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S>:Any,T,N}
+function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S >: Any,T,N}
     new_array = DataValueArray{T,N}(Array{T}(undef, size(A)), Array{Bool}(undef, size(A)))
     for i in eachindex(A)
         new_array[i] = A[i]
@@ -91,8 +91,8 @@ function Base.convert(::Type{DataValueArray}, A::AbstractArray{T,N}) where {T,N}
     return convert(DataValueArray{T,N}, A)
 end
 
-#----- Conversion from arrays of DataValues -----------------------------------#
-function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S<:DataValue,T,N}
+# ----- Conversion from arrays of DataValues -----------------------------------#
+function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where {S <: DataValue,T,N}
     new_array = DataValueArray{T,N}(Array{T}(undef, size(A)), Array{Bool}(undef, size(A)))
     for i in eachindex(A)
         new_array[i] = A[i]
@@ -100,20 +100,20 @@ function Base.convert(::Type{DataValueArray{T,N}}, A::AbstractArray{S,N}) where 
     return new_array
 end
 
-#----- Conversion from DataValueArrays of a different type --------------------#
+# ----- Conversion from DataValueArrays of a different type --------------------#
 function Base.convert(::Type{DataValueArray}, X::DataValueArray{T,N}) where {T,N}
     return X
 end
 
 function Base.convert(::Type{DataValueArray{T}}, A::AbstractArray{DataValue{S},N}) where {S,T,N}
-    return convert(DataValueArray{T, N}, A)
+    return convert(DataValueArray{T,N}, A)
 end
 
 function Base.convert(::Type{DataValueArray}, A::AbstractArray{DataValue{T},N}) where {T,N}
     return convert(DataValueArray{T,N}, A)
 end
 
-function Base.convert(::Type{DataValueArray}, A::AbstractArray{DataValue, N}) where {N}
+function Base.convert(::Type{DataValueArray}, A::AbstractArray{DataValue,N}) where {N}
     return convert(DataValueArray{Any,N}, A)
 end
 

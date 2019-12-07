@@ -6,20 +6,20 @@ _unsafe_get_eltype(x) = typeof(x)
 
 # Copied from julia 0.6
 maptoTuple(f) = Tuple{}
-maptoTuple(f, a, b...) = Tuple{f(a), maptoTuple(f, b...).types...}
+maptoTuple(f, a, b...) = Tuple{f(a),maptoTuple(f, b...).types...}
 
 _nullable_eltype(f, A, As...) =
     Base._return_type(f, maptoTuple(_unsafe_get_eltype, A, As...))
 
-function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(unsafe_get(dt), format, locale=locale))
+function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale = Dates.ENGLISH) where {T <: AbstractString}
+    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(unsafe_get(dt), format, locale = locale))
 end
 
-function Dates.Date(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(unsafe_get(dt), format, locale=locale))
+function Dates.Date(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale = Dates.ENGLISH) where {T <: AbstractString}
+    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(unsafe_get(dt), format, locale = locale))
 end
 
-for f in (:(Base.abs), :(Base.abs2), :(Base.conj),:(Base.sign))
+for f in (:(Base.abs), :(Base.abs2), :(Base.conj), :(Base.sign))
     @eval begin
         function $f(a::DataValue{T}) where {T}
             if isna(a)
@@ -52,9 +52,9 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
         :min, :max)
     @eval begin
         import Base.$(op)
-        function $op(a::DataValue{T1},b::DataValue{T2}) where {T1,T2}
+        function $op(a::DataValue{T1}, b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(a) && hasvalue(b)
-            S = _nullable_eltype($op,a,b)
+            S = _nullable_eltype($op, a, b)
             if nonnull
                 return DataValue($op(get(a), get(b)))
             else
@@ -62,9 +62,9 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
             end
         end
 
-        function $op(a::DataValue{T1},b::T2) where {T1,T2}
+        function $op(a::DataValue{T1}, b::T2) where {T1,T2}
             nonnull = hasvalue(a)
-            S = _nullable_eltype($op,a,b)
+            S = _nullable_eltype($op, a, b)
             if nonnull
                 return DataValue($op(get(a), b))
             else
@@ -72,9 +72,9 @@ for op in (:+, :-, :*, :/, :%, :&, :|, :^, :<<, :>>, :div, :mod, :fld,
             end
         end
 
-        function $op(a::T1,b::DataValue{T2}) where {T1,T2}
+        function $op(a::T1, b::DataValue{T2}) where {T1,T2}
             nonnull = hasvalue(b)
-            S = _nullable_eltype($op,a,b)
+            S = _nullable_eltype($op, a, b)
             if nonnull
                 return DataValue($op(a, get(b)))
             else
