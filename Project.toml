@@ -1,6 +1,6 @@
 name = "DataValues"
 uuid = "e7dc6d0d-1eca-5fa6-8ad6-5aecde8b7ea5"
-version = "0.4.13-DEV"
+version = "0.4.13"
 
 [deps]
 DataValueInterfaces = "e2d170a0-9d28-54be-80f0-106bbe20a464"
