@@ -222,7 +222,7 @@ using Test
     nulls = Z.isna
     @test isequal(reverse!(Z), DataValueArray(A, reverse!(Z.isna)))
 
-# # empty!(X::DataValueVector)
+## empty!(X::DataValueVector)
     n = rand(1:1_000)
     A, M = rand(n), rand(Bool, n)
     X = DataValueArray(A, M)
