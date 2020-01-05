@@ -1,3 +1,6 @@
+# DataValues.jl v0.4.13 Release Notes
+* Add unsafe_setindex_value and unsafe_setindex_isna
+
 # DataValues.jl v0.4.12 Release Notes
 * Fix an ambiguity bug
 
