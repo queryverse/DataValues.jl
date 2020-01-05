@@ -85,6 +85,28 @@ end
     return v
 end
 
+"""
+    unsafe_setindex_value!(X::DataValueArray, v, I::Int...)
+
+Set the value entry of `X` at position `I` equal to `v`. This method
+does not update X.isna.
+"""
+@inline function unsafe_setindex_value!(x::DataValueArray, v, I::Int...)
+    x.values[I...] = v
+    return
+end
+
+"""
+    unsafe_setindex_isna!(X::DataValueArray, v, I::Int...)
+
+Set the isna entry of `X` at position `I` equal to `v`. This method
+does not update the actual value at position `I`.
+"""
+@inline function unsafe_setindex_isna!(x::DataValueArray, v, I::Int...)
+    x.isna[I...] = v
+    return
+end
+
 # DA TODO disabled
 # function unsafe_getindex_notnull(X::DataValueArray, I::Int...)
 #     return DataValue(getindex(X.values, I...))
