@@ -66,14 +66,12 @@ function profile_broadcast(f, L, U, D, A1, A2, X1, X2, E1, E2, Y1, Y2, F1, F2)
 end
 
 function profile_ops_nonulls(A1, A2, X1, X2, E1, E2)
-    for op in (
-        :(.+),
+    for op in (:(.+),
         :(.-),
         :(.*),
         :(./),
         :(.%),
-        :(.^),
-    )
+        :(.^),)
         _op = Symbol("$op")
         println("Method: $_op (no empty entries)")
         @eval begin
@@ -89,14 +87,12 @@ function profile_ops_nonulls(A1, A2, X1, X2, E1, E2)
         end
     end
 
-    for op in (
-        :(.==),
+    for op in (:(.==),
         :(.!=),
         :(.<),
         :(.>),
         :(.<=),
-        :(.>=),
-    )
+        :(.>=),)
         _op = Symbol("$op")
         println("Method: $_op (no empty entries)")
         @eval begin
@@ -140,14 +136,12 @@ function profile_broadcasted_right(C1, C2, V1, V2, H1, H2, Q1, Q2)
 end
 
 function profile_ops_halfnulls(A1, A2, Y1, Y2, F1, F2)
-    for op in (
-        :(.+),
+    for op in (:(.+),
         :(.-),
         :(.*),
         :(./),
         :(.%),
-        :(.^),
-    )
+        :(.^),)
         _op = Symbol("$op")
         println("Method: $_op (~half empty entries)")
         @eval begin
@@ -163,14 +157,12 @@ function profile_ops_halfnulls(A1, A2, Y1, Y2, F1, F2)
         end
     end
 
-    for op in (
-        :(.==),
+    for op in (:(.==),
         :(.!=),
         :(.<),
         :(.>),
         :(.<=),
-        :(.>=),
-    )
+        :(.>=),)
         _op = Symbol("$op")
         println("Method: $_op (~half empty entries)")
         @eval begin

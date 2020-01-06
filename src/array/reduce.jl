@@ -106,7 +106,7 @@ behavior is enabled, `f` will be automatically lifted over the elements of `X`.
 Note that, in general, mapreducing over a `DataValueArray` will return a
 `DataValue` object regardless of whether `skipna` is set to `true` or `false`.
 """
-function Base.mapreduce(f, op::Function, X::T; skipna::Bool = false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
+function Base.mapreduce(f, op::Function, X::T; skipna::Bool = false) where {N,S <: DataValue,T <: AbstractArray{S,N}}
     if skipna
         return DataValue(mapreduce(f, op, dropna(X)))
     else
@@ -124,7 +124,7 @@ over the elements of `X`. Note that, in general, mapreducing over a
 `DataValueArray` will return a `DataValue` object regardless of whether `skipna`
 is set to `true` or `false`.
 """
-function Base.reduce(op, X::T; skipna::Bool = false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
+function Base.reduce(op, X::T; skipna::Bool = false) where {N,S <: DataValue,T <: AbstractArray{S,N}}
     return mapreduce(identity, op, X; skipna = skipna)
 end
 
@@ -137,11 +137,11 @@ for (fn, op) in ((:(Base.sum), +),
     @eval begin
         # supertype(typeof(@functorize(abs))) returns Func{1} on Julia 0.4,
         # and Function on 0.5
-        function $fn(f::Union{Function,Type},X::T; skipna::Bool=false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
+        function $fn(f::Union{Function,Type}, X::T; skipna::Bool = false) where {N,S <: DataValue,T <: AbstractArray{S,N}}
             return mapreduce(f, $op, X; skipna = skipna)
         end
 
-        function $fn(X::T; skipna::Bool=false) where {N,S<:DataValue,T<:AbstractArray{S,N}}
+        function $fn(X::T; skipna::Bool = false) where {N,S <: DataValue,T <: AbstractArray{S,N}}
             return mapreduce(identity, $op, X; skipna = skipna)
         end
     end
@@ -191,7 +191,7 @@ end
 #     return v
 # end
 
-function Base.extrema(X::T; skipna::Bool = false) where {N,T2,T<:DataValueArray{T2,N}}
+function Base.extrema(X::T; skipna::Bool = false) where {N,T2,T <: DataValueArray{T2,N}}
     length(X) > 0 || throw(ArgumentError("collection must be non-empty"))
     vmin = DataValue{T2}()
     vmax = DataValue{T2}()
@@ -213,13 +213,13 @@ function Base.extrema(X::T; skipna::Bool = false) where {N,T2,T<:DataValueArray{
     return (vmin, vmax)
 end
 
-function Base.extrema(X::T; skipna::Bool = false) where {N,T2,S<:DataValue{T2},T<:AbstractArray{S,N}}
+function Base.extrema(X::T; skipna::Bool = false) where {N,T2,S <: DataValue{T2},T <: AbstractArray{S,N}}
     length(X) > 0 || throw(ArgumentError("collection must be non-empty"))
     vmin = DataValue{T2}()
     vmax = DataValue{T2}()
     @inbounds for i in 1:length(X)
         missing = isna(X[i])
-        
+
         if skipna && missing
             continue
         elseif missing

@@ -123,7 +123,7 @@ function Base.resize!(X::DataValueArray{T,1}, n::Int) where {T}
     resize!(X.values, n)
     oldn = length(X.isna)
     resize!(X.isna, n)
-    X.isna[oldn+1:n] .= true
+    X.isna[oldn + 1:n] .= true
     return X
 end
 
@@ -268,35 +268,35 @@ Currently supported return type arguments include: `Array`, `Array{T}`,
 Convert `X` to an `AbstractArray` of type `T` and replace all null entries of
 `X` with `replacement` in the result.
 """
-function Base.convert(::Type{Array{S, N}}, X::DataValueArray{T, N}) where {S,T,N}
+function Base.convert(::Type{Array{S,N}}, X::DataValueArray{T,N}) where {S,T,N}
     if any(isna, X)
         throw(DataValueException())
     else
-        return convert(Array{S, N}, X.values)
+        return convert(Array{S,N}, X.values)
     end
 end
 
-function Base.convert(::Type{Array{S}}, X::DataValueArray{T, N}) where {S,T,N} # -> Array{S, N}
-    return convert(Array{S, N}, X)
+function Base.convert(::Type{Array{S}}, X::DataValueArray{T,N}) where {S,T,N} # -> Array{S, N}
+    return convert(Array{S,N}, X)
 end
 
 function Base.convert(::Type{Vector}, X::DataValueVector{T}) where {T} # -> Vector{T}
-    return convert(Array{T, 1}, X)
+    return convert(Array{T,1}, X)
 end
 
 function Base.convert(::Type{Matrix}, X::DataValueMatrix{T}) where {T} # -> Matrix{T}
-    return convert(Array{T, 2}, X)
+    return convert(Array{T,2}, X)
 end
 
 function Base.convert(::Type{Array},
-                            X::DataValueArray{T, N}) where {T,N} # -> Array{T, N}
-    return convert(Array{T, N}, X)
+                            X::DataValueArray{T,N}) where {T,N} # -> Array{T, N}
+    return convert(Array{T,N}, X)
 end
 
 # Conversions with replacements for handling null values
 
-function Base.convert(::Type{Array{S, N}},
-                               X::DataValueArray{T, N},
+function Base.convert(::Type{Array{S,N}},
+                               X::DataValueArray{T,N},
                                replacement::Any) where {S,T,N} # -> Array{S, N}
     replacementS = convert(S, replacement)
     res = Array{S}(undef, size(X))
@@ -313,19 +313,19 @@ end
 function Base.convert(::Type{Vector},
                          X::DataValueVector{T},
                          replacement::Any) where {T} # -> Vector{T}
-    return convert(Array{T, 1}, X, replacement)
+    return convert(Array{T,1}, X, replacement)
 end
 
 function Base.convert(::Type{Matrix},
                          X::DataValueMatrix{T},
                          replacement::Any) where {T} # -> Matrix{T}
-    return convert(Array{T, 2}, X, replacement)
+    return convert(Array{T,2}, X, replacement)
 end
 
 function Base.convert(::Type{Array},
-                            X::DataValueArray{T, N},
+                            X::DataValueArray{T,N},
                             replacement::Any) where {T,N} # -> Array{T, N}
-    return convert(Array{T, N}, X, replacement)
+    return convert(Array{T,N}, X, replacement)
 end
 
 Base.any(::typeof(isna), X::DataValueArray) = Base.any(X.isna)
