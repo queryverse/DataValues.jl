@@ -180,7 +180,7 @@ function dropna(X::AbstractVector{T}) where {T}
     if !(DataValue <: T) && !(T <: DataValue)
         return copy(X)
     else
-        Y = filter(x->!isna(x), X)
+        Y = filter(x -> !isna(x), X)
         res = similar(Y, eltype(T))
         for i in eachindex(Y, res)
             @inbounds res[i] = isa(Y[i], DataValue) ? Y[i].value : Y[i]

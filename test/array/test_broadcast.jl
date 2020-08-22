@@ -15,12 +15,12 @@ using Test
     M3 = rand(Bool, 10, [dims; i]...)
     C3 = Array{Float64}(undef, 10, [dims; i]...)
 
-    m1 = broadcast((x, y)->x, M1, M2)
-    m2 = broadcast((x, y)->x, M2, M3)
-    R2 = reshape(Bool[ (x->(m1[x] | M2[x]))(i) for i in 1:length(M2) ], size(M2))
-    R3 = reshape(Bool[ (x->(m2[x] | M3[x]))(i) for i in 1:length(M3) ], size(M3))
-    r2 = broadcast((x, y)->x, R2, R3)
-    Q3 = reshape(Bool[ (x->(r2[x] | R3[x]))(i) for i in 1:length(R3) ], size(M3))
+    m1 = broadcast((x, y) -> x, M1, M2)
+    m2 = broadcast((x, y) -> x, M2, M3)
+    R2 = reshape(Bool[ (x -> (m1[x] | M2[x]))(i) for i in 1:length(M2) ], size(M2))
+    R3 = reshape(Bool[ (x -> (m2[x] | M3[x]))(i) for i in 1:length(M3) ], size(M3))
+    r2 = broadcast((x, y) -> x, R2, R3)
+    Q3 = reshape(Bool[ (x -> (r2[x] | R3[x]))(i) for i in 1:length(R3) ], size(M3))
 
     U1 = DataValueArray(A1)
     U2 = DataValueArray(A2)
