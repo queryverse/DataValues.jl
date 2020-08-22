@@ -52,7 +52,7 @@ end
 # The following method allows for the construction of zero-element
 # DataValueArrays by calling the parametrized type on zero arguments.
 function DataValueArray{T,N}() where {T,N}
-    return DataValueArray{T}(ntuple(i->0, N))
+    return DataValueArray{T}(ntuple(i -> 0, N))
 end
 
 function DataValueArray{T,N}(data::AbstractArray{S,N}) where {S,T,N}

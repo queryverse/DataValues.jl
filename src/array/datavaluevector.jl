@@ -96,7 +96,7 @@ Remove the item at index `i` and return the removed item. Subsequent items
 are shifted down to fill the resulting gap. If specified, replacement values from
 an ordered collection will be spliced in place of the removed item.
 """
-function Base.splice!(X::DataValueVector, i::Integer, ins = _default_splice)
+function Base.splice!(X::DataValueVector, i::Integer, ins=_default_splice)
     v = X[i]
     m = length(ins)
     if m == 0
@@ -125,7 +125,7 @@ place of the removed items.
 To insert `ins` before an index `n` without removing any items, use
 `splice!(X, n:n-1, ins)`.
 """
-function Base.splice!(X::DataValueVector, rng::UnitRange{T}, ins = _default_splice) where {T <: Integer}
+function Base.splice!(X::DataValueVector, rng::UnitRange{T}, ins=_default_splice) where {T <: Integer}
     vs = X[rng]
     m = length(ins)
     if m == 0
@@ -250,7 +250,7 @@ Modify `X` by reversing the first `n` elements starting at index `s`
 (inclusive). If unspecified, `s` and `n` will default to `1` and `length(X)`,
 respectively.
 """
-function Base.reverse!(X::DataValueVector, s = 1, n = length(X))
+function Base.reverse!(X::DataValueVector, s=1, n=length(X))
     if isbitstype(eltype(X)) || !any(isna, X)
         reverse!(X.values, s, n)
         reverse!(X.isna, s, n)
@@ -280,7 +280,7 @@ Return a copy of `X` with the first `n` elements starting at index `s`
 (inclusive) reversed. If unspecified, `s` and `n` will default to `1` and
 `length(X)`, respectively.
 """
-function Base.reverse(X::DataValueVector, s = 1, n = length(X))
+function Base.reverse(X::DataValueVector, s=1, n=length(X))
     return reverse!(copy(X), s, n)
 end
 

@@ -21,17 +21,17 @@ using Test
         M[j] = false
         X = DataValueArray(A)
         Y = DataValueArray(A, M)
-        B = A[findall(x->!x, M)]
+        B = A[findall(x -> !x, M)]
 
         @test isequal(mapreduce(f, +, X), DataValue(mapreduce(f, +, X.values)))
         @test isequal(mapreduce(f, +, Y), DataValue{Float64}())
-        v = mapreduce(f, +, Y, skipna = true)
+        v = mapreduce(f, +, Y, skipna=true)
         @test v.value ≈ mapreduce(f, +, B)
         @test !isna(v)
 
         @test isequal(reduce(+, X), DataValue(reduce(+, X.values)))
         @test isequal(reduce(+, Y), DataValue{Float64}())
-        v = reduce(+, Y, skipna = true)
+        v = reduce(+, Y, skipna=true)
         @test v.value ≈ reduce(+, B)
         @test !isna(v)
 
@@ -42,18 +42,18 @@ using Test
             @test method(X) == DataValue(method(A))
             @test method(f, X) == DataValue(method(f, A))
             @test method(Y) == DataValue{Float64}()
-            v = method(Y, skipna = true)
+            v = method(Y, skipna=true)
             @test v.value ≈ method(B)
             @test !isna(v)
             @test method(f, Y) == DataValue{Float64}()
-            v = method(f, Y, skipna = true)
+            v = method(f, Y, skipna=true)
             @test v.value ≈ method(f, B)
             @test !isna(v)
         end
 
         @test isequal(extrema(X), (DataValue(minimum(A)), DataValue(maximum(A))))
         @test isequal(extrema(Y), (DataValue{Float64}(), DataValue{Float64}()))
-        v1 = extrema(Y, skipna = true)
+        v1 = extrema(Y, skipna=true)
         v2 = extrema(B)
         @test v1[1].value == v2[1]
         @test !isna(v1[1])
@@ -61,7 +61,7 @@ using Test
         @test !isna(v1[2])
 
         H = rand(Bool, N)
-        G = H[findall(x->!x, M)]
+        G = H[findall(x -> !x, M)]
         U = DataValueArray(H)
         V = DataValueArray(H, M)
 
@@ -69,9 +69,9 @@ using Test
         |,)
             @test isequal(reduce(op, U),
                         DataValue(reduce(op, H)))
-            @test isequal(reduce(op, U, skipna = true),
+            @test isequal(reduce(op, U, skipna=true),
                         DataValue(reduce(op, H)))
-            @test isequal(reduce(op, V, skipna = true),
+            @test isequal(reduce(op, V, skipna=true),
                         DataValue(reduce(op, G)))
         end
     end

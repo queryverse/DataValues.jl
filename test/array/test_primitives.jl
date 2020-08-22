@@ -134,14 +134,14 @@ using DataValues
 
     Y1 = reshape(copy(Y), length(Y), 1)
     @test size(Y1) == (length(Y), 1)
-    @test all(i->isequal(Y1[i], Y[i]), 1:length(Y))
+    @test all(i -> isequal(Y1[i], Y[i]), 1:length(Y))
     Y2 = reshape(Y1, 1, length(Y1))
     @test size(Y2) == (1, length(Y1))
-    @test all(i->isequal(Y1[i], Y2[i]), 1:length(Y2))
+    @test all(i -> isequal(Y1[i], Y2[i]), 1:length(Y2))
 # Test that arrays share the same data
     Y2.values[1] += 1
     Y2.isna[2] = true
-    @test all(i->isequal(Y1[i], Y2[i]), 1:length(Y2))
+    @test all(i -> isequal(Y1[i], Y2[i]), 1:length(Y2))
 
 # ----- test Base.ndims ------------------------------------------------------#
 
@@ -163,10 +163,10 @@ using DataValues
 # ----- test Base.find -------------------------------------------------------#
 
     z = DataValueArray(rand(Bool, 10))
-    @test (LinearIndices(z))[findall(x->x != 0, z)] == (LinearIndices(z.values))[findall(z.values)]
+    @test (LinearIndices(z))[findall(x -> x != 0, z)] == (LinearIndices(z.values))[findall(z.values)]
 
     z = DataValueArray([false, true, false, true, false, true])
-    @test isequal((LinearIndices(z))[findall(x->x != 0, z)], [2, 4, 6])
+    @test isequal((LinearIndices(z))[findall(x -> x != 0, z)], [2, 4, 6])
 
 # ----- test dropna --------------------------------------------------------#
 
@@ -207,11 +207,11 @@ using DataValues
 
 # test that dropna! returns unwrapped values when DataValues are present
     X = [false, 1, :c, "string", DataValue("I am not null"), DataValue()]
-    @test !any(x->isa(x, DataValue), dropna!(X))
-    @test any(x->isa(x, DataValue), X)
+    @test !any(x -> isa(x, DataValue), dropna!(X))
+    @test any(x -> isa(x, DataValue), X)
     Y = Any[false, 1, :c, "string", DataValue("I am not null"), DataValue()]
-    @test !any(x->isa(x, DataValue), dropna!(Y))
-    @test any(x->isa(x, DataValue), Y)
+    @test !any(x -> isa(x, DataValue), dropna!(Y))
+    @test any(x -> isa(x, DataValue), Y)
 
 # ----- test any(isna, X) --------------------------------------------------#
 

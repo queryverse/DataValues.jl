@@ -11,12 +11,12 @@ maptoTuple(f, a, b...) = Tuple{f(a),maptoTuple(f, b...).types...}
 _nullable_eltype(f, A, As...) =
     Base._return_type(f, maptoTuple(_unsafe_get_eltype, A, As...))
 
-function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale = Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(unsafe_get(dt), format, locale = locale))
+function Dates.DateTime(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
+    isna(dt) ? DataValue{DateTime}() : DataValue{DateTime}(DateTime(unsafe_get(dt), format, locale=locale))
 end
 
-function Dates.Date(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale = Dates.ENGLISH) where {T <: AbstractString}
-    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(unsafe_get(dt), format, locale = locale))
+function Dates.Date(dt::DataValue{T}, format::AbstractString; locale::Dates.Locale=Dates.ENGLISH) where {T <: AbstractString}
+    isna(dt) ? DataValue{Date}() : DataValue{Date}(Date(unsafe_get(dt), format, locale=locale))
 end
 
 for f in (:(Base.abs), :(Base.abs2), :(Base.conj), :(Base.sign))

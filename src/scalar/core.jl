@@ -3,7 +3,7 @@ struct DataValue{T}
     value::T
 
     DataValue{T}() where {T} = new(false)
-    DataValue{T}(value::T, hasvalue::Bool = true) where {T} = new(hasvalue, value)
+    DataValue{T}(value::T, hasvalue::Bool=true) where {T} = new(hasvalue, value)
 end
 
 struct DataValueException <: Exception
@@ -11,7 +11,7 @@ end
 
 const NA = DataValue{Union{}}()
 
-DataValue(value::T, hasvalue::Bool = true) where {T} = DataValue{T}(value, hasvalue)
+DataValue(value::T, hasvalue::Bool=true) where {T} = DataValue{T}(value, hasvalue)
 DataValue(value::Missing) = DataValue{Union{}}()
 DataValue{T}(::Missing) where T = DataValue{T}()
 DataValue() = DataValue{Union{}}()
