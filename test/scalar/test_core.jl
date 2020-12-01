@@ -318,4 +318,6 @@ using InteractiveUtils
 
     end
 
+@test convert(DataValue{String}, missing) == DataValue{String}()
+
 end

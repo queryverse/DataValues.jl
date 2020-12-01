@@ -21,6 +21,7 @@ Base.eltype(::Type{DataValue{T}}) where {T} = T
 
 Base.convert(::Type{DataValue{T}}, x::DataValue{T}) where {T} = x
 Base.convert(::Type{DataValue}, x::DataValue) = x
+Base.convert(::Type{D}, ::Missing) where {D <: DataValue} = D()
 
 Base.convert(t::Type{DataValue{T}}, x::Any) where {T} = convert(t, convert(T, x))
 
