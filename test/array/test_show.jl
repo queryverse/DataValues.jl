@@ -1,7 +1,4 @@
-using Test
-using DataValues
-
-@testset "DataValueArray: Show" begin
+@testitem "DataValueArray: Show" begin
 
     io = IOBuffer()
     disp = TextDisplay(IOBuffer())

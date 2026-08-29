@@ -1,7 +1,4 @@
-using DataValues
-using Test
-
-@testset "Broadcast" begin
+@testitem "Broadcast" begin
 
     dv1 = DataValue(3)
     dv2 = DataValue(5)

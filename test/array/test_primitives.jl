@@ -1,7 +1,4 @@
-using Test
-using DataValues
-
-@testset "DataValueArray: Primitives" begin
+@testitem "DataValueArray: Primitives" begin
 
     n = rand(1:5)
     siz = [ rand(2:5) for i in n ]

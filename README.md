@@ -1,8 +1,7 @@
 # DataValues
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Build Status](https://travis-ci.org/queryverse/DataValues.jl.svg?branch=master)](https://travis-ci.org/queryverse/DataValues.jl)
-[![Build status](https://ci.appveyor.com/api/projects/status/nkd83orhu4xm68yp/branch/master?svg=true)](https://ci.appveyor.com/project/queryverse/datavalues-jl/branch/master)
+[![Build Status](https://github.com/queryverse/DataValues.jl/actions/workflows/juliaci.yml/badge.svg?branch=main)](https://github.com/queryverse/DataValues.jl/actions/workflows/juliaci.yml)
 [![codecov](https://codecov.io/gh/queryverse/DataValues.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/queryverse/DataValues.jl)
 
 ## Overview

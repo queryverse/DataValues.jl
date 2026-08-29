@@ -1,7 +1,4 @@
-using Test
-using DataValues
-
-@testset "DataValueArray: Constructor" begin
+@testitem "DataValueArray: Constructor" begin
 
 # test Inner Constructor
     @test_throws ArgumentError DataValueArray([1, 2, 3, 4], [true, false, true])
