@@ -1,7 +1,5 @@
-using DataValues
-using Test
-
-@testset "Base derived tests" begin
+@testitem "Base derived tests" setup=[DVFixtures] begin
+    using Dates
 
     types = [
     Bool,

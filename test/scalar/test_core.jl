@@ -1,9 +1,7 @@
-using DataValues
-using Test
-using Dates
-using InteractiveUtils
+@testitem "Core" setup=[DVFixtures] begin
 
-@testset "Core" begin
+    using Dates
+    using InteractiveUtils
 
     @testset "Missing integration" begin
 

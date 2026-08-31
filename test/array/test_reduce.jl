@@ -1,8 +1,6 @@
-using DataValues
-using Random
-using Test
+@testitem "DataValueArray: Reduce" begin
 
-@testset "DataValueArray: Reduce" begin
+    using Random
 
     Random.seed!(1)
     f(x) = 5 * x

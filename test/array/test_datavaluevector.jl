@@ -1,7 +1,4 @@
-using DataValues
-using Test
-
-@testset "DataValueArray: DataVector" begin
+@testitem "DataValueArray: DataVector" begin
 
     A = [1:10...]
     B = [1:5...]

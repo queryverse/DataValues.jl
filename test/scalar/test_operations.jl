@@ -1,8 +1,6 @@
-using DataValues
-using Test
-using Dates
+@testitem "Operations" begin
 
-@testset "Operations" begin
+    using Dates
 
     time_a = DataValue("14:00:00")
     date_a = DataValue("01/01/2012")

@@ -1,7 +1,4 @@
-using Test
-using DataValues
-
-@testset "DataValueArray: TypeDefs" begin
+@testitem "DataValueArray: TypeDefs" begin
 
     x = DataValueArray([1, 2, 3],
     [false, false, true])

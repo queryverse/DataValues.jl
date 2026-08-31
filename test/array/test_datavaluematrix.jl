@@ -1,8 +1,6 @@
-using DataValues
-using LinearAlgebra
-using Test
+@testitem "DataValueArray: DataMatrix" begin
 
-@testset "DataValueArray: DataMatrix" begin
+    using LinearAlgebra
 
 
 # ----- test Base.diag -----#

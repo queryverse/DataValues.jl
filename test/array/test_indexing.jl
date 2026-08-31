@@ -1,9 +1,7 @@
-using Test
-using Random
-using DataValues
-# import DataValues: unsafe_getindex_notnull, unsafe_getvalue_notnull
+@testitem "DataValueArray: Indexing" begin
 
-@testset "DataValueArray: Indexing" begin
+    using Random
+# import DataValues: unsafe_getindex_notnull, unsafe_getvalue_notnull
 
     x = DataValueArray{Int}((5, 2))
 

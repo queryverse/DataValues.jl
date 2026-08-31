@@ -1,7 +1,4 @@
-using DataValues
-using Test
-
-@testset "DataValueArray: Broadcast" begin
+@testitem "DataValueArray: Broadcast" begin
 
     A1 = rand(Int, 10)
     M1 = rand(Bool, 10)
