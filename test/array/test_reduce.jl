@@ -8,7 +8,9 @@
                                                     DataValue(5 * x.value))
 
     for N in (10, 2050)
-        A = rand(N)
+        # Integer-valued, so every partial sum is exact: Base reduces `X.values` with
+        # `@simd`, which reassociates, while the DataValueArray reduction cannot.
+        A = Float64.(rand(1:1000, N))
         M = rand(Bool, N)
         i = rand(1:N)
         M[i] = true
