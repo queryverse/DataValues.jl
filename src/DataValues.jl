@@ -12,6 +12,7 @@ include("scalar/core.jl")
 # TODO 0.7 migration, enable again
 # include("scalar/broadcast.jl")
 include("scalar/operations.jl")
+include("scalar/strings.jl")
 
 include("array/typedefs.jl")
 include("array/constructors.jl")
