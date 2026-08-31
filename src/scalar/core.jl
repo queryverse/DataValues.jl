@@ -44,6 +44,10 @@ Base.convert(::Type{Missing}, ::DataValue{Union{}}) = missing
 
 Base.promote_rule(::Type{DataValue{S}}, ::Type{T}) where {S,T} = DataValue{promote_type(S, T)}
 Base.promote_rule(::Type{DataValue{T}}, ::Type{Any}) where {T} = DataValue{Any}
+# Base promotes anything against `Any` to `Any` (see the `>:Union{Missing,Nothing}`
+# rule in base/missing.jl). Without the mirror image of the rule above, the two
+# directions disagree and `promote_type(Any, DataValue{T})` recurses forever.
+Base.promote_rule(::Type{Any}, ::Type{DataValue{T}}) where {T} = DataValue{Any}
 Base.promote_rule(::Type{DataValue{Union{}}}, ::Type{Any}) = DataValue{Any}
 Base.promote_rule(::Type{Any}, ::Type{DataValue{Union{}}}) = DataValue{Any}
 Base.promote_rule(::Type{DataValue{S}}, ::Type{DataValue{T}}) where {S,T} = DataValue{promote_type(S, T)}

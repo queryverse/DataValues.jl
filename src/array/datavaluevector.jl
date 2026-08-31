@@ -52,7 +52,7 @@ null then this method inserts a null entry at the beginning of `X`. Returns `X`.
 """
 function Base.pushfirst!(X::DataValueVector, v::DataValue)
     if isna(v)
-        ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.values, 1)
+        Base._growbeg!(X.values, 1)
         pushfirst!(X.isna, true)
     else
         pushfirst!(X.values, v.value)
@@ -200,8 +200,8 @@ collection to `prepend!`.
 function Base.prepend!(X::DataValueVector, items::AbstractVector)
     old_length = length(X)
     nitems = length(items)
-    ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.values, nitems)
-    ccall(:jl_array_grow_beg, Nothing, (Any, UInt), X.isna, nitems)
+    Base._growbeg!(X.values, nitems)
+    Base._growbeg!(X.isna, nitems)
     if X === items
         copyto!(X, 1, items, nitems + 1, nitems)
     else
@@ -209,6 +209,10 @@ function Base.prepend!(X::DataValueVector, items::AbstractVector)
     end
     return X
 end
+
+# `pushfirst!(X, a, b, c)` reaches us as `prepend!(X, (a, b, c))`. Base's fallback for that
+# only handles `Vector`, so collect any other iterable into one first.
+Base.prepend!(X::DataValueVector, items) = prepend!(X, [x for x in items])
 
 """
     sizehint!(X::DataValueVector, newsz::Integer)
@@ -246,11 +250,11 @@ end
 """
     reverse!(X::DataValueVector, [s], [n])
 
-Modify `X` by reversing the first `n` elements starting at index `s`
-(inclusive). If unspecified, `s` and `n` will default to `1` and `length(X)`,
+Modify `X` by reversing the elements from index `s` to index `n` (both
+inclusive). If unspecified, `s` and `n` will default to `1` and `length(X)`,
 respectively.
 """
-function Base.reverse!(X::DataValueVector, s=1, n=length(X))
+function Base.reverse!(X::DataValueVector, s::Integer=1, n::Integer=length(X))
     if isbitstype(eltype(X)) || !any(isna, X)
         reverse!(X.values, s, n)
         reverse!(X.isna, s, n)
@@ -276,11 +280,11 @@ end
 """
     reverse(X::DataValueVector, [s], [n])
 
-Return a copy of `X` with the first `n` elements starting at index `s`
-(inclusive) reversed. If unspecified, `s` and `n` will default to `1` and
+Return a copy of `X` with the elements from index `s` to index `n` (both
+inclusive) reversed. If unspecified, `s` and `n` will default to `1` and
 `length(X)`, respectively.
 """
-function Base.reverse(X::DataValueVector, s=1, n=length(X))
+function Base.reverse(X::DataValueVector, s::Integer=1, n::Integer=length(X))
     return reverse!(copy(X), s, n)
 end
 
